@@ -17,6 +17,7 @@ h2{font-size:18px;margin:0 0 12px}.hint{color:var(--muted);font-size:14px;line-h
 label{display:block;font-weight:bold;margin:12px 0 6px}input,select{width:100%;padding:13px;border:1px solid #d8dee6;border-radius:12px;font-size:16px;background:#fff}
 button{border:0;border-radius:13px;padding:13px 16px;font-size:16px;font-weight:bold;cursor:pointer}
 .primary{background:var(--primary);color:#fff}.secondary{background:#e6f2f1;color:var(--dark)}.danger{background:#fee2e2;color:var(--danger)}.ghost{background:#eef2f7;color:#334155}
+.share-btn{background:#0ea5e9;color:#fff}
 .actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1;min-width:130px}
 .step{display:none}.step.active{display:block}
 .progress{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:10px 0 18px}.bar{height:100%;background:var(--primary);width:0;transition:.3s}
@@ -25,11 +26,14 @@ video{width:100%;display:block;max-height:62vh;object-fit:cover}.camera-frame{po
 .camera-msg{position:absolute;bottom:14px;right:12px;left:12px;text-align:center;color:#fff;background:#0008;padding:8px;border-radius:10px;font-size:13px}
 .preview{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
 .thumb{position:relative;background:#eef2f7;border-radius:12px;overflow:hidden}.thumb img{width:100%;display:block;aspect-ratio:1/1.25;object-fit:contain;background:#fff}.thumb small{display:block;padding:7px;color:#475569}
+.thumb .share-one{position:absolute;top:6px;left:6px;background:#0ea5e9;color:#fff;border:0;border-radius:99px;padding:6px 10px;font-size:12px;cursor:pointer}
 .badge{display:inline-block;padding:5px 9px;border-radius:99px;background:#e6f2f1;color:var(--dark);font-size:12px;font-weight:bold}
 .hidden{display:none!important}.notice{padding:11px;border-radius:12px;background:#fffbeb;color:#854d0e;font-size:13px;line-height:1.6}
 .range{width:100%}.value{font-size:13px;color:var(--muted)}
 canvas{display:none}
 footer{text-align:center;color:#94a3b8;font-size:12px;padding:12px}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-left:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -126,13 +130,23 @@ footer{text-align:center;color:#94a3b8;font-size:12px;padding:12px}
     <h2>الملف جاهز للتصدير ✓</h2>
     <p id="summary" class="hint"></p>
     <div id="finalPreview" class="preview"></div>
-    <div class="actions" style="margin-top:14px">
-      <button class="primary" onclick="exportImages()">⬇️ تصدير الصور</button>
-      <button class="secondary" onclick="exportPDF()">📄 إنشاء PDF واحد</button>
-      <button class="secondary" onclick="exportZIP()">🗜️ تصدير ZIP</button>
+
+    <h2 style="margin-top:20px;font-size:16px">مشاركة الملف</h2>
+    <p class="hint">يمكنك مشاركة الصور مباشرة إلى واتساب، تيليجرام، البريد، Drive، أو أي تطبيق آخر.</p>
+    <div class="actions">
+      <button class="share-btn" onclick="shareAll()">📤 مشاركة كل الصور</button>
+      <button class="share-btn" onclick="shareAsPDF()">📤 مشاركة PDF</button>
+      <button class="share-btn" onclick="shareAsZIP()">📤 مشاركة ZIP</button>
+    </div>
+
+    <h2 style="margin-top:20px;font-size:16px">تنزيل الملف</h2>
+    <div class="actions">
+      <button class="primary" onclick="exportImages()">⬇️ تنزيل الصور</button>
+      <button class="secondary" onclick="exportPDF()">📄 تنزيل PDF</button>
+      <button class="secondary" onclick="exportZIP()">🗜️ تنزيل ZIP</button>
       <button class="ghost" onclick="newFile()">ملف جديد</button>
     </div>
-    <p class="hint">سيتم تنزيل الملفات بأسماء مرتبة. إذا منع المتصفح عدة تنزيلات، اسمح بالتنزيلات المتعددة لهذا الموقع.</p>
+    <p class="hint" style="margin-top:12px">إذا لم تظهر نافذة المشاركة، فهذا يعني أن المتصفح لا يدعم المشاركة المباشرة، استخدم أزرار التنزيل بدلًا منها.</p>
   </section>
 </main>
 
@@ -195,17 +209,11 @@ async function startIdCamera() {
 }
 
 function stopCamera() {
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
-  }
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
 }
 
 function stopDocCamera() {
-  if (docStream) {
-    docStream.getTracks().forEach(t => t.stop());
-    docStream = null;
-  }
+  if (docStream) { docStream.getTracks().forEach(t => t.stop()); docStream = null; }
 }
 
 function captureVideo(video) {
@@ -269,16 +277,9 @@ function mergeId() {
   }
 }
 
-function retakeId() {
-  resetData();
-  showStep(2);
-  startIdCamera();
-}
+function retakeId() { resetData(); showStep(2); startIdCamera(); }
 
-async function startDocuments() {
-  showStep(4);
-  await startDocCamera();
-}
+async function startDocuments() { showStep(4); await startDocCamera(); }
 
 async function startDocCamera() {
   try {
@@ -312,10 +313,7 @@ function renderDocuments() {
 
 function finishDocuments() {
   stopDocCamera();
-  if (!documents.length && !idMerged) {
-    alert('لم يتم تصوير أي مستند.');
-    return;
-  }
+  if (!documents.length && !idMerged) { alert('لم يتم تصوير أي مستند.'); return; }
   showStep(5);
 }
 
@@ -334,7 +332,9 @@ async function applyAndPreview() {
   processed.forEach((src, i) => {
     const d = document.createElement('div');
     d.className = 'thumb';
-    d.innerHTML = '<img src="' + src + '"><small>صفحة ' + (i + 1) + '</small>';
+    d.innerHTML = '<img src="' + src + '">' +
+      '<button class="share-one" onclick="shareOne(' + i + ')" title="مشاركة">📤</button>' +
+      '<small>صفحة ' + (i + 1) + '</small>';
     $('processedPreview').appendChild(d);
   });
   $('summary').textContent = 'تم تجهيز ' + processed.length + ' صفحات للمستفيد: ' + $('beneficiary').value.trim() + '.';
@@ -380,6 +380,100 @@ function safeName() {
   return ($('beneficiary').value.trim() || 'مستفيد').replace(/[\\/:*?"<>|]/g, '_');
 }
 
+/* ============ تحويل DataURL إلى File ============ */
+function dataURLtoFile(dataurl, filename) {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) u8arr[n] = bstr.charCodeAt(n);
+  return new File([u8arr], filename, { type: mime });
+}
+
+/* ============ المشاركة ============ */
+async function shareOne(index) {
+  try {
+    const file = dataURLtoFile(processed[index], `${String(index + 1).padStart(2, '0')}-${safeName()}.jpg`);
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: safeName(),
+        text: `صفحة ${index + 1} من ملف ${safeName()}`
+      });
+    } else {
+      alert('المتصفح لا يدعم مشاركة الصور. استخدم زر التنزيل.');
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') console.error(err);
+  }
+}
+
+async function shareAll() {
+  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  if (!navigator.canShare) {
+    alert('المتصفح لا يدعم المشاركة المباشرة. استخدم أزرار التنزيل.');
+    return;
+  }
+  try {
+    const files = processed.map((src, i) =>
+      dataURLtoFile(src, `${String(i + 1).padStart(2, '0')}-${safeName()}.jpg`)
+    );
+    if (navigator.canShare({ files })) {
+      await navigator.share({
+        files,
+        title: safeName(),
+        text: `ملف المستفيد: ${safeName()}`
+      });
+    } else {
+      // بعض المتصفحات لا تدعم مشاركة أكثر من ملف؛ نشارك الأول مع تنبيه
+      alert('المتصفح لا يدعم مشاركة عدة ملفات معًا. سيتم مشاركة أول صورة فقط. يمكنك استخدام ZIP لمشاركة الكل.');
+      await navigator.share({ files: [files[0]], title: safeName() });
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') console.error(err);
+  }
+}
+
+async function shareAsPDF() {
+  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  if (!navigator.canShare) {
+    alert('المتصفح لا يدعم المشاركة المباشرة. استخدم زر تنزيل PDF.');
+    return;
+  }
+  try {
+    const blob = await buildPDFBlob();
+    const file = new File([blob], `${safeName()}.pdf`, { type: 'application/pdf' });
+    if (navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: safeName(), text: `ملف PDF للمستفيد ${safeName()}` });
+    } else {
+      alert('المتصفح لا يدعم مشاركة PDF. استخدم زر التنزيل.');
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') console.error(err);
+  }
+}
+
+async function shareAsZIP() {
+  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  if (!navigator.canShare) {
+    alert('المتصفح لا يدعم المشاركة المباشرة. استخدم زر تنزيل ZIP.');
+    return;
+  }
+  try {
+    const blob = await buildZIPBlob();
+    const file = new File([blob], `${safeName()}.zip`, { type: 'application/zip' });
+    if (navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: safeName(), text: `ملف مضغوط للمستفيد ${safeName()}` });
+    } else {
+      alert('المتصفح لا يدعم مشاركة ZIP. استخدم زر التنزيل.');
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') console.error(err);
+  }
+}
+
+/* ============ التنزيل ============ */
 function download(data, name) {
   const a = document.createElement('a');
   a.href = data;
@@ -402,8 +496,7 @@ function loadImage(src) {
   });
 }
 
-async function exportPDF() {
-  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+async function buildPDFBlob() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageW = pdf.internal.pageSize.getWidth();
@@ -418,17 +511,34 @@ async function exportPDF() {
     if (i > 0) pdf.addPage();
     pdf.addImage(processed[i], 'JPEG', x, y, w, h);
   }
-  pdf.save(`${safeName()}.pdf`);
+  return pdf.output('blob');
 }
 
-async function exportZIP() {
+async function exportPDF() {
   if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  const blob = await buildPDFBlob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${safeName()}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function buildZIPBlob() {
   const zip = new JSZip();
   processed.forEach((src, i) => {
     const base64 = src.split(',')[1];
     zip.file(`${String(i + 1).padStart(2, '0')}-${safeName()}.jpg`, base64, { base64: true });
   });
-  const blob = await zip.generateAsync({ type: 'blob' });
+  return zip.generateAsync({ type: 'blob' });
+}
+
+async function exportZIP() {
+  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  const blob = await buildZIPBlob();
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
