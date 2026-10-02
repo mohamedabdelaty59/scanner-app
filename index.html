@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>ماسح ملفات المساعدات</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--primary:#0f766e;--dark:#134e4a;--bg:#f5f7f8;--card:#fff;--muted:#64748b;--danger:#b91c1c}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Tahoma",sans-serif;background:var(--bg);color:#172033}
+header{background:linear-gradient(135deg,var(--dark),var(--primary));color:#fff;padding:18px 16px;text-align:center}
+header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.9}
+main{max-width:760px;margin:auto;padding:16px}.card{background:var(--card);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 5px 20px #0000000d}
+h2{font-size:18px;margin:0 0 12px}.hint{color:var(--muted);font-size:14px;line-height:1.7}
+label{display:block;font-weight:bold;margin:12px 0 6px}input,select{width:100%;padding:13px;border:1px solid #d8dee6;border-radius:12px;font-size:16px;background:#fff}
+button{border:0;border-radius:13px;padding:13px 16px;font-size:16px;font-weight:bold;cursor:pointer}
+.primary{background:var(--primary);color:#fff}.secondary{background:#e6f2f1;color:var(--dark)}.danger{background:#fee2e2;color:var(--danger)}.ghost{background:#eef2f7;color:#334155}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1;min-width:130px}
+.step{display:none}.step.active{display:block}
+.progress{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:10px 0 18px}.bar{height:100%;background:var(--primary);width:0;transition:.3s}
+.camera{background:#101820;border-radius:18px;overflow:hidden;position:relative;min-height:300px;display:flex;align-items:center;justify-content:center}
+video{width:100%;display:block;max-height:62vh;object-fit:cover}.camera-frame{position:absolute;inset:12% 7%;border:2px dashed #fff;border-radius:15px;box-shadow:0 0 0 9999px #0005;pointer-events:none}
+.camera-msg{position:absolute;bottom:14px;right:12px;left:12px;text-align:center;color:#fff;background:#0008;padding:8px;border-radius:10px;font-size:13px}
+.preview{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.thumb{position:relative;background:#eef2f7;border-radius:12px;overflow:hidden}.thumb img{width:100%;display:block;aspect-ratio:1/1.25;object-fit:contain;background:#fff}.thumb small{display:block;padding:7px;color:#475569}
+.badge{display:inline-block;padding:5px 9px;border-radius:99px;background:#e6f2f1;color:var(--dark);font-size:12px;font-weight:bold}
+.hidden{display:none!important}.notice{padding:11px;border-radius:12px;background:#fffbeb;color:#854d0e;font-size:13px;line-height:1.6}
+.range{width:100%}.value{font-size:13px;color:var(--muted)}
+canvas{display:none}
+footer{text-align:center;color:#94a3b8;font-size:12px;padding:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>ماسح ملفات المساعدات</h1>
+  <p>تصوير البطاقة والمستندات وتجهيزها دفعة واحدة</p>
+</header>
+
+<main>
+  <div class="progress"><div id="progressBar" class="bar"></div></div>
+
+  <section id="step1" class="card step active">
+    <span class="badge">الخطوة 1</span>
+    <h2>بيانات المستفيد</h2>
+    <p class="hint">أدخل اسم المستفيد لتسمية الملف عند التصدير.</p>
+    <label>اسم المستفيد</label>
+    <input id="beneficiary" placeholder="مثال: محمد أحمد علي">
+    <div class="actions" style="margin-top:16px">
+      <button class="primary" onclick="startFile()">ابدأ التصوير</button>
+    </div>
+  </section>
+
+  <section id="step2" class="card step">
+    <span class="badge">الخطوة 2</span>
+    <h2 id="idTitle">تصوير البطاقة — الوجه الأمامي</h2>
+    <p id="idHint" class="hint">ضع البطاقة داخل الإطار، ثم اضغط التقاط.</p>
+    <div class="camera">
+      <video id="video" autoplay playsinline muted></video>
+      <div class="camera-frame"></div>
+      <div class="camera-msg">حاول أن تكون البطاقة مستقيمة والإضاءة جيدة</div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="primary" onclick="captureId()">📷 التقاط</button>
+      <button class="ghost" onclick="stopCamera();showStep(1)">رجوع</button>
+    </div>
+    <div id="idPreview" class="preview"></div>
+  </section>
+
+  <section id="step3" class="card step">
+    <span class="badge">الخطوة 3</span>
+    <h2>البطاقة جاهزة ✓</h2>
+    <p class="hint">تم تصوير الوجهين ودمجهما في صفحة واحدة. يمكنك الآن تصوير باقي المستندات.</p>
+    <div id="idMergedPreview"></div>
+    <div class="actions" style="margin-top:12px">
+      <button class="primary" onclick="startDocuments()">📄 تصوير باقي المستندات</button>
+      <button class="secondary" onclick="retakeId()">إعادة تصوير البطاقة</button>
+    </div>
+  </section>
+
+  <section id="step4" class="card step">
+    <span class="badge">الخطوة 4</span>
+    <h2>تصوير باقي المستندات</h2>
+    <p class="hint">صوّر المستندات واحدًا تلو الآخر. لا تحتاج للخروج من جلسة التصوير.</p>
+    <div class="camera">
+      <video id="docVideo" autoplay playsinline muted></video>
+      <div class="camera-frame"></div>
+      <div class="camera-msg">اضبط الورقة داخل الإطار ثم التقط الصورة</div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="primary" onclick="captureDocument()">📷 تصوير المستند</button>
+      <button class="secondary" onclick="finishDocuments()">✓ انتهيت</button>
+    </div>
+    <div id="docCount" class="hint" style="margin-top:10px"></div>
+    <div id="docPreview" class="preview"></div>
+  </section>
+
+  <section id="step5" class="card step">
+    <span class="badge">الخطوة 5</span>
+    <h2>تحسين الملف بالكامل</h2>
+    <p class="hint">سيتم تطبيق الإعدادات نفسها على جميع الصفحات قبل التصدير.</p>
+    <label>الإضاءة <span id="brightnessValue" class="value">100%</span></label>
+    <input class="range" id="brightness" type="range" min="60" max="150" value="100" oninput="updateValues()">
+    <label>التباين <span id="contrastValue" class="value">100%</span></label>
+    <input class="range" id="contrast" type="range" min="70" max="150" value="100" oninput="updateValues()">
+    <label>الحدة <span id="sharpnessValue" class="value">0</span></label>
+    <input class="range" id="sharpness" type="range" min="0" max="2" step=".1" value="0" oninput="updateValues()">
+    <label>وضع الألوان</label>
+    <select id="filter">
+      <option value="color">ملون</option>
+      <option value="gray">رمادي</option>
+      <option value="bw">أبيض وأسود</option>
+    </select>
+    <label><input id="autoCrop" type="checkbox" checked style="width:auto"> تحسين تلقائي للصفحة (قص/تصحيح أساسي)</label>
+    <div class="notice">هذه النسخة تعالج الصور محليًا على الهاتف. لا يتم رفع الصور إلى خادم خارجي.</div>
+    <div class="actions" style="margin-top:14px">
+      <button class="primary" onclick="applyAndPreview()">✨ تطبيق على الكل</button>
+      <button class="ghost" onclick="showStep(4);startDocCamera()">تعديل التصوير</button>
+    </div>
+    <div id="processedPreview" class="preview"></div>
+  </section>
+
+  <section id="step6" class="card step">
+    <span class="badge">الخطوة 6</span>
+    <h2>الملف جاهز للتصدير ✓</h2>
+    <p id="summary" class="hint"></p>
+    <div id="finalPreview" class="preview"></div>
+    <div class="actions" style="margin-top:14px">
+      <button class="primary" onclick="exportImages()">⬇️ تصدير الصور</button>
+      <button class="secondary" onclick="exportPDF()">📄 إنشاء PDF واحد</button>
+      <button class="secondary" onclick="exportZIP()">🗜️ تصدير ZIP</button>
+      <button class="ghost" onclick="newFile()">ملف جديد</button>
+    </div>
+    <p class="hint">سيتم تنزيل الملفات بأسماء مرتبة. إذا منع المتصفح عدة تنزيلات، اسمح بالتنزيلات المتعددة لهذا الموقع.</p>
+  </section>
+</main>
+
+<canvas id="canvas"></canvas>
+<footer>ماسح ملفات المساعدات — نسخة أولية</footer>
+
+<script>
+let stream = null, docStream = null;
+let idFront = null, idBack = null, idMerged = null;
+let documents = [];
+let processed = [];
+let currentStep = 1;
+
+const $ = id => document.getElementById(id);
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(x => x.classList.remove('active'));
+  $('step' + n).classList.add('active');
+  currentStep = n;
+  $('progressBar').style.width = ((n - 1) / 5 * 100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateData() {
+  const name = $('beneficiary').value.trim();
+  if (!name) { alert('اكتب اسم المستفيد أولًا.'); return false; }
+  return true;
+}
+
+async function startFile() {
+  if (!validateData()) return;
+  resetData();
+  showStep(2);
+  await startIdCamera();
+}
+
+function resetData() {
+  idFront = idBack = idMerged = null;
+  documents = [];
+  processed = [];
+  $('idPreview').innerHTML = '';
+  $('docPreview').innerHTML = '';
+  $('processedPreview').innerHTML = '';
+  $('finalPreview').innerHTML = '';
+  $('idMergedPreview').innerHTML = '';
+  $('docCount').textContent = '';
+}
+
+async function startIdCamera() {
+  try {
+    stopCamera();
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false
+    });
+    $('video').srcObject = stream;
+  } catch (e) {
+    alert('تعذر تشغيل الكاميرا. تأكد من السماح للمتصفح باستخدام الكاميرا وفتح الصفحة عبر HTTPS أو localhost.');
+  }
+}
+
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+}
+
+function stopDocCamera() {
+  if (docStream) {
+    docStream.getTracks().forEach(t => t.stop());
+    docStream = null;
+  }
+}
+
+function captureVideo(video) {
+  const c = document.createElement('canvas');
+  const v = video;
+  const max = 2200;
+  const vw = v.videoWidth || max;
+  const vh = v.videoHeight || max;
+  const scale = Math.min(1, max / vw);
+  c.width = Math.round(vw * scale);
+  c.height = Math.round(vh * scale);
+  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.94);
+}
+
+function captureId() {
+  const img = captureVideo($('video'));
+  if (!idFront) {
+    idFront = img;
+    $('idTitle').textContent = 'تصوير البطاقة — الوجه الخلفي';
+    $('idHint').textContent = 'اقلب البطاقة الآن ثم اضغط التقاط.';
+    renderIdPreview();
+  } else {
+    idBack = img;
+    stopCamera();
+    mergeId();
+    showStep(3);
+  }
+}
+
+function renderIdPreview() {
+  $('idPreview').innerHTML = '';
+  const d = document.createElement('div');
+  d.className = 'thumb';
+  d.innerHTML = '<img src="' + idFront + '"><small>✓ الوجه الأمامي</small>';
+  $('idPreview').appendChild(d);
+}
+
+function mergeId() {
+  const a = new Image(), b = new Image();
+  let loaded = 0;
+  const done = () => { loaded++; if (loaded === 2) drawMerged(); };
+  a.onload = done; b.onload = done;
+  a.src = idFront; b.src = idBack;
+
+  function drawMerged() {
+    const maxW = 1600, gap = 30;
+    const aw = Math.min(maxW, a.width), bw = Math.min(maxW, b.width);
+    const w = Math.max(aw, bw);
+    const ah = a.height * (w / a.width), bh = b.height * (w / b.width);
+    const c = document.createElement('canvas');
+    c.width = w;
+    c.height = Math.round(ah + bh + gap);
+    const x = c.getContext('2d');
+    x.fillStyle = '#fff';
+    x.fillRect(0, 0, c.width, c.height);
+    x.drawImage(a, 0, 0, w, ah);
+    x.drawImage(b, 0, ah + gap, w, bh);
+    idMerged = c.toDataURL('image/jpeg', 0.94);
+    $('idMergedPreview').innerHTML = '<div class="thumb"><img src="' + idMerged + '"><small>البطاقة — الوجه والظهر</small></div>';
+  }
+}
+
+function retakeId() {
+  resetData();
+  showStep(2);
+  startIdCamera();
+}
+
+async function startDocuments() {
+  showStep(4);
+  await startDocCamera();
+}
+
+async function startDocCamera() {
+  try {
+    stopDocCamera();
+    docStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false
+    });
+    $('docVideo').srcObject = docStream;
+  } catch (e) {
+    alert('تعذر تشغيل الكاميرا للمستندات.');
+  }
+}
+
+function captureDocument() {
+  const img = captureVideo($('docVideo'));
+  documents.push(img);
+  renderDocuments();
+}
+
+function renderDocuments() {
+  $('docCount').textContent = 'تم تصوير ' + documents.length + ' مستند/صفحة.';
+  $('docPreview').innerHTML = '';
+  documents.forEach((src, i) => {
+    const d = document.createElement('div');
+    d.className = 'thumb';
+    d.innerHTML = '<img src="' + src + '"><small>المستند ' + (i + 1) + '</small>';
+    $('docPreview').appendChild(d);
+  });
+}
+
+function finishDocuments() {
+  stopDocCamera();
+  if (!documents.length && !idMerged) {
+    alert('لم يتم تصوير أي مستند.');
+    return;
+  }
+  showStep(5);
+}
+
+function updateValues() {
+  $('brightnessValue').textContent = $('brightness').value + '%';
+  $('contrastValue').textContent = $('contrast').value + '%';
+  $('sharpnessValue').textContent = $('sharpness').value;
+}
+
+async function applyAndPreview() {
+  const all = [idMerged, ...documents].filter(Boolean);
+  processed = [];
+  $('processedPreview').innerHTML = '<p class="hint">جارٍ تجهيز الصور...</p>';
+  for (const src of all) processed.push(await processImage(src));
+  $('processedPreview').innerHTML = '';
+  processed.forEach((src, i) => {
+    const d = document.createElement('div');
+    d.className = 'thumb';
+    d.innerHTML = '<img src="' + src + '"><small>صفحة ' + (i + 1) + '</small>';
+    $('processedPreview').appendChild(d);
+  });
+  $('summary').textContent = 'تم تجهيز ' + processed.length + ' صفحات للمستفيد: ' + $('beneficiary').value.trim() + '.';
+  $('finalPreview').innerHTML = $('processedPreview').innerHTML;
+  showStep(6);
+}
+
+function processImage(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      const max = 2400;
+      const scale = Math.min(1, max / img.width);
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      const ctx = c.getContext('2d');
+      const b = +$('brightness').value;
+      const con = +$('contrast').value;
+      ctx.filter = `brightness(${b}%) contrast(${con}%)`;
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      if ($('filter').value !== 'color') {
+        const data = ctx.getImageData(0, 0, c.width, c.height);
+        const p = data.data;
+        for (let i = 0; i < p.length; i += 4) {
+          const g = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
+          if ($('filter').value === 'gray') {
+            p[i] = p[i + 1] = p[i + 2] = g;
+          } else {
+            const v = g > 150 ? 255 : 0;
+            p[i] = p[i + 1] = p[i + 2] = v;
+          }
+        }
+        ctx.putImageData(data, 0, 0);
+      }
+      resolve(c.toDataURL('image/jpeg', 0.94));
+    };
+    img.src = src;
+  });
+}
+
+function safeName() {
+  return ($('beneficiary').value.trim() || 'مستفيد').replace(/[\\/:*?"<>|]/g, '_');
+}
+
+function download(data, name) {
+  const a = document.createElement('a');
+  a.href = data;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function exportImages() {
+  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  processed.forEach((src, i) => download(src, `${String(i + 1).padStart(2, '0')}-${safeName()}.jpg`));
+}
+
+function loadImage(src) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.src = src;
+  });
+}
+
+async function exportPDF() {
+  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  for (let i = 0; i < processed.length; i++) {
+    const img = await loadImage(processed[i]);
+    const ratio = Math.min((pageW - 20) / img.width, (pageH - 20) / img.height);
+    const w = img.width * ratio;
+    const h = img.height * ratio;
+    const x = (pageW - w) / 2;
+    const y = (pageH - h) / 2;
+    if (i > 0) pdf.addPage();
+    pdf.addImage(processed[i], 'JPEG', x, y, w, h);
+  }
+  pdf.save(`${safeName()}.pdf`);
+}
+
+async function exportZIP() {
+  if (!processed.length) { alert('اضغط "تطبيق على الكل" أولًا.'); return; }
+  const zip = new JSZip();
+  processed.forEach((src, i) => {
+    const base64 = src.split(',')[1];
+    zip.file(`${String(i + 1).padStart(2, '0')}-${safeName()}.jpg`, base64, { base64: true });
+  });
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${safeName()}.zip`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function newFile() {
+  stopCamera();
+  stopDocCamera();
+  $('beneficiary').value = '';
+  resetData();
+  showStep(1);
+}
+
+updateValues();
+</script>
+</body>
+</html>
