@@ -25,7 +25,6 @@ body{font-family:"Cairo","Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg)
 button,input,select{font-family:inherit}
 .hidden{display:none!important}
 
-/* ---------- Header ---------- */
 .top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,var(--pd),var(--p));color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 .brand{display:flex;align-items:center;gap:10px;max-width:820px;margin:auto}
 .logo{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:22px}
@@ -47,7 +46,6 @@ input:focus,select:focus{border-color:var(--p2);box-shadow:0 0 0 3px rgba(20,184
 .step{display:none}.step.active{display:block;animation:fade .25s}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ---------- Buttons ---------- */
 button{border:0;border-radius:13px;padding:13px 16px;font-size:15.5px;font-weight:700;cursor:pointer;transition:.15s}
 button:active{transform:scale(.97)}
 .primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:0 6px 16px rgba(15,118,110,.28)}
@@ -59,7 +57,6 @@ button:active{transform:scale(.97)}
 .actions>button{flex:1;min-width:130px}
 button:disabled{opacity:.5;cursor:not-allowed}
 
-/* ---------- NID info ---------- */
 .nid-box{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
 .nid-box div{background:var(--soft);border-radius:12px;padding:9px 12px;font-size:13px}
 .nid-box b{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
@@ -67,12 +64,10 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .notice{padding:11px 13px;border-radius:12px;background:rgba(245,158,11,.12);color:var(--warn);font-size:13px;line-height:1.7}
 .notice.ok{background:rgba(21,128,61,.1);color:var(--ok)}
 
-/* ---------- Draft banner ---------- */
 .draft{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--soft);border:1.5px dashed var(--p2);border-radius:14px;padding:12px;margin-bottom:12px;font-size:14px}
 .draft span{flex:1;min-width:180px}
 .draft button{padding:9px 13px;font-size:14px}
 
-/* ---------- Chips ---------- */
 .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:8px 13px;border-radius:99px;font-size:13.5px;font-weight:700;cursor:pointer;position:relative}
@@ -81,7 +76,6 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .chip.on .n{background:#fff;color:var(--p)}
 .chip.need:not(.on):not(.has){border-style:dashed;border-color:var(--p2)}
 
-/* ---------- Camera ---------- */
 .camwrap{position:relative;background:#0a1114;border-radius:20px;overflow:hidden;aspect-ratio:3/4;max-height:68vh;width:100%;margin:auto}
 .camwrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .guide{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.9);border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.38);pointer-events:none;transition:.25s}
@@ -109,28 +103,28 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .strip .st b{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:10px;text-align:center;padding:1px 0}
 .strip .empty{color:var(--muted);font-size:13px;align-self:center}
 
-/* ---------- Page grid ---------- */
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 @media(min-width:620px){.grid{grid-template-columns:repeat(3,1fr)}}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative;box-shadow:0 3px 12px rgba(0,0,0,.04)}
-.tile .im{background:repeating-conic-gradient(#e8eeee 0 25%,#f6f9f9 0 50%) 0 0/16px 16px;aspect-ratio:1/1.25;display:grid;place-items:center;cursor:pointer}
+.tile .im{background:repeating-conic-gradient(#e8eeee 0 25%,#f6f9f9 0 50%) 0 0/16px 16px;aspect-ratio:1/1.25;display:grid;place-items:center;cursor:pointer;position:relative}
 .tile img{width:100%;height:100%;object-fit:contain;display:block}
-.tile .meta{padding:8px 10px 4px;font-size:13px;font-weight:700;display:flex;gap:6px;align-items:center}
+.tile .meta{padding:8px 10px 4px;font-size:13px;font-weight:700;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .tile .meta b{background:var(--p);color:#fff;border-radius:8px;padding:1px 7px;font-size:12px}
+.tile .meta .sz{font-size:10.5px;color:var(--muted);font-weight:600;background:var(--soft);padding:2px 7px;border-radius:6px}
 .tile .tb{display:flex;gap:4px;padding:4px 8px 9px}
 .tile .tb button{flex:1;padding:7px 0;font-size:15px;border-radius:9px;background:rgba(100,116,139,.12);color:var(--ink)}
-.q{position:absolute;top:8px;right:8px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.q{position:absolute;top:8px;right:8px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:2}
 .q.good{background:var(--ok)}.q.mid{background:#d97706}.q.bad{background:var(--danger)}
+.dpibadge{position:absolute;top:8px;left:8px;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:99px;color:#fff;letter-spacing:.3px;z-index:2}
+.dpibadge.hi{background:rgba(21,128,61,.9)}.dpibadge.mid{background:rgba(217,119,6,.9)}.dpibadge.lo{background:rgba(185,28,28,.9)}
 .empty-grid{text-align:center;color:var(--muted);padding:30px 10px}
 
-/* ---------- Settings ---------- */
 .range-row{display:flex;align-items:center;gap:10px}
 .range-row input[type=range]{flex:1;accent-color:var(--p)}
 .range-row output{min-width:44px;text-align:center;font-size:13px;font-weight:700;color:var(--p)}
 .tog{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--soft);border-radius:12px;margin:8px 0;font-weight:700;font-size:14px;cursor:pointer}
 .tog input{width:20px;height:20px;accent-color:var(--p);margin:0}
 
-/* ---------- Modal ---------- */
 .modal{position:fixed;inset:0;z-index:60;background:rgba(5,12,14,.78);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .modal-in{background:var(--card);width:100%;max-width:640px;max-height:96vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px;animation:up .25s}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
@@ -149,6 +143,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .stat{display:flex;gap:8px;margin:8px 0 4px}
 .stat div{flex:1;background:var(--soft);border-radius:12px;padding:10px;text-align:center;font-size:12px;color:var(--muted)}
 .stat b{display:block;font-size:18px;color:var(--p)}
+.prog{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:8px}
+.prog>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--p),var(--p2));transition:width .3s}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26px}
 </style>
 </head>
@@ -169,7 +165,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 
 <main>
 
-<!-- ===================== STEP 1 ===================== -->
 <section id="s1" class="step active">
   <div id="draftBox" class="draft hidden">
     <span>📝 يوجد ملف غير مكتمل محفوظ على هذا الجهاز (<b id="draftInfo"></b>).</span>
@@ -189,10 +184,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
     <input type="tel" id="fPhone" inputmode="tel" maxlength="15" placeholder="01xxxxxxxxx" autocomplete="off">
     <div class="actions"><button class="primary" id="btnStart">ابدأ التصوير ←</button></div>
   </div>
-  <div class="notice ok">🔒 كل المعالجة تتم محليًا على الهاتف. لا يتم رفع الصور إلى أي مكان إلا إذا شاركتها بنفسك.</div>
+  <div class="notice ok">🔒 كل المعالجة محليًا. المقاسات: بطاقة ٨.٥٦×٥.٤سم (٤٠٠DPI) · A4 (٣٠٠DPI).</div>
 </section>
 
-<!-- ===================== STEP 2 ===================== -->
 <section id="s2" class="step">
   <div class="card" style="padding:12px">
     <div class="chips" id="typeChips"></div>
@@ -225,7 +219,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
   <input type="file" id="fileNative" accept="image/*" capture="environment" class="hidden">
 </section>
 
-<!-- ===================== STEP 3 ===================== -->
 <section id="s3" class="step">
   <div class="card">
     <h2>صفحات الملف</h2>
@@ -260,14 +253,15 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
   </div>
 </section>
 
-<!-- ===================== STEP 4 ===================== -->
 <section id="s4" class="step">
   <div class="card">
     <h2>الملف جاهز ✓</h2>
-    <div id="exLoading" class="hint"><span class="spin"></span>جارٍ تجهيز الصفحات بأعلى جودة...</div>
+    <div id="exLoading" class="hint"><span class="spin"></span><span id="exProgress">جارٍ تجهيز الصفحات بأعلى جودة...</span></div>
+    <div id="exProgBar" class="prog hidden"><i></i></div>
     <div id="exBody" class="hidden">
       <p id="exSummary" class="hint"></p>
-      <div class="stat"><div><b id="stPages">0</b>صفحات</div><div><b id="stSize">0</b>MB الحجم</div></div>
+      <div class="stat"><div><b id="stPages">0</b>صفحات</div><div><b id="stSize">0</b>MB الحجم</div><div><b id="stDpi">0</b>أدنى DPI</div></div>
+      <p id="exPrint" class="notice ok"></p>
       <div class="grid" id="exGrid" style="margin-top:12px"></div>
 
       <h3>الجودة وحجم الملف</h3>
@@ -278,8 +272,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
       </select>
       <label>تنسيق صفحات PDF</label>
       <select id="selPdf">
-        <option value="a4">صفحات A4 — البطاقة بمقاسها الفعلي 8.56×5.4 سم (للطباعة)</option>
-        <option value="fit">صفحة بنفس مقاس المستند (بطاقة 8.56×5.4 سم / A4)</option>
+        <option value="a4">صفحات A4 — البطاقة بمقاسها الفعلي (للطباعة)</option>
+        <option value="fit">صفحة بنفس مقاس المستند الفعلي (بطاقة / A4)</option>
       </select>
 
       <h3>مشاركة</h3>
@@ -305,12 +299,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 
 </main>
 
-<!-- ===================== Editor ===================== -->
 <div id="editor" class="modal hidden">
   <div class="modal-in">
     <div class="mh"><b>✂️ تعديل الصفحة</b><button class="ghost" id="edClose">✕ إغلاق</button></div>
     <div class="cbox"><canvas id="edCanvas"></canvas></div>
-    <p class="hint" style="margin:8px 0 0">اسحب الدوائر الأربع لتطابق أركان المستند.</p>
+    <p class="hint" style="margin:8px 0 0">اسحب الدوائر الأربع لتطابق أركان المستند. ESC = إغلاق · Ctrl+S = حفظ</p>
     <div class="row4">
       <button class="secondary" id="edAuto">✨ كشف تلقائي</button>
       <button class="secondary" id="edFull">⛶ الصورة كاملة</button>
@@ -324,10 +317,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
     <select id="edMode"></select>
     <label for="edSize">مقاس الإخراج لهذه الصفحة</label>
     <select id="edSize">
-      <option value="">حسب نوع المستند</option>
+      <option value="">تلقائي حسب نوع المستند</option>
       <option value="card">بطاقة 8.56×5.4 سم</option>
-      <option value="a4">A4</option>
-      <option value="free">كما صُوّر (بدون تثبيت)</option>
+      <option value="a4">A4 (21×29.7 سم)</option>
+      <option value="free">كما صُوّر (بدون تثبيت مقاس)</option>
     </select>
     <div class="actions">
       <button class="primary" id="edSave">✓ حفظ</button>
@@ -338,7 +331,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 </div>
 
 <div id="toast" class="toast"></div>
-<footer>ماسح ملفات المساعدات — الإصدار 2</footer>
+<footer>ماسح ملفات المساعدات — الإصدار 4 · مقاسات فيزيائية دقيقة + DPI حقيقي</footer>
 
 <script>
 'use strict';
@@ -357,13 +350,14 @@ function toast(msg, ms = 2600) {
   clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms);
 }
 const vibrate = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /* =====================================================================
-   الثوابت والحالة
+   الثوابت — مقاسات فيزيائية احترافية
 ===================================================================== */
 const SIZES = {
-  card: { w: 8.56, h: 5.4,  dpi: 600, short: '8.56×5.4 سم' },
-  a4:   { w: 21,   h: 29.7, dpi: 200, short: 'A4' }
+  card: { w: 8.56, h: 5.4,  dpi: 400, short: '8.56×5.4 سم' },   // بطاقة/شهادة ميلاد — 400 DPI
+  a4:   { w: 21,   h: 29.7, dpi: 300, short: 'A4 · 21×29.7 سم' } // مستندات A4 — 300 DPI
 };
 const TYPES = [
   { k: 'idf',    label: 'بطاقة — الوجه', size: 'card', need: true },
@@ -374,13 +368,28 @@ const TYPES = [
   { k: 'rent',   label: 'عقد إيجار',     size: 'a4' },
   { k: 'other',  label: 'مستند آخر',     size: 'a4' }
 ];
+const typeOf = k => TYPES.find(t => t.k === k) || TYPES[TYPES.length - 1];
+
+/** المقاس الفعلي المطلوب لصفحة (أو null للحر) */
 function effSize(p) {
   const o = p.size;
   if (o === 'free') return null;
   if (o === 'card' || o === 'a4') return o;
   return S.set.fixedSize ? typeOf(p.type).size : null;
 }
-const typeOf = k => TYPES.find(t => t.k === k) || TYPES[TYPES.length - 1];
+/** أبعاد الصفحة الفعلية بالبكسل حسب المقاس المختار + DPI */
+function pxForSize(szKey) {
+  if (!szKey) return null;
+  const z = SIZES[szKey];
+  return {
+    w: Math.round(z.w / 2.54 * z.dpi),
+    h: Math.round(z.h / 2.54 * z.dpi),
+    aspect: z.w / z.h,
+    dpi: z.dpi,
+    cm: { w: z.w, h: z.h }
+  };
+}
+
 const MODES = [
   { k: 'color', label: '🎨 ملوّن' },
   { k: 'magic', label: '✨ تحسين ذكي' },
@@ -413,7 +422,7 @@ function parseNid(s) {
 }
 
 /* =====================================================================
-   التخزين المحلي للمسودة (IndexedDB)
+   المسودة (IndexedDB)
 ===================================================================== */
 const DB = {
   open() { return new Promise((res, rej) => { const r = indexedDB.open('aid-scanner', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
@@ -428,11 +437,11 @@ const saveDraft = debounce(async () => {
       name: S.name, nid: S.nid, phone: S.phone, set: S.set, ts: Date.now(),
       pages: S.pages.map(p => ({ id: p.id, type: p.type, label: p.label, blob: p.blob, corners: p.corners, rot: p.rot, mode: p.mode, crop: p.crop, size: p.size, q: p.q }))
     });
-  } catch (e) { /* وضع التصفح الخاص */ }
+  } catch (e) {}
 }, 700);
 
 /* =====================================================================
-   فك الصور وذاكرة مؤقتة
+   فك الصور
 ===================================================================== */
 const bmCache = new Map();
 async function decode(blob) {
@@ -471,7 +480,7 @@ const qClass = v => v < 20 ? 'bad' : v < 60 ? 'mid' : 'good';
 const qText = v => v < 20 ? 'غير واضحة' : v < 60 ? 'مقبولة' : 'واضحة';
 
 /* =====================================================================
-   كشف حدود المستند (Otsu + أكبر مكوّن متصل + أطراف الشكل)
+   كشف الحدود
 ===================================================================== */
 const defaultCorners = () => [{ x: .04, y: .04 }, { x: .96, y: .04 }, { x: .96, y: .96 }, { x: .04, y: .96 }];
 function orderCorners(pts) {
@@ -490,7 +499,6 @@ function detectQuad(cv) {
   const d = tg.getImageData(0, 0, w, h).data, n = w * h;
   const g = new Uint8Array(n), hist = new Array(256).fill(0);
   for (let i = 0, j = 0; j < n; i += 4, j++) { const v = (.299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2]) | 0; g[j] = v; hist[v]++; }
-  // Otsu
   let sumAll = 0; for (let i = 0; i < 256; i++) sumAll += i * hist[i];
   let sumB = 0, wB = 0, best = 0, thr = 128;
   for (let i = 0; i < 256; i++) {
@@ -498,14 +506,12 @@ function detectQuad(cv) {
     sumB += i * hist[i]; const mB = sumB / wB, mF = (sumAll - sumB) / wF;
     const v = wB * wF * (mB - mF) * (mB - mF); if (v > best) { best = v; thr = i; }
   }
-  // اتجاه الخلفية: متوسط الإطار الخارجي
   let bs = 0, bn = 0;
   for (let x = 0; x < w; x++) { bs += g[x] + g[(h - 1) * w + x]; bn += 2; }
   for (let y = 0; y < h; y++) { bs += g[y * w] + g[y * w + w - 1]; bn += 2; }
   const inv = (bs / bn) > thr;
   const m = new Uint8Array(n);
   for (let i = 0; i < n; i++) m[i] = ((g[i] > thr) !== inv) ? 1 : 0;
-  // أكبر مكوّن متصل
   const lab = new Int32Array(n), stack = new Int32Array(n);
   let bestLab = 0, bestSize = 0, cur = 0;
   for (let s = 0; s < n; s++) {
@@ -543,7 +549,7 @@ function rotCorners(cs, dir) {
 }
 
 /* =====================================================================
-   تصحيح المنظور (Homography)
+   تصحيح المنظور (Homography) — احترافي مع فرض الاتجاه الفيزيائي
 ===================================================================== */
 function solveHomography(dst, src) {
   const A = [], b = [];
@@ -566,14 +572,29 @@ function solveHomography(dst, src) {
   for (let i = n - 1; i >= 0; i--) { let s = b[i]; for (let c = i + 1; c < n; c++) s -= A[i][c] * h[c]; h[i] = s / A[i][i]; }
   return h;
 }
-function warp(src, corners, maxSide, aspect) {
+
+/**
+ * warp مع فرض البعد الفيزيائي:
+ *  - إذا مرّرنا targetPx {w,h} → نستخدم الأبعاد المطلوبة مباشرة
+ *  - إذا فقط aspect → نطبق مع احترام اتجاه الصورة الأصلية
+ *  - وإلا → تصغير عادي
+ */
+function warp(src, corners, opts) {
   const P = corners.map(c => ({ x: c.x * src.width, y: c.y * src.height }));
   const [tl, tr, br, bl] = P, dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   let W = Math.max(dist(tl, tr), dist(bl, br)), H = Math.max(dist(tl, bl), dist(tr, br));
-  if (aspect) {
-    const a = W >= H ? Math.max(aspect, 1 / aspect) : Math.min(aspect, 1 / aspect), long = Math.max(2, Math.round(maxSide));
-    if (a >= 1) { W = long; H = long / a; } else { H = long; W = long * a; }
-  } else { const k = Math.min(1, maxSide / Math.max(W, H)); W *= k; H *= k; }
+
+  if (opts && opts.targetPx) {
+    W = opts.targetPx.w; H = opts.targetPx.h;
+  } else if (opts && opts.aspect && opts.maxSide) {
+    const a = opts.aspect;
+    const land = W >= H; // اتجاه الصورة الأصلية
+    if (land) { W = opts.maxSide; H = opts.maxSide / a; }
+    else { H = opts.maxSide; W = opts.maxSide * a; }
+  } else if (opts && opts.maxSide) {
+    const k = Math.min(1, opts.maxSide / Math.max(W, H)); W *= k; H *= k;
+  }
+
   W = Math.max(2, Math.round(W)); H = Math.max(2, Math.round(H));
   const h = solveHomography([[0, 0], [W, 0], [W, H], [0, H]], [[tl.x, tl.y], [tr.x, tr.y], [br.x, br.y], [bl.x, bl.y]]);
   const sw = src.width, sh = src.height;
@@ -598,7 +619,7 @@ function warp(src, corners, maxSide, aspect) {
 }
 
 /* =====================================================================
-   التحسين: خلفية، ألوان، حدة
+   التحسين
 ===================================================================== */
 function estimateBg(cv) {
   const w = cv.width, h = cv.height;
@@ -664,7 +685,7 @@ function enhance(cv, o) {
 }
 
 /* =====================================================================
-   خط المعالجة: تدوير → قص → تحسين
+   خط المعالجة
 ===================================================================== */
 async function srcCanvas(p, rot, maxSide) {
   const bm = await getBitmap(p), { w, h } = dimsOf(bm), odd = rot % 180 !== 0;
@@ -679,28 +700,48 @@ function scaleTo(cv, maxSide) {
   const sc = Math.min(1, maxSide / Math.max(cv.width, cv.height)); if (sc >= 1) return cv;
   const c = mkCanvas(cv.width * sc, cv.height * sc); c.getContext('2d').drawImage(cv, 0, 0, c.width, c.height); return c;
 }
-async function renderPage(p, cap) {
+/** يعيد canvas + معلومات المقاس الفعلي (cm/dpi) */
+async function renderPage(p, capOverride) {
   const opts = { ...S.set, mode: p.mode || S.set.mode };
-  const sz = effSize(p), crop = S.set.autoCrop && p.crop !== false && p.corners;
-  const src = await srcCanvas(p, p.rot || 0, Math.min(2800, Math.max(cap * 1.6, 900)));
+  const szKey = effSize(p), sz = szKey ? SIZES[szKey] : null;
+  const targetPx = sz ? { w: Math.round(sz.w / 2.54 * sz.dpi), h: Math.round(sz.h / 2.54 * sz.dpi) } : null;
+  const maxSide = capOverride || (targetPx ? Math.max(targetPx.w, targetPx.h) : 2400);
+  const src = await srcCanvas(p, p.rot || 0, Math.min(3600, Math.max(maxSide * 1.5, 900)));
+  const crop = S.set.autoCrop && p.crop !== false && p.corners;
   let cv;
   if (crop) {
-    let long = cap, aspect = 0;
-    if (sz) { const z = SIZES[sz]; aspect = z.w / z.h; long = Math.min(cap, Math.round(Math.max(z.w, z.h) / 2.54 * z.dpi)); }
-    cv = warp(src, p.corners, long, aspect);
-  } else cv = scaleTo(src, cap);
+    if (targetPx) {
+      // فرض الأبعاد الفعلية الدقيقة (بطاقة/ A4) مع احترام الاتجاه
+      const land = src.width >= src.height;
+      const target = land ? { w: targetPx.w, h: targetPx.h } : { w: targetPx.h, h: targetPx.w };
+      cv = warp(src, p.corners, { targetPx: target });
+    } else {
+      cv = warp(src, p.corners, { maxSide });
+    }
+  } else cv = scaleTo(src, maxSide);
   enhance(cv, opts);
-  return cv;
+  // حساب المقاس الفعلي الفعلي (بعد القص الفعلي)
+  let cm = null, dpi = 0;
+  if (sz) {
+    const land = cv.width >= cv.height;
+    cm = land ? { w: Math.max(sz.w, sz.h), h: Math.min(sz.w, sz.h) } : { w: Math.min(sz.w, sz.h), h: Math.max(sz.w, sz.h) };
+    dpi = Math.round(Math.min(cv.width / (cm.w / 2.54), cv.height / (cm.h / 2.54)));
+  }
+  return { canvas: cv, cm, dpi };
 }
-function mergeCards(a, b) {
-  const W = Math.max(a.width, b.width), ppc = W / SIZES.card.w;   // بكسل لكل سم
+function mergeCards(aObj, bObj) {
+  const a = aObj.canvas, b = bObj.canvas;
+  const W = Math.max(a.width, b.width);
+  // بكسل لكل سم — نأخذها من العرض الأكبر (عادة البطاقة الأفقية)
+  const ppc = W / Math.max(SIZES.card.w, SIZES.card.h);
   const pad = Math.round(.5 * ppc), gap = Math.round(.6 * ppc);
   const ah = a.height * W / a.width, bh = b.height * W / b.width;
   const c = mkCanvas(W + pad * 2, ah + bh + gap + pad * 2), g = c.getContext('2d');
   g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
   g.drawImage(a, pad, pad, W, ah); g.drawImage(b, pad, pad + ah + gap, W, bh);
-  g.strokeStyle = '#cbd5e1'; g.lineWidth = 2; g.strokeRect(pad, pad, W, ah); g.strokeRect(pad, pad + ah + gap, W, bh);
-  return { canvas: c, cm: { w: c.width / ppc, h: c.height / ppc } };
+  g.strokeStyle = '#cbd5e1'; g.lineWidth = 2;
+  g.strokeRect(pad, pad, W, ah); g.strokeRect(pad, pad + ah + gap, W, bh);
+  return { canvas: c, cm: { w: c.width / ppc, h: c.height / ppc }, dpi: Math.round(ppc * 2.54) };
 }
 function stamp(cv) {
   if (!S.set.stamp) return;
@@ -710,26 +751,26 @@ function stamp(cv) {
   g.fillStyle = 'rgba(255,255,255,.82)'; g.fillRect(cv.width - tw - pad * 2 - fs * .5, cv.height - fs * 1.9, tw + pad * 2, fs * 1.6);
   g.fillStyle = '#475569'; g.fillText(txt, cv.width - pad - fs * .5, cv.height - fs * .65);
 }
-async function buildOutputs() {
-  const CAP = 4000;
+async function buildOutputs(progressCb) {
   const idf = S.pages.find(p => p.type === 'idf'), idb = S.pages.find(p => p.type === 'idb');
   const merge = S.set.mergeId && idf && idb, outs = [];
+  const total = S.pages.length + (merge ? 1 : 0);
+  let done = 0;
+  const tick = () => { done++; progressCb && progressCb(done, total); };
+
   for (const p of S.pages) {
-    if (merge && p === idb) continue;
-    let cv, label = p.label, cm = null;
+    if (merge && p === idb) { tick(); continue; }
+    let obj, label = p.label, merged = false;
     if (merge && p === idf) {
-      const m = mergeCards(await renderPage(idf, CAP), await renderPage(idb, CAP));
-      cv = m.canvas; cm = m.cm; label = 'البطاقة';
+      const a = await renderPage(idf), b = await renderPage(idb);
+      obj = mergeCards(a, b); label = 'البطاقة (وجه + ظهر)'; merged = true;
     } else {
-      cv = await renderPage(p, CAP);
-      const sz = effSize(p);
-      if (sz && S.set.autoCrop && p.crop !== false && p.corners) {
-        const z = SIZES[sz], big = Math.max(z.w, z.h), small = Math.min(z.w, z.h);
-        cm = cv.width >= cv.height ? { w: big, h: small } : { w: small, h: big };
-      }
+      obj = await renderPage(p);
     }
-    stamp(cv);
-    outs.push({ label, canvas: cv, cm, dpi: cm ? Math.round(cv.width / (cm.w / 2.54)) : 0 });
+    stamp(obj.canvas);
+    outs.push({ label, canvas: obj.canvas, cm: obj.cm, dpi: obj.dpi, merged });
+    tick();
+    await sleep(0);
   }
   return outs;
 }
@@ -757,7 +798,7 @@ async function addCaptured(blob) {
   if (target) {
     applyBlob(target, blob, corners, q); S.replaceId = null; toast('تم استبدال الصورة');
   } else {
-    const p = { id: newId(), type: S.curType, label: makeLabel(S.curType), crop: true, mode: '' };
+    const p = { id: newId(), type: S.curType, label: makeLabel(S.curType), crop: true, mode: '', size: '' };
     applyBlob(p, blob, corners, q); S.pages.push(p);
   }
   if (S.curType === 'idf') S.curType = 'idb'; else if (S.curType === 'idb') S.curType = 'other';
@@ -817,7 +858,6 @@ async function onFiles(files) {
   toast('✓ تمت الإضافة');
 }
 
-/* واجهة التصوير: الأنواع والشريط */
 function updateCam() {
   const wrap = $('typeChips'); wrap.innerHTML = '';
   TYPES.forEach(t => {
@@ -854,11 +894,14 @@ function renderGrid() {
   if (!S.pages.length) { g.innerHTML = '<div class="empty-grid" style="grid-column:1/-1">لا توجد صفحات. أضف مستندات من خطوة التصوير.</div>'; return; }
   g.innerHTML = '';
   S.pages.forEach((p, i) => {
+    const szKey = effSize(p);
+    const sizeLabel = szKey ? SIZES[szKey].short : 'حر';
     const d = document.createElement('div'); d.className = 'tile'; d.dataset.tid = p.id;
     d.innerHTML =
       '<div class="im" data-act="edit"><img src="' + (p.turl || p.url) + '" alt=""></div>' +
       '<span class="q ' + qClass(p.q || 100) + '">' + qText(p.q || 100) + '</span>' +
-      '<div class="meta"><b>' + (i + 1) + '</b><span>' + esc(p.label) + '</span></div>' +
+      '<div class="meta"><b>' + (i + 1) + '</b><span>' + esc(p.label) + '</span>' +
+      '<span class="sz">' + sizeLabel + '</span></div>' +
       '<div class="tb">' +
         '<button data-act="up" title="أعلى">▲</button><button data-act="down" title="أسفل">▼</button>' +
         '<button data-act="edit" title="تعديل">✂️</button><button data-act="del" title="حذف">🗑</button></div>';
@@ -885,8 +928,8 @@ async function refreshThumbs() {
   for (const p of S.pages) {
     if (tok !== thumbTok) return;
     try {
-      const cv = await renderPage(p, 520); if (tok !== thumbTok) return;
-      p.turl = cv.toDataURL('image/jpeg', .72);
+      const r = await renderPage(p, 520); if (tok !== thumbTok) return;
+      p.turl = r.canvas.toDataURL('image/jpeg', .72);
       const im = document.querySelector('[data-tid="' + p.id + '"] img'); if (im) im.src = p.turl;
     } catch (e) { console.error(e); }
   }
@@ -894,7 +937,7 @@ async function refreshThumbs() {
 const refreshDebounced = debounce(refreshThumbs, 250);
 
 /* =====================================================================
-   إعدادات التحسين
+   الإعدادات
 ===================================================================== */
 function buildModeUI() {
   const w = $('modeChips'); w.innerHTML = '';
@@ -923,7 +966,7 @@ function bindSettings() {
 }
 
 /* =====================================================================
-   محرر الصفحة (القص اليدوي)
+   المحرر
 ===================================================================== */
 const ED = { p: null, rot: 0, corners: null, src: null, drag: -1 };
 async function buildEdSrc() {
@@ -949,6 +992,12 @@ async function openEditor(id) {
 }
 function closeEditor() { $('editor').classList.add('hidden'); document.body.style.overflow = ''; ED.p = null; }
 async function edRotate(dir) { ED.rot = (ED.rot + (dir > 0 ? 90 : 270)) % 360; ED.corners = rotCorners(ED.corners, dir); await buildEdSrc(); drawEd(); }
+function edSave() {
+  const p = ED.p; if (!p) return;
+  p.rot = ED.rot; p.corners = ED.corners; p.crop = $('edCrop').checked; p.mode = $('edMode').value;
+  p.label = $('edLabel').value.trim() || p.label; p.size = $('edSize').value;
+  closeEditor(); renderGrid(); updateCam(); syncSettingsUI(); saveDraft(); refreshThumbs();
+}
 function bindEditor() {
   const ec = $('edCanvas');
   ec.addEventListener('pointerdown', e => {
@@ -971,15 +1020,16 @@ function bindEditor() {
   $('edAuto').onclick = () => { ED.corners = detectQuad(ED.src) || defaultCorners(); $('edCrop').checked = true; drawEd(); toast('تم ضبط الحواف تلقائيًا'); };
   $('edFull').onclick = () => { ED.corners = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }]; drawEd(); };
   $('edRL').onclick = () => edRotate(-1); $('edRR').onclick = () => edRotate(1);
-  $('edSave').onclick = () => {
-    const p = ED.p; if (!p) return;
-    p.rot = ED.rot; p.corners = ED.corners; p.crop = $('edCrop').checked; p.mode = $('edMode').value;
-    p.label = $('edLabel').value.trim() || p.label; p.size = $('edSize').value;
-    closeEditor(); renderGrid(); updateCam(); syncSettingsUI(); saveDraft(); refreshThumbs();
-  };
+  $('edSave').onclick = edSave;
   $('edDel').onclick = () => { if (ED.p && confirm('حذف هذه الصفحة؟')) { const id = ED.p.id; closeEditor(); deletePage(id); } };
   $('edRetake').onclick = () => { const p = ED.p; if (!p) return; S.replaceId = p.id; S.curType = p.type; closeEditor(); go(2); toast('التقط الصورة البديلة'); };
   $('editor').addEventListener('click', e => { if (e.target.id === 'editor') closeEditor(); });
+  // اختصارات لوحة المفاتيح
+  document.addEventListener('keydown', e => {
+    if ($('editor').classList.contains('hidden')) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeEditor(); }
+    else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); edSave(); }
+  });
 }
 
 /* =====================================================================
@@ -990,59 +1040,123 @@ const safeName = () => (S.name.trim() || 'مستفيد').replace(/[\\/:*?"<>|]/g
 const safeLbl = s => s.replace(/[\\/:*?"<>|\s]+/g, '-');
 const fname = (i, o) => String(i + 1).padStart(2, '0') + '-' + safeLbl(o.label) + '-' + safeName() + '.jpg';
 const totalMB = () => OUT.reduce((s, o) => s + o.blob.size, 0) / 1048576;
+
+/**
+ * حقن DPI في JFIF header. تدعم offset القياسي (canvas.toBlob) + الفحص الدفاعي.
+ */
 async function setJpegDpi(blob, dpi) {
-  if (!dpi) return blob;
+  if (!dpi || dpi < 1) return blob;
   try {
-    const b = new Uint8Array(await blob.arrayBuffer());
-    if (b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF && b[3] === 0xE0 && b[6] === 0x4A && b[7] === 0x46 && b[8] === 0x49 && b[9] === 0x46) {
-      b[13] = 1; b[14] = dpi >> 8; b[15] = dpi & 255; b[16] = dpi >> 8; b[17] = dpi & 255;
-      return new Blob([b], { type: 'image/jpeg' });
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    // SOI + APP0/JFIF عند الإزاحة القياسية
+    if (buf.length >= 20 && buf[0] === 0xFF && buf[1] === 0xD8 &&
+        buf[2] === 0xFF && buf[3] === 0xE0 &&
+        buf[6] === 0x4A && buf[7] === 0x46 && buf[8] === 0x49 && buf[9] === 0x46 && buf[10] === 0x00) {
+      buf[13] = 1;                    // units = dots per inch
+      buf[14] = (dpi >> 8) & 0xFF;    // X density high
+      buf[15] = dpi & 0xFF;           // X density low
+      buf[16] = (dpi >> 8) & 0xFF;    // Y density high
+      buf[17] = dpi & 0xFF;           // Y density low
+      return new Blob([buf], { type: 'image/jpeg' });
     }
   } catch (e) {}
   return blob;
 }
-const sizeTxt = o => o.cm ? o.cm.w.toFixed(2) + ' × ' + o.cm.h.toFixed(2) + ' سم · ' + o.dpi + ' DPI' : 'كما صُوّر';
+const sizeTxt = o => o.cm ? (o.cm.w.toFixed(2) + ' × ' + o.cm.h.toFixed(2) + ' سم · ' + o.dpi + ' DPI') : 'كما صُوّر';
+const dpiClass = v => !v ? '' : v >= 300 ? 'hi' : v >= 180 ? 'mid' : 'lo';
+
 async function encodeAll() {
-  for (const o of OUT) { o.blob = await setJpegDpi(await toBlob(o.canvas, S.set.quality), o.dpi); if (o.url) URL.revokeObjectURL(o.url); o.url = URL.createObjectURL(o.blob); }
+  for (const o of OUT) {
+    o.blob = await setJpegDpi(await toBlob(o.canvas, S.set.quality), o.dpi);
+    if (o.url) URL.revokeObjectURL(o.url); o.url = URL.createObjectURL(o.blob);
+    await sleep(0);
+  }
 }
 function renderExport() {
   const g = $('exGrid'); g.innerHTML = '';
   OUT.forEach((o, i) => {
     const d = document.createElement('div'); d.className = 'tile';
-    d.innerHTML = '<div class="im"><img src="' + o.url + '" alt=""></div><div class="meta"><b>' + (i + 1) + '</b><span>' + esc(o.label) + '</span></div><div class="hint" style="padding:0 10px;margin:0;font-size:11.5px">' + sizeTxt(o) + '</div><div class="tb"><button data-i="' + i + '">📤 مشاركة</button></div>';
+    const dpiBadge = o.dpi ? '<span class="dpibadge ' + dpiClass(o.dpi) + '">' + o.dpi + ' DPI</span>' : '';
+    d.innerHTML =
+      '<div class="im">' + dpiBadge + '<img src="' + o.url + '" alt=""></div>' +
+      '<div class="meta"><b>' + (i + 1) + '</b><span>' + esc(o.label) + '</span></div>' +
+      '<div class="meta" style="padding-top:0"><span class="sz">' + sizeTxt(o) + '</span></div>' +
+      '<div class="tb"><button data-i="' + i + '">📤 مشاركة</button></div>';
     g.appendChild(d);
   });
-  $('stPages').textContent = OUT.length; $('stSize').textContent = totalMB().toFixed(1);
+  const minDpi = OUT.reduce((m, o) => o.dpi ? Math.min(m, o.dpi) : m, 9999);
+  $('stPages').textContent = OUT.length;
+  $('stSize').textContent = totalMB().toFixed(1);
+  $('stDpi').textContent = minDpi === 9999 ? '—' : minDpi;
   $('exSummary').textContent = 'ملف: ' + S.name.trim() + (S.nid ? ' — ' + S.nid : '') + '.';
+  // ملخص الطباعة
+  const printEl = $('exPrint');
+  if (minDpi === 9999) { printEl.classList.add('hidden'); }
+  else {
+    printEl.classList.remove('hidden');
+    if (minDpi >= 300) { printEl.className = 'notice ok'; printEl.textContent = '✓ جاهز للطباعة بأعلى جودة (≥ 300 DPI على كل الصفحات).'; }
+    else if (minDpi >= 200) { printEl.className = 'notice'; printEl.textContent = '⚠️ جودة مقبولة للطباعة لكن بعض الصفحات أقل من 300 DPI. للحصول على جودة أفضل، أعد التصوير بإضاءة أوضح.'; }
+    else { printEl.className = 'notice'; printEl.textContent = '⚠️ بعض الصفحات أقل من 200 DPI — قد تظهر مشوشة عند الطباعة. يُفضّل إعادة التصوير.'; }
+  }
   $('selQ').value = String(S.set.quality); $('selPdf').value = S.set.pdfFit;
 }
 async function prepareExport() {
-  $('exLoading').classList.remove('hidden'); $('exBody').classList.add('hidden');
+  $('exLoading').classList.remove('hidden'); $('exBody').classList.add('hidden'); $('exProgBar').classList.remove('hidden');
+  const bar = $('exProgBar').querySelector('i');
+  bar.style.width = '0%';
   try {
-    await new Promise(r => setTimeout(r, 40));
-    OUT = await buildOutputs(); await encodeAll(); renderExport();
-    $('exLoading').classList.add('hidden'); $('exBody').classList.remove('hidden');
+    await sleep(40);
+    OUT = await buildOutputs((done, total) => {
+      const pct = Math.round(done / total * 60);
+      bar.style.width = pct + '%';
+      $('exProgress').textContent = 'جارٍ تجهيز الصفحات... ' + done + '/' + total;
+    });
+    bar.style.width = '80%';
+    $('exProgress').textContent = 'جارٍ ضغط الصور...';
+    await encodeAll();
+    bar.style.width = '100%';
+    renderExport();
+    await sleep(150);
+    $('exLoading').classList.add('hidden'); $('exProgBar').classList.add('hidden');
+    $('exBody').classList.remove('hidden');
   } catch (e) { console.error(e); $('exLoading').textContent = '⚠️ حدث خطأ أثناء التجهيز. ارجع للمراجعة وحاول مرة أخرى.'; }
 }
 async function buildPdf() {
   const { jsPDF } = window.jspdf; let pdf = null;
   for (const o of OUT) {
     const cv = o.canvas, w = cv.width, h = cv.height, url = cv.toDataURL('image/jpeg', S.set.quality);
-    const cm = o.cm ? { w: o.cm.w * 10, h: o.cm.h * 10 } : null;   // بالمليمتر
+    const cm = o.cm;
     if (S.set.pdfFit === 'fit') {
-      const pw = cm ? cm.w : 210, ph = cm ? cm.h : 210 * h / w, orient = pw > ph ? 'l' : 'p';
-      if (!pdf) pdf = new jsPDF({ orientation: orient, unit: 'mm', format: [pw, ph], compress: true }); else pdf.addPage([pw, ph], orient);
+      // حجم الصفحة = حجم المستند الفعلي
+      const pw = cm ? cm.w * 10 : 210, ph = cm ? cm.h * 10 : 210 * h / w;
+      const orient = pw > ph ? 'l' : 'p';
+      if (!pdf) pdf = new jsPDF({ orientation: orient, unit: 'mm', format: [pw, ph], compress: true });
+      else pdf.addPage([pw, ph], orient);
       pdf.addImage(url, 'JPEG', 0, 0, pw, ph);
     } else {
-      const land = cm ? (cm.w > cm.h && cm.w > 150) : w > h, orient = land ? 'l' : 'p';
-      if (!pdf) pdf = new jsPDF({ orientation: orient, unit: 'mm', format: 'a4', compress: true }); else pdf.addPage('a4', orient);
+      // A4 مع احترام الاتجاه الفعلي
+      const land = cm ? (cm.w > cm.h && cm.w > 15) : w > h;
+      const orient = land ? 'l' : 'p';
+      if (!pdf) pdf = new jsPDF({ orientation: orient, unit: 'mm', format: 'a4', compress: true });
+      else pdf.addPage('a4', orient);
       const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight(), m = 8;
       let iw, ih, x, y;
       if (cm) {
-        iw = cm.w; ih = cm.h;
-        if (Math.abs(iw / ih - pw / ph) < .03 && iw > pw * .9) { iw = pw; ih = ph; x = 0; y = 0; }
-        else { const k = Math.min(1, (pw - m * 2) / iw, (ph - m * 2) / ih); iw *= k; ih *= k; x = (pw - iw) / 2; y = ih < ph / 2 ? 20 : (ph - ih) / 2; }
-      } else { const k = Math.min((pw - m * 2) / w, (ph - m * 2) / h); iw = w * k; ih = h * k; x = (pw - iw) / 2; y = (ph - ih) / 2; }
+        // استخدم مقاسات فيزيائية بالملليمتر مباشرة (أدق)
+        iw = cm.w * 10; ih = cm.h * 10;
+        // إذا كان المستند A4 فيزيائيًا، اطبعه بحجم الصفحة كاملة
+        if (Math.abs(iw - pw) < 5 && Math.abs(ih - ph) < 5) { iw = pw; ih = ph; x = 0; y = 0; }
+        else {
+          const k = Math.min(1, (pw - m * 2) / iw, (ph - m * 2) / ih);
+          iw *= k; ih *= k;
+          x = (pw - iw) / 2;
+          // للمستندات الصغيرة (بطاقة): ضعها في الوسط العلوي
+          y = (iw < pw * .6) ? m * 2 : (ph - ih) / 2;
+        }
+      } else {
+        const k = Math.min((pw - m * 2) / w, (ph - m * 2) / h);
+        iw = w * k; ih = h * k; x = (pw - iw) / 2; y = (ph - ih) / 2;
+      }
       pdf.addImage(url, 'JPEG', x, y, iw, ih);
     }
   }
@@ -1051,8 +1165,19 @@ async function buildPdf() {
 async function buildZip() {
   const zip = new JSZip(), folder = zip.folder(safeName());
   OUT.forEach((o, i) => folder.file(fname(i, o), o.blob));
-  const lines = ['ملف المستفيد: ' + S.name.trim(), S.nid ? 'الرقم القومي: ' + S.nid : '', S.phone ? 'الهاتف: ' + S.phone : '', 'تاريخ التجهيز: ' + new Date().toLocaleString('ar-EG'), '', 'الصفحات:']
-    .concat(OUT.map((o, i) => (i + 1) + '. ' + o.label)).filter((x, i) => x !== '' || i === 4);
+  const lines = [
+    'ملف المستفيد: ' + S.name.trim(),
+    S.nid ? 'الرقم القومي: ' + S.nid : '',
+    S.phone ? 'الهاتف: ' + S.phone : '',
+    'تاريخ التجهيز: ' + new Date().toLocaleString('ar-EG'),
+    '',
+    'المقاسات الفيزيائية:',
+    '  · بطاقة / شهادة ميلاد: 8.56 × 5.4 سم @ ' + SIZES.card.dpi + ' DPI',
+    '  · مستندات A4: 21 × 29.7 سم @ ' + SIZES.a4.dpi + ' DPI',
+    '',
+    'الصفحات:'
+  ].concat(OUT.map((o, i) => (i + 1) + '. ' + o.label + (o.cm ? ' [' + o.cm.w.toFixed(2) + '×' + o.cm.h.toFixed(2) + ' سم · ' + o.dpi + ' DPI]' : '')))
+   .filter(x => x !== '');
   folder.file('بيانات.txt', lines.join('\n'));
   return zip.generateAsync({ type: 'blob', compression: 'STORE' });
 }
@@ -1092,7 +1217,7 @@ function newFile() {
 }
 
 /* =====================================================================
-   التنقل بين الخطوات
+   التنقل
 ===================================================================== */
 function readData() {
   const name = $('fName').value.trim(), nid = AR_DIGITS($('fNid').value).replace(/\D/g, '');
@@ -1126,7 +1251,7 @@ function onNid() {
 }
 
 /* =====================================================================
-   المسودة المحفوظة
+   المسودة
 ===================================================================== */
 async function checkDraft() {
   try {
@@ -1147,7 +1272,7 @@ async function checkDraft() {
 }
 
 /* =====================================================================
-   الربط والتشغيل
+   التشغيل
 ===================================================================== */
 function init() {
   document.querySelectorAll('#steps button').forEach(b => b.onclick = () => go(+b.dataset.s));
