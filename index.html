@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>ماسح ملفات المساعدات — v7</title>
+<title>ماسح ملفات المساعدات — v8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -78,59 +78,275 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .chip.on .n{background:#fff;color:var(--p)}
 .chip.need:not(.on):not(.has){border-style:dashed;border-color:var(--p2)}
 
-/* Filter group headers */
 .fgroup{margin:10px 0 6px}
 .fgroup b{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px;letter-spacing:.3px}
 
-.camwrap{position:relative;background:#000;border-radius:20px;overflow:hidden;width:100%;height:62vh;min-height:320px;max-height:520px;margin:auto}
-.camwrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;z-index:1}
-.guide{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.9);border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.32);pointer-events:none;transition:width .25s,height .25s;z-index:2}
-.guide i{position:absolute;width:22px;height:22px;border:4px solid var(--p2)}
-.guide i:nth-child(1){top:-3px;right:-3px;border-left:0;border-bottom:0;border-radius:0 12px 0 0}
-.guide i:nth-child(2){top:-3px;left:-3px;border-right:0;border-bottom:0;border-radius:12px 0 0 0}
-.guide i:nth-child(3){bottom:-3px;right:-3px;border-left:0;border-top:0;border-radius:0 0 12px 0}
-.guide i:nth-child(4){bottom:-3px;left:-3px;border-right:0;border-top:0;border-radius:0 0 0 12px}
-.screen-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .15s;z-index:3}
-.screen-flash.on{opacity:.85}
-.cam-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:4}
-.pill{background:rgba(0,0,0,.55);color:#fff;padding:6px 11px;border-radius:99px;font-size:12.5px;font-weight:700;backdrop-filter:blur(6px)}
-.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
-.flash.go{animation:fl .28s}
-@keyframes fl{0%{opacity:.85}100%{opacity:0}}
+/* ============ Scanner v8 ============ */
+#s2{padding:0;margin:0}
+#s2.active{display:block}
+.scanner-wrap{
+  position:fixed;inset:0;z-index:50;
+  background:#000;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.scanner-wrap.hidden{display:none}
+.scanner-wrap video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;background:#000;z-index:1;
+}
+/* خطوط الأركان فقط */
+.scanner-guide{
+  position:absolute;left:50%;top:45%;
+  transform:translate(-50%,-50%);
+  transition:width .3s,height .3s,filter .3s;
+  pointer-events:none;z-index:2;
+}
+.scanner-guide .bracket{
+  position:absolute;width:32px;height:32px;
+  border:4px solid rgba(255,255,255,.92);
+  transition:border-color .25s;
+}
+.scanner-guide .bracket.tl{top:-2px;left:-2px;border-right:0;border-bottom:0;border-radius:16px 0 0 0}
+.scanner-guide .bracket.tr{top:-2px;right:-2px;border-left:0;border-bottom:0;border-radius:0 16px 0 0}
+.scanner-guide .bracket.br{bottom:-2px;right:-2px;border-left:0;border-top:0;border-radius:0 0 16px 0}
+.scanner-guide .bracket.bl{bottom:-2px;left:-2px;border-right:0;border-top:0;border-radius:0 0 0 16px}
+.scanner-guide.detected .bracket{border-color:#22d3ee}
+.scanner-guide.detected{filter:drop-shadow(0 0 12px rgba(34,211,238,.6))}
+.scanner-guide.locked .bracket{border-color:#22c55e}
+.scanner-guide.locked{filter:drop-shadow(0 0 16px rgba(34,197,94,.7));animation:pulse-lock 1s infinite}
+@keyframes pulse-lock{
+  0%,100%{transform:translate(-50%,-50%) scale(1)}
+  50%{transform:translate(-50%,-50%) scale(1.02)}
+}
+.guide-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+  background-size:33.33% 33.33%;
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.scanner-guide.detected .guide-grid{opacity:1}
 
-/* ✅ Reference preview (وجه البطاقة كمرجع أثناء تصوير الظهر) */
-.ref-preview{
-  position:absolute;bottom:12px;left:12px;z-index:6;
-  width:100px;height:auto;
+.scanner-topbar{
+  position:absolute;top:0;left:0;right:0;
+  padding:calc(12px + env(safe-area-inset-top)) 14px 14px;
+  background:linear-gradient(to bottom, rgba(0,0,0,.65), transparent);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;z-index:5;pointer-events:none;
+}
+.scanner-topbar button{pointer-events:auto}
+.scanner-topbar .spacer{flex:1}
+.scanner-topbar .icon-btn{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.15);color:#fff;
+  backdrop-filter:blur(8px);
+  display:grid;place-items:center;
+  font-size:18px;padding:0;
+  border:1.5px solid rgba(255,255,255,.2);
+}
+.scanner-topbar .icon-btn.on{background:#fbbf24;color:#000}
+.scanner-topbar .icon-btn.auto-on{background:#22c55e;color:#fff}
+
+.scan-progress{
+  position:absolute;top:calc(70px + env(safe-area-inset-top));
+  left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:12px;
+  background:rgba(0,0,0,.55);
+  padding:8px 16px;border-radius:99px;
+  backdrop-filter:blur(10px);z-index:5;
+  font-size:13px;font-weight:700;color:#fff;
+}
+.scan-progress .step-dot{
+  display:flex;align-items:center;gap:6px;
+  opacity:.5;transition:.3s;
+}
+.scan-progress .step-dot.active{opacity:1}
+.scan-progress .step-dot.done{opacity:1;color:#22c55e}
+.scan-progress .step-dot .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.3);
+  border:1.5px solid rgba(255,255,255,.5);
+}
+.scan-progress .step-dot.active .dot{
+  background:#22d3ee;border-color:#22d3ee;
+  box-shadow:0 0 10px rgba(34,211,238,.8);
+}
+.scan-progress .step-dot.done .dot{
+  background:#22c55e;border-color:#22c55e;
+}
+.scan-progress .sep{color:rgba(255,255,255,.4)}
+
+.smart-hint{
+  position:absolute;
+  bottom:calc(190px + env(safe-area-inset-bottom));
+  left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.65);color:#fff;
+  padding:9px 18px;border-radius:99px;
+  font-size:13.5px;font-weight:700;
+  backdrop-filter:blur(10px);z-index:5;
+  white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
+  transition:opacity .3s;
+  border:1.5px solid rgba(255,255,255,.15);
+}
+.smart-hint.hide{opacity:0;pointer-events:none}
+
+.scanner-bottombar{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:16px 20px calc(20px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top, rgba(0,0,0,.7), transparent);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;z-index:5;
+}
+.scanner-bottombar .side-btn{
+  width:56px;height:56px;border-radius:16px;
+  background:rgba(255,255,255,.12);color:#fff;
+  backdrop-filter:blur(10px);
+  border:1.5px solid rgba(255,255,255,.2);
+  display:grid;place-items:center;
+  font-size:22px;padding:0;
+  position:relative;
+}
+.scanner-bottombar .side-btn .badge{
+  position:absolute;top:-4px;right:-4px;
+  min-width:20px;height:20px;border-radius:99px;
+  background:#ef4444;color:#fff;
+  font-size:11px;font-weight:800;
+  display:grid;place-items:center;padding:0 5px;
+}
+
+.shutter-btn{
+  width:82px;height:82px;border-radius:50%;
+  background:#fff;border:5px solid rgba(255,255,255,.95);
+  box-shadow:0 0 0 3px rgba(15,118,110,.9),0 8px 24px rgba(0,0,0,.5);
+  padding:0;position:relative;
+  transition:transform .15s,box-shadow .3s;
+}
+.shutter-btn:active{transform:scale(.9)}
+.shutter-btn::before{
+  content:'';position:absolute;inset:6px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#0f766e,#14b8a6);
+}
+.shutter-btn .ring-progress{
+  position:absolute;inset:-8px;
+  border-radius:50%;
+  border:3px solid transparent;
+  border-top-color:#22d3ee;
+  opacity:0;
+  transition:opacity .2s;
+}
+.shutter-btn.counting .ring-progress{
+  opacity:1;
+  animation:spin-ring .9s linear infinite;
+}
+@keyframes spin-ring{to{transform:rotate(360deg)}}
+.shutter-btn.locked{
+  box-shadow:0 0 0 3px #22c55e,0 0 24px rgba(34,197,94,.6),0 8px 24px rgba(0,0,0,.5);
+}
+
+.quick-ref{
+  position:absolute;
+  top:calc(120px + env(safe-area-inset-top));
+  left:14px;z-index:5;
+  width:64px;height:auto;
   border-radius:10px;overflow:hidden;
   box-shadow:0 4px 16px rgba(0,0,0,.5);
   border:2px solid rgba(255,255,255,.85);
   background:#fff;
-  opacity:0;transform:translateY(20px);
-  transition:.35s;pointer-events:none;
+  opacity:0;transform:translateY(-12px);
+  transition:.35s;
+  pointer-events:none;
 }
-.ref-preview.on{opacity:1;transform:translateY(0)}
-.ref-preview img{display:block;width:100%;height:auto}
-.ref-preview::after{
-  content:'الوجه ✓';position:absolute;bottom:0;left:0;right:0;
-  background:rgba(21,128,61,.9);color:#fff;text-align:center;
-  font-size:10px;font-weight:800;padding:2px 0;
-}
+.quick-ref.on{opacity:1;transform:translateY(0)}
+.quick-ref img{display:block;width:100%;height:auto}
 
-.cam-err{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;color:#fff;padding:24px;background:#0a1114;z-index:7}
+.screen-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .15s;z-index:3}
+.screen-flash.on{opacity:.85}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:6}
+.flash.go{animation:fl .28s}
+@keyframes fl{0%{opacity:.85}100%{opacity:0}}
+
+.cam-err{
+  position:absolute;inset:0;
+  display:grid;place-content:center;gap:12px;text-align:center;
+  color:#fff;padding:24px;background:#0a1114;z-index:7;
+}
 .cam-err p{margin:0;line-height:1.8;font-size:14px}
-.cam-ctrl{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 6px 6px}
-.cam-ctrl .side{display:flex;gap:10px;min-width:100px;justify-content:flex-end}
-.round{width:50px;height:50px;border-radius:50%;padding:0;font-size:21px;background:var(--soft);color:var(--ink)}
-.round.on{background:#fbbf24;color:#000}
-.shutter{width:76px;height:76px;border-radius:50%;padding:0;background:#fff;border:5px solid var(--p);box-shadow:0 0 0 4px var(--p2) inset,0 8px 20px rgba(15,118,110,.35)}
-.shutter:active{transform:scale(.9)}
-.strip{display:flex;gap:8px;overflow-x:auto;padding:8px 2px;min-height:78px}
-.strip .st{position:relative;flex:0 0 58px;height:70px;border-radius:10px;overflow:hidden;border:2px solid var(--line);background:#fff;cursor:pointer}
-.strip .st img{width:100%;height:100%;object-fit:cover}
-.strip .st b{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:10px;text-align:center;padding:1px 0}
-.strip .empty{color:var(--muted);font-size:13px;align-self:center}
 
+/* Floating review button */
+.float-review{
+  position:fixed;
+  bottom:calc(110px + env(safe-area-inset-bottom));
+  right:16px;z-index:55;
+  font-size:13px;padding:12px 16px;
+  border-radius:99px;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.float-review.hidden{display:none!important}
+
+/* Bottom Sheet */
+.sheet{
+  position:fixed;inset:0;z-index:70;
+  background:rgba(0,0,0,.6);
+  display:flex;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(4px);
+  animation:fade .2s;
+}
+.sheet-in{
+  background:var(--card);width:100%;max-width:640px;
+  border-radius:24px 24px 0 0;
+  padding:20px;
+  animation:up .3s;
+  max-height:88vh;overflow:auto;
+}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.sheet h3{margin:0 0 14px;font-size:17px;color:var(--ink)}
+.sheet .type-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 12px;border-radius:14px;
+  background:var(--soft);margin-bottom:8px;
+  cursor:pointer;transition:.15s;
+  font-weight:700;font-size:14.5px;color:var(--ink);
+}
+.sheet .type-row:active{transform:scale(.98)}
+.sheet .type-row.on{
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  color:#fff;
+}
+.sheet .type-row .icon{font-size:22px;width:28px;text-align:center}
+.sheet .type-row .label{flex:1}
+.sheet .type-row .badge-n{
+  background:var(--p);color:#fff;
+  border-radius:99px;padding:2px 8px;
+  font-size:11px;font-weight:800;
+}
+.sheet .type-row.on .badge-n{background:rgba(255,255,255,.25)}
+
+/* Toast with thumbnail for undo */
+.toast-action{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 8px 8px 14px;
+  background:#0f172a;color:#fff;
+  border-radius:99px;font-size:14px;font-weight:700;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  max-width:92vw;
+}
+.toast-action img{
+  width:40px;height:40px;object-fit:cover;
+  border-radius:8px;
+  border:2px solid rgba(255,255,255,.2);
+  background:#fff;
+}
+.toast-action .msg{flex:1;text-align:right}
+.toast-action .undo-btn{
+  padding:8px 14px;
+  background:rgba(255,255,255,.15);color:#fff;
+  border-radius:99px;font-size:13px;font-weight:800;
+  border:1px solid rgba(255,255,255,.2);
+}
+
+/* ============ بقية الأقسام ============ */
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 @media(min-width:620px){.grid{grid-template-columns:repeat(3,1fr)}}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative;box-shadow:0 3px 12px rgba(0,0,0,.04)}
@@ -155,9 +371,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 .modal{position:fixed;inset:0;z-index:60;background:rgba(5,12,14,.78);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .modal-in{background:var(--card);width:100%;max-width:640px;max-height:96vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px;animation:up .25s}
-@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.mh b{font-size:17px}
+.mh b{font-size:17px;color:var(--ink)}
 .mh button{padding:6px 12px}
 .cbox{background:#0a1114;border-radius:14px;display:grid;place-items:center;padding:6px;touch-action:none}
 #edCanvas{max-width:100%;max-height:52vh;touch-action:none;border-radius:8px;cursor:crosshair}
@@ -166,6 +381,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,30px);background:#0f172a;color:#fff;padding:11px 18px;border-radius:99px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.28s;z-index:99;max-width:92vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.has-action{padding:0;background:transparent}
 .spin{display:inline-block;width:18px;height:18px;border:3px solid var(--p2);border-top-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:middle;margin-inline-end:8px}
 @keyframes sp{to{transform:rotate(360deg)}}
 .stat{display:flex;gap:8px;margin:8px 0 4px}
@@ -215,39 +431,76 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
   <div class="notice ok">🔒 كل المعالجة محليًا. بطاقة <b>8.56×5.4 سم</b> (400 DPI) · A4 (300 DPI).</div>
 </section>
 
-<section id="s2" class="step">
-  <div class="card" style="padding:12px">
-    <div class="chips" id="typeChips"></div>
-    <div class="camwrap" id="camwrap">
-      <video id="video" autoplay playsinline muted webkit-playsinline></video>
-      <div class="screen-flash" id="screenFlash"></div>
-      <div class="guide" id="guide"><i></i><i></i><i></i><i></i></div>
-      <div class="cam-top"><span class="pill" id="meter">⏳ جارٍ تشغيل الكاميرا</span><span class="pill" id="typePill"></span></div>
-      <div class="ref-preview" id="refPreview"><img id="refPreviewImg" src="" alt=""></div>
-      <div class="flash" id="flash"></div>
-      <div class="cam-err hidden" id="camErr">
-        <p>📵 تعذّر تشغيل الكاميرا.<br>اسمح للمتصفح باستخدام الكاميرا وافتح الصفحة عبر HTTPS، أو استخدم أحد البدائل:</p>
-        <button class="primary" id="errNative">📷 فتح كاميرا الجهاز</button>
-        <button class="secondary" id="errGallery">🖼️ اختيار من المعرض</button>
-      </div>
-    </div>
-    <div class="cam-ctrl">
-      <button class="round" id="btnGallery" title="من المعرض">🖼️</button>
-      <button class="shutter" id="btnShot" aria-label="التقاط"></button>
-      <div class="side">
-        <button class="round" id="btnTorch" title="الفلاش">🔦</button>
-        <button class="round" id="btnFlip" title="تبديل الكاميرا">🔄</button>
-      </div>
-    </div>
-    <div class="strip" id="strip"></div>
-    <div class="actions">
-      <button class="ghost" id="b2back">→ رجوع</button>
-      <button class="primary" id="b2next">مراجعة وتحسين ←</button>
-    </div>
+<!-- ================== STEP 2 — Scanner v8 ================== -->
+<section id="s2" class="step"></section>
+
+<div class="scanner-wrap hidden" id="scannerWrap">
+  <video id="video" autoplay playsinline muted webkit-playsinline></video>
+  <div class="screen-flash" id="screenFlash"></div>
+
+  <!-- Top bar -->
+  <div class="scanner-topbar">
+    <button class="icon-btn" id="btnSheet" title="نوع المستند">📋</button>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="btnAuto" title="التقاط تلقائي">⚡</button>
+    <button class="icon-btn" id="btnFlip" title="تبديل الكاميرا">🔄</button>
+    <button class="icon-btn" id="btnTorch" title="الفلاش">🔦</button>
   </div>
-  <input type="file" id="fileGallery" accept="image/*" multiple class="hidden">
-  <input type="file" id="fileNative" accept="image/*" capture="environment" class="hidden">
-</section>
+
+  <!-- Progress bar -->
+  <div class="scan-progress" id="scanProgress">
+    <div class="step-dot" id="progIdf"><span class="dot"></span>الوجه</div>
+    <span class="sep">→</span>
+    <div class="step-dot" id="progIdb"><span class="dot"></span>الظهر</div>
+  </div>
+
+  <!-- Quick preview of previous page -->
+  <div class="quick-ref" id="quickRef"><img id="quickRefImg" src="" alt=""></div>
+
+  <!-- Guide frame -->
+  <div class="scanner-guide" id="guide">
+    <div class="guide-grid"></div>
+    <div class="bracket tl"></div>
+    <div class="bracket tr"></div>
+    <div class="bracket br"></div>
+    <div class="bracket bl"></div>
+  </div>
+
+  <!-- Smart hint -->
+  <div class="smart-hint" id="smartHint">📸 ضع المستند داخل الإطار</div>
+
+  <!-- Bottom bar -->
+  <div class="scanner-bottombar">
+    <button class="side-btn" id="btnGallery" title="من المعرض">
+      🖼️<span class="badge hidden" id="galleryBadge">0</span>
+    </button>
+    <button class="shutter-btn" id="btnShot" aria-label="التقاط">
+      <div class="ring-progress"></div>
+    </button>
+    <button class="side-btn" id="btnBack" title="رجوع">→</button>
+  </div>
+
+  <div class="flash" id="flash"></div>
+  <div class="cam-err hidden" id="camErr">
+    <p>📵 تعذّر تشغيل الكاميرا.<br>اسمح للمتصفح باستخدام الكاميرا وافتح الصفحة عبر HTTPS.</p>
+    <button class="primary" id="errNative">📷 فتح كاميرا الجهاز</button>
+    <button class="secondary" id="errGallery">🖼️ من المعرض</button>
+  </div>
+</div>
+
+<button class="primary float-review hidden" id="btnFloatReview">✓ مراجعة</button>
+
+<!-- Bottom Sheet -->
+<div id="typeSheet" class="sheet hidden">
+  <div class="sheet-in">
+    <h3>📋 نوع المستند</h3>
+    <div id="typeList"></div>
+    <button class="ghost" id="sheetClose" style="width:100%;margin-top:8px;">إغلاق</button>
+  </div>
+</div>
+
+<input type="file" id="fileGallery" accept="image/*" multiple class="hidden">
+<input type="file" id="fileNative" accept="image/*" capture="environment" class="hidden">
 
 <section id="s3" class="step">
   <div class="card">
@@ -259,7 +512,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 
   <div class="card">
     <h2>🎨 فلاتر الصور</h2>
-    <p class="hint">اختر الفلتر المناسب ثم اضبط يدويًا عند الحاجة. كل فلتر له استخدام مختلف.</p>
+    <p class="hint">اختر الفلتر المناسب ثم اضبط يدويًا عند الحاجة.</p>
     <div id="filterUI"></div>
     <label>الإضاءة <output id="oBri"></output></label>
     <div class="range-row"><input type="range" id="rBri" min="-40" max="40" step="1"></div>
@@ -362,7 +615,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 </div>
 
 <div id="toast" class="toast"></div>
-<footer>ماسح ملفات المساعدات — v7 · 12 فلتر احترافي + تبديل تلقائي</footer>
+<footer>ماسح ملفات المساعدات — v8 · واجهة إسكانر مبسطة</footer>
 
 <script>
 'use strict';
@@ -377,8 +630,27 @@ const mkCanvas = (w, h) => { const c = document.createElement('canvas'); c.width
 const AR_DIGITS = s => String(s).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
 let toastT;
 function toast(msg, ms = 2600) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  const t = $('toast');
+  t.innerHTML = '';
+  t.classList.remove('has-action');
+  t.textContent = msg;
+  t.classList.add('show');
   clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms);
+}
+/** Toast مخصص مع صورة مصغّرة وزر تراجع */
+function toastWithUndo(msg, dataUrl, onUndo, ms = 5000) {
+  const t = $('toast');
+  t.innerHTML =
+    '<div class="toast-action">' +
+      '<img src="' + dataUrl + '" alt="">' +
+      '<span class="msg">' + esc(msg) + '</span>' +
+      '<button class="undo-btn" id="__undoBtn">تراجع</button>' +
+    '</div>';
+  t.classList.add('show', 'has-action');
+  const btn = document.getElementById('__undoBtn');
+  if (btn) btn.onclick = () => { t.classList.remove('show'); setTimeout(() => t.classList.remove('has-action'), 300); onUndo && onUndo(); };
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.classList.remove('has-action'), 300); }, ms);
 }
 const vibrate = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -392,13 +664,13 @@ const SIZES = {
   a4:   { w: 21,   h: 29.7, dpi: 300, short: 'A4 · 21×29.7 سم', landscape: false }
 };
 const TYPES = [
-  { k: 'idf',    label: 'بطاقة — الوجه', size: 'card', need: true },
-  { k: 'idb',    label: 'بطاقة — الظهر', size: 'card', need: true },
-  { k: 'birth',  label: 'شهادة ميلاد',   size: 'card' },
-  { k: 'income', label: 'إثبات دخل',     size: 'a4' },
-  { k: 'medical',label: 'تقرير طبي',     size: 'a4' },
-  { k: 'rent',   label: 'عقد إيجار',     size: 'a4' },
-  { k: 'other',  label: 'مستند آخر',     size: 'a4' }
+  { k: 'idf',    label: 'بطاقة — الوجه', size: 'card', need: true, icon: '💳' },
+  { k: 'idb',    label: 'بطاقة — الظهر', size: 'card', need: true, icon: '🔙' },
+  { k: 'birth',  label: 'شهادة ميلاد',   size: 'card', icon: '📜' },
+  { k: 'income', label: 'إثبات دخل',     size: 'a4', icon: '💰' },
+  { k: 'medical',label: 'تقرير طبي',     size: 'a4', icon: '🏥' },
+  { k: 'rent',   label: 'عقد إيجار',     size: 'a4', icon: '🏠' },
+  { k: 'other',  label: 'مستند آخر',     size: 'a4', icon: '📄' }
 ];
 const typeOf = k => TYPES.find(t => t.k === k) || TYPES[TYPES.length - 1];
 
@@ -409,52 +681,27 @@ function effSize(p) {
   return S.set.fixedSize ? typeOf(p.type).size : null;
 }
 
-/* =====================================================================
-   ✅ الفلاتر — 12 وضع احترافي مُجمَّع في 6 مجموعات
-===================================================================== */
 const FILTER_GROUPS = [
-  {
-    name: 'أساسي',
-    modes: [
-      { k: 'original', label: '🖼️ أصلي', desc: 'بدون معالجة' }
-    ]
-  },
-  {
-    name: 'Magic — إزالة الظل + إبراز الألوان',
-    modes: [
-      { k: 'magic1', label: '✨ Magic 1', desc: 'خفيف' },
-      { k: 'magic2', label: '💫 Magic 2', desc: 'متوسط' },
-      { k: 'magic3', label: '🌟 Magic 3', desc: 'قوي' }
-    ]
-  },
-  {
-    name: 'Polish — تباين محلي قوي للوثائق',
-    modes: [
-      { k: 'polish1', label: '💎 Polish 1', desc: 'ناعم' },
-      { k: 'polish2', label: '💠 Polish 2', desc: 'متوسط' },
-      { k: 'polish3', label: '🔷 Polish 3', desc: 'قوي' }
-    ]
-  },
-  {
-    name: 'رمادي',
-    modes: [
-      { k: 'gray1', label: '⬜ Gray 1', desc: 'ناعم' },
-      { k: 'gray2', label: '◻️ Gray 2', desc: 'عالي التباين' }
-    ]
-  },
-  {
-    name: 'أبيض وأسود',
-    modes: [
-      { k: 'bw1', label: '⚫ B&W 1', desc: 'عتبة يدوية' },
-      { k: 'bw2', label: '⚪ B&W 2', desc: 'عتبة تلقائية' }
-    ]
-  },
-  {
-    name: 'Eco — توفير الحبر',
-    modes: [
-      { k: 'eco', label: '🌿 Eco', desc: 'للنماذج الرسمية' }
-    ]
-  }
+  { name: 'أساسي', modes: [{ k: 'original', label: '🖼️ أصلي', desc: 'بدون معالجة' }] },
+  { name: 'Magic — إزالة الظل + إبراز الألوان', modes: [
+    { k: 'magic1', label: '✨ Magic 1', desc: 'خفيف' },
+    { k: 'magic2', label: '💫 Magic 2', desc: 'متوسط' },
+    { k: 'magic3', label: '🌟 Magic 3', desc: 'قوي' }
+  ]},
+  { name: 'Polish — تباين محلي قوي للوثائق', modes: [
+    { k: 'polish1', label: '💎 Polish 1', desc: 'ناعم' },
+    { k: 'polish2', label: '💠 Polish 2', desc: 'متوسط' },
+    { k: 'polish3', label: '🔷 Polish 3', desc: 'قوي' }
+  ]},
+  { name: 'رمادي', modes: [
+    { k: 'gray1', label: '⬜ Gray 1', desc: 'ناعم' },
+    { k: 'gray2', label: '◻️ Gray 2', desc: 'عالي التباين' }
+  ]},
+  { name: 'أبيض وأسود', modes: [
+    { k: 'bw1', label: '⚫ B&W 1', desc: 'عتبة يدوية' },
+    { k: 'bw2', label: '⚪ B&W 2', desc: 'عتبة تلقائية' }
+  ]},
+  { name: 'Eco — توفير الحبر', modes: [{ k: 'eco', label: '🌿 Eco', desc: 'للنماذج الرسمية' }] }
 ];
 const ALL_MODES = FILTER_GROUPS.flatMap(g => g.modes);
 const modeOf = k => ALL_MODES.find(m => m.k === k) || ALL_MODES[0];
@@ -487,7 +734,7 @@ function parseNid(s) {
    المسودة
 ===================================================================== */
 const DB = {
-  open() { return new Promise((res, rej) => { const r = indexedDB.open('aid-scanner-v7', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  open() { return new Promise((res, rej) => { const r = indexedDB.open('aid-scanner-v8', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
   async get(k) { const db = await this.open(); return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
   async set(k, v) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); },
   async del(k) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').delete(k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
@@ -529,9 +776,7 @@ function cachedRender(p, cap) {
 function storeRender(p, cap, result) {
   const k = pageHash(p, cap);
   renderCache.set(k, result);
-  while (renderCache.size > MAX_RENDER_CACHE) {
-    renderCache.delete(renderCache.keys().next().value);
-  }
+  while (renderCache.size > MAX_RENDER_CACHE) renderCache.delete(renderCache.keys().next().value);
 }
 function invalidatePageCache(p) {
   const prefix = p.id + '#';
@@ -682,6 +927,17 @@ function detectQuad(cv, targetAR) {
   }
   return best && bestScore > 0.4 ? best.corners : null;
 }
+function detectQuadDetailed(cv, targetAR) {
+  const ar = targetAR || 1.585;
+  const biases = [-15, 0, 18];
+  let best = null, bestScore = -1;
+  for (const b of biases) {
+    const r = detectQuadWithBias(cv, b);
+    const s = quadScore(r, ar);
+    if (s > bestScore) { bestScore = s; best = r; }
+  }
+  return { result: best, score: bestScore };
+}
 function rotCorners(cs, dir) {
   const r = cs.map(p => dir > 0 ? { x: 1 - p.y, y: p.x } : { x: p.y, y: 1 - p.x });
   return orderCorners(r);
@@ -718,17 +974,10 @@ function warp(src, corners, opts) {
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   let W = Math.max(dist(tl, tr), dist(bl, br));
   let H = Math.max(dist(tl, bl), dist(tr, br));
-  if (opts && opts.targetPx) {
-    W = opts.targetPx.w; H = opts.targetPx.h;
-  } else if (opts && opts.maxSide) {
-    const k = Math.min(1, opts.maxSide / Math.max(W, H));
-    W *= k; H *= k;
-  }
+  if (opts && opts.targetPx) { W = opts.targetPx.w; H = opts.targetPx.h; }
+  else if (opts && opts.maxSide) { const k = Math.min(1, opts.maxSide / Math.max(W, H)); W *= k; H *= k; }
   W = Math.max(2, Math.round(W)); H = Math.max(2, Math.round(H));
-  const h = solveHomography(
-    [[0, 0], [W, 0], [W, H], [0, H]],
-    [[tl.x, tl.y], [tr.x, tr.y], [br.x, br.y], [bl.x, bl.y]]
-  );
+  const h = solveHomography([[0, 0], [W, 0], [W, H], [0, H]], [[tl.x, tl.y], [tr.x, tr.y], [br.x, br.y], [bl.x, bl.y]]);
   const sw = src.width, sh = src.height;
   const sd = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sw, sh).data;
   const out = mkCanvas(W, H);
@@ -796,10 +1045,6 @@ function estimateBg(cv) {
   bg.drawImage(sm, 0, 0, w, h);
   return bg.getImageData(0, 0, w, h).data;
 }
-
-/* =====================================================================
-   إزالة الحدة (Shallow)
-===================================================================== */
 function sharpen(cv, a) {
   if (a <= 0) return;
   const w = cv.width, h = cv.height;
@@ -823,7 +1068,7 @@ function sharpen(cv, a) {
 }
 
 /* =====================================================================
-   ✅ المعالجة الرئيسية — 12 فلتر
+   المعالجة الرئيسية — 12 فلتر
 ===================================================================== */
 function enhance(cv, o) {
   const w = cv.width, h = cv.height;
@@ -831,23 +1076,15 @@ function enhance(cv, o) {
   const img = ctx.getImageData(0, 0, w, h);
   const d = img.data;
   const mode = o.mode || 'original';
-
-  // إعدادات المستخدم الأساسية (تُطبَّق على كل الأوضاع)
   const bri = o.brightness * 2.55;
   const cc = o.contrast * 2.55;
   const f = (259 * (cc + 255)) / (255 * (259 - cc));
-  const adj = v => {
-    let x = (v - 128) * f + 128 + bri;
-    return x < 0 ? 0 : x > 255 ? 255 : x;
-  };
+  const adj = v => { let x = (v - 128) * f + 128 + bri; return x < 0 ? 0 : x > 255 ? 255 : x; };
 
-  // وضع "أصلي" — فقط تعديلات المستخدم
   if (mode === 'original') {
     if (bri !== 0 || cc !== 0) {
       for (let i = 0; i < d.length; i += 4) {
-        d[i] = adj(d[i]);
-        d[i + 1] = adj(d[i + 1]);
-        d[i + 2] = adj(d[i + 2]);
+        d[i] = adj(d[i]); d[i + 1] = adj(d[i + 1]); d[i + 2] = adj(d[i + 2]);
       }
       ctx.putImageData(img, 0, 0);
     }
@@ -855,7 +1092,6 @@ function enhance(cv, o) {
     return;
   }
 
-  // باقي الأوضاع تحتاج خلفية
   const bg = estimateBg(cv);
 
   if (mode === 'magic1' || mode === 'magic2' || mode === 'magic3') {
@@ -869,9 +1105,7 @@ function enhance(cv, o) {
       r = gray + (r - gray) * satBoost;
       g = gray + (g - gray) * satBoost;
       b = gray + (b - gray) * satBoost;
-      d[i]     = adj(r);
-      d[i + 1] = adj(g);
-      d[i + 2] = adj(b);
+      d[i] = adj(r); d[i + 1] = adj(g); d[i + 2] = adj(b);
     }
     ctx.putImageData(img, 0, 0);
     sharpen(cv, (o.sharp || 0) + (mode === 'magic1' ? 0.15 : mode === 'magic2' ? 0.30 : 0.45));
@@ -893,9 +1127,7 @@ function enhance(cv, o) {
       r = gray + (r - gray) * sat;
       g = gray + (g - gray) * sat;
       b = gray + (b - gray) * sat;
-      d[i]     = adj(r);
-      d[i + 1] = adj(g);
-      d[i + 2] = adj(b);
+      d[i] = adj(r); d[i + 1] = adj(g); d[i + 2] = adj(b);
     }
     ctx.putImageData(img, 0, 0);
     sharpen(cv, (o.sharp || 0) + p * 0.35);
@@ -919,7 +1151,6 @@ function enhance(cv, o) {
   if (mode === 'bw1' || mode === 'bw2') {
     let thr = o.thr;
     if (mode === 'bw2') {
-      // عتبة تلقائية Otsu
       const hist = new Array(256).fill(0);
       for (let i = 0; i < d.length; i += 4) {
         const y = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) | 0;
@@ -930,13 +1161,10 @@ function enhance(cv, o) {
       for (let i = 0; i < 256; i++) sum += i * hist[i];
       let sumB = 0, wB = 0, best = 0;
       for (let i = 0; i < 256; i++) {
-        wB += hist[i];
-        if (!wB) continue;
-        const wF = n - wB;
-        if (!wF) break;
+        wB += hist[i]; if (!wB) continue;
+        const wF = n - wB; if (!wF) break;
         sumB += i * hist[i];
-        const mB = sumB / wB;
-        const mF = (sum - sumB) / wF;
+        const mB = sumB / wB, mF = (sum - sumB) / wF;
         const v = wB * wF * (mB - mF) ** 2;
         if (v > best) { best = v; thr = i; }
       }
@@ -1000,10 +1228,7 @@ async function renderPage(p, capOverride) {
   const szKey = effSize(p), sz = szKey ? SIZES[szKey] : null;
   let targetPx = null;
   if (sz) {
-    targetPx = {
-      w: Math.round(sz.w / 2.54 * sz.dpi),
-      h: Math.round(sz.h / 2.54 * sz.dpi)
-    };
+    targetPx = { w: Math.round(sz.w / 2.54 * sz.dpi), h: Math.round(sz.h / 2.54 * sz.dpi) };
   }
   const maxSide = capOverride || (targetPx ? Math.max(targetPx.w, targetPx.h) : 2400);
   const src = await srcCanvas(p, p.rot || 0, Math.min(3200, Math.max(maxSide * 1.4, 900)));
@@ -1054,7 +1279,6 @@ function mergeCards(aObj, bObj) {
   const totalW = cardW + padding * 2;
   const totalH = padding * 2 + cardH * 2 + gap;
   const c = mkCanvas(totalW, totalH), g = c.getContext('2d');
-
   const bgGrad = g.createLinearGradient(0, 0, 0, totalH);
   bgGrad.addColorStop(0, '#f9fbfb');
   bgGrad.addColorStop(1, '#eaf0ef');
@@ -1074,7 +1298,6 @@ function mergeCards(aObj, bObj) {
     ctx.quadraticCurveTo(x, y, x + r, y);
     ctx.closePath();
   };
-
   const drawCard = (srcCanvas, y) => {
     const x = padding;
     roundRect(g, x, y, cardW, cardH, radius);
@@ -1175,18 +1398,17 @@ function applyBlob(p, blob, corners, q) {
   invalidatePageCache(p);
 }
 
-/** ✅ التبديل التلقائي بعد التقاط الوجه */
-async function showReference(p) {
-  // استخدم المصغّرة إن وُجدت
+/** ✅ معاينة سريعة للصفحة السابقة */
+async function showQuickRef(p) {
   try {
-    const r = await renderPage(p, 240);
-    const dataUrl = r.canvas.toDataURL('image/jpeg', 0.7);
-    $('refPreviewImg').src = dataUrl;
-    $('refPreview').classList.add('on');
-    setTimeout(() => $('refPreview').classList.remove('on'), 8000);
+    const r = await renderPage(p, 200);
+    $('quickRefImg').src = r.canvas.toDataURL('image/jpeg', 0.7);
+    $('quickRef').classList.add('on');
+    setTimeout(() => $('quickRef').classList.remove('on'), 7000);
   } catch (e) {}
 }
 
+/** ✅ التقط + معالجة فورية مع خيار تراجع */
 async function addCaptured(blob) {
   const bm = await decode(blob);
   const small = drawSmall(bm, 400);
@@ -1206,57 +1428,195 @@ async function addCaptured(blob) {
   else if (S.curType === 'idf' || S.curType === 'idb') target = S.pages.find(p => p.type === S.curType);
 
   let newPage = null;
+  let undoData = null;
+
   if (target) {
+    // احفظ نسخة للـ undo
+    const oldBlob = target.blob, oldCorners = target.corners, oldQ = target.q;
     applyBlob(target, blob, corners, q);
     S.replaceId = null;
-    toast('تم استبدال الصورة');
     newPage = target;
+    undoData = () => applyBlob(target, oldBlob, oldCorners, oldQ);
   } else {
     const p = { id: newId(), type: S.curType, label: makeLabel(S.curType), crop: true, mode: '', size: '' };
     applyBlob(p, blob, corners, q);
     S.pages.push(p);
     newPage = p;
+    undoData = () => {
+      const idx = S.pages.indexOf(p);
+      if (idx >= 0) {
+        if (p.url) URL.revokeObjectURL(p.url);
+        S.pages.splice(idx, 1);
+        updateProgress();
+        updateGalleryBadge();
+      }
+    };
   }
 
-  // ✅ منطق التبديل التلقائي
+  // معاينة مصغّرة داخل التوست
+  let previewUrl = '';
+  try {
+    const rp = await renderPage(newPage, 80);
+    previewUrl = rp.canvas.toDataURL('image/jpeg', 0.7);
+  } catch (e) {}
+
+  // منطق التبديل التلقائي
   const wasIdf = newPage.type === 'idf';
   const hasIdb = S.pages.some(p => p.type === 'idb');
+  const hasIdf = S.pages.some(p => p.type === 'idf');
 
   if (wasIdf && !hasIdb && S.set.autoSwitch !== false) {
-    // تبديل تلقائي إلى الظهر
     S.curType = 'idb';
-    updateCam();
-    // عرض الوجه كمرجع
-    showReference(newPage);
+    updateProgress();
+    updateGalleryBadge();
+    showQuickRef(newPage);
     vibrate([40, 60, 40]);
-    toast('📷 ممتاز! الآن صوّر ظهر البطاقة', 4000);
+    if (previewUrl) toastWithUndo('📷 ممتاز! الآن صوّر ظهر البطاقة', previewUrl, undoData, 5000);
   } else {
-    // السلوك الافتراضي
     if (S.curType === 'idf') S.curType = 'idb';
     else if (S.curType === 'idb') S.curType = 'other';
-    updateCam();
-    $('refPreview').classList.remove('on');
+    updateProgress();
+    updateGalleryBadge();
+    if (previewUrl) toastWithUndo('✓ تم التقاط ' + newPage.label, previewUrl, undoData, 4000);
+    if (hasIdf && hasIdb) {
+      setTimeout(() => $('quickRef').classList.remove('on'), 2500);
+    }
   }
 
   saveDraft();
-  if (q < 20) toast('⚠️ الصورة غير واضحة — يُفضّل إعادة التصوير', 3600);
+  if (q < 20) setTimeout(() => toast('⚠️ الصورة غير واضحة — يُفضّل إعادة التصوير', 3600), 4200);
 }
 
 /* =====================================================================
-   الكاميرا
+   ✅ الكاميرا v8
 ===================================================================== */
-let stream = null, facing = 'environment', torchOn = false, meterT = null, wake = null;
-let torchSupported = null;
-let screenFlashOn = false;
+let stream = null, facing = 'environment', torchOn = false, wake = null;
+let torchSupported = null, screenFlashOn = false;
+let autoMode = false;
+let detectionLoop = null;
+let lastStableTime = 0;
+
+/** حلقة الكشف في الوقت الحقيقي */
+function startDetectionLoop() {
+  stopDetectionLoop();
+  const work = mkCanvas(240, 320);
+  const g = work.getContext('2d', { willReadFrequently: true });
+
+  detectionLoop = setInterval(() => {
+    const v = $('video');
+    if (!v.videoWidth || S.step !== 2) return;
+    work.width = 240;
+    work.height = Math.round(v.videoHeight * 240 / v.videoWidth);
+    g.drawImage(v, 0, 0, work.width, work.height);
+
+    const t = typeOf(S.curType);
+    const ar = SIZES[t.size].w / SIZES[t.size].h;
+    const det = detectQuadDetailed(work, ar);
+    const score = det.score;
+
+    const guide = $('guide');
+    const hint = $('smartHint');
+    const shutter = $('btnShot');
+
+    if (det.result && score > 0.55) {
+      const detected = score > 0.65;
+      const locked = score > 0.80;
+      guide.classList.toggle('detected', detected);
+      guide.classList.toggle('locked', locked);
+
+      if (locked) {
+        hint.textContent = autoMode ? '⚡ المستند مثالي — يتم الالتقاط...' : '🟢 ممتاز — التقط الآن';
+        hint.classList.remove('hide');
+
+        if (autoMode) {
+          const now = Date.now();
+          if (lastStableTime === 0) lastStableTime = now;
+          const elapsed = now - lastStableTime;
+          if (elapsed > 300) shutter.classList.add('counting');
+          if (elapsed > 1500) {
+            shutter.classList.remove('counting');
+            lastStableTime = 0;
+            shot();
+            return;
+          }
+        }
+      } else if (detected) {
+        hint.textContent = '🟡 قرّب المستند للإطار';
+        hint.classList.remove('hide');
+        lastStableTime = 0;
+        shutter.classList.remove('counting');
+      }
+    } else {
+      guide.classList.remove('detected', 'locked');
+      hint.textContent = '📸 ضع المستند داخل الإطار';
+      hint.classList.remove('hide');
+      lastStableTime = 0;
+      shutter.classList.remove('counting');
+    }
+  }, 220);
+}
+
+function stopDetectionLoop() {
+  if (detectionLoop) { clearInterval(detectionLoop); detectionLoop = null; }
+  const g = $('guide'); if (g) g.classList.remove('detected', 'locked');
+  const s = $('btnShot'); if (s) s.classList.remove('counting', 'locked');
+  lastStableTime = 0;
+}
+
+function setGuide() {
+  const wrap = $('scannerWrap'), g = $('guide');
+  if (!wrap || !g) return;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  if (!w || !h) return;
+  const t = typeOf(S.curType);
+  const z = SIZES[t.size];
+  const ar = z.w / z.h;
+  const margin = 0.82;
+  const maxW = w * margin;
+  const maxH = h * margin * 0.62;
+  let gw, gh;
+  if (ar >= 1) {
+    gw = maxW; gh = gw / ar;
+    if (gh > maxH) { gh = maxH; gw = gh * ar; }
+  } else {
+    gh = maxH; gw = gh * ar;
+    if (gw > maxW) { gw = maxW; gh = gw / ar; }
+  }
+  g.style.width = Math.round(gw) + 'px';
+  g.style.height = Math.round(gh) + 'px';
+}
+
+function updateProgress() {
+  const hasIdf = S.pages.some(p => p.type === 'idf');
+  const hasIdb = S.pages.some(p => p.type === 'idb');
+  const pIdf = $('progIdf'), pIdb = $('progIdb');
+  if (!pIdf || !pIdb) return;
+  pIdf.classList.toggle('done', hasIdf);
+  pIdf.classList.toggle('active', !hasIdf && S.curType === 'idf');
+  pIdb.classList.toggle('done', hasIdb);
+  pIdb.classList.toggle('active', (hasIdf || S.curType === 'idb') && !hasIdb);
+}
+
+function updateGalleryBadge() {
+  const badge = $('galleryBadge');
+  const btn = $('btnFloatReview');
+  if (badge) {
+    if (S.pages.length > 0) { badge.textContent = S.pages.length; badge.classList.remove('hidden'); }
+    else badge.classList.add('hidden');
+  }
+  if (btn) {
+    if (S.pages.length > 0) { btn.textContent = '✓ مراجعة (' + S.pages.length + ')'; btn.classList.remove('hidden'); }
+    else btn.classList.add('hidden');
+  }
+}
 
 async function startCam() {
   stopCam();
-  $('camErr').classList.add('hidden');
-  $('meter').textContent = '⏳ جارٍ تشغيل الكاميرا';
+  const errEl = $('camErr'); if (errEl) errEl.classList.add('hidden');
+  const hint = $('smartHint'); if (hint) hint.textContent = '⏳ جارٍ تشغيل الكاميرا';
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    $('camErr').classList.remove('hidden');
-    return;
+    if (errEl) errEl.classList.remove('hidden'); return;
   }
   try {
     let s;
@@ -1269,7 +1629,6 @@ async function startCam() {
       s = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     }
     stream = s;
-
     const v = $('video');
     v.setAttribute('playsinline', 'true');
     v.setAttribute('webkit-playsinline', 'true');
@@ -1290,7 +1649,6 @@ async function startCam() {
 
     let played = false;
     try { await v.play(); played = true; } catch (e) {}
-
     if (!played || v.paused) {
       const resume = async () => { try { await v.play(); } catch (_) {} };
       document.addEventListener('touchstart', resume, { once: true, passive: true });
@@ -1303,10 +1661,7 @@ async function startCam() {
       await tr.applyConstraints({ advanced: [{ torch: true }] });
       await tr.applyConstraints({ advanced: [{ torch: false }] });
       torchSupported = true;
-    } catch (e) {
-      torchSupported = false;
-    }
-    $('btnTorch').classList.remove('hidden');
+    } catch (e) { torchSupported = false; }
 
     try {
       const caps = tr.getCapabilities ? tr.getCapabilities() : {};
@@ -1315,43 +1670,28 @@ async function startCam() {
       }
     } catch (e) {}
 
-    startMeter();
+    startDetectionLoop();
     requestAnimationFrame(setGuide);
     try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
+    if (hint) hint.textContent = '📸 ضع المستند داخل الإطار';
   } catch (e) {
     console.error('Camera error:', e);
-    $('camErr').classList.remove('hidden');
-    $('meter').textContent = '📵 تعذّر تشغيل الكاميرا';
+    if (errEl) errEl.classList.remove('hidden');
+    if (hint) hint.textContent = '📵 تعذّر تشغيل الكاميرا';
   }
 }
 
 function stopCam() {
+  stopDetectionLoop();
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-  clearInterval(meterT); meterT = null;
   try { if (wake) { wake.release(); wake = null; } } catch (e) {}
   screenFlashOn = false; torchOn = false;
-  $('screenFlash').classList.remove('on');
-  $('btnTorch').classList.remove('on');
-}
-
-function startMeter() {
-  clearInterval(meterT);
-  const c = mkCanvas(320, 240);
-  const g = c.getContext('2d', { willReadFrequently: true });
-  meterT = setInterval(() => {
-    const v = $('video');
-    if (!v.videoWidth || S.step !== 2) return;
-    c.width = 320;
-    c.height = Math.round(v.videoHeight * 320 / v.videoWidth);
-    g.drawImage(v, 0, 0, c.width, c.height);
-    const s = sharpness(c), el = $('meter');
-    el.textContent = s < 18 ? '🟠 ثبّت الجهاز وقرّب قليلًا' : s < 55 ? '🟡 جودة مقبولة' : '🟢 واضحة — التقط الآن';
-  }, 900);
+  const sf = $('screenFlash'); if (sf) sf.classList.remove('on');
+  const tb = $('btnTorch'); if (tb) tb.classList.remove('on');
 }
 
 async function toggleTorch() {
   if (!stream) { toast('الكاميرا غير جاهزة'); return; }
-
   if (torchSupported !== false) {
     try {
       const tr = stream.getVideoTracks()[0];
@@ -1361,20 +1701,24 @@ async function toggleTorch() {
       torchSupported = true;
       if (torchOn) { screenFlashOn = false; $('screenFlash').classList.remove('on'); }
       return;
-    } catch (e) {
-      torchSupported = false;
-    }
+    } catch (e) { torchSupported = false; }
   }
-
   screenFlashOn = !screenFlashOn;
   $('screenFlash').classList.toggle('on', screenFlashOn);
   $('btnTorch').classList.toggle('on', screenFlashOn);
   if (screenFlashOn) toast('💡 وضع الإضاءة عبر الشاشة', 1800);
 }
 
+function toggleAutoMode() {
+  autoMode = !autoMode;
+  $('btnAuto').classList.toggle('auto-on', autoMode);
+  toast(autoMode ? '⚡ التقاط تلقائي مُفعّل' : 'التقاط يدوي', 2000);
+  if (autoMode) vibrate(40);
+}
+
 async function shot() {
   const v = $('video');
-  if (!v.videoWidth) { toast('الكاميرا غير جاهزة بعد'); return; }
+  if (!v || !v.videoWidth) { toast('الكاميرا غير جاهزة بعد'); return; }
   const f = $('flash');
   f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
   vibrate(35);
@@ -1392,57 +1736,64 @@ async function onFiles(files) {
   toast('✓ تمت الإضافة');
 }
 
-function setGuide() {
-  const camwrap = $('camwrap'), g = $('guide');
-  if (!camwrap || !g) return;
-  const w = camwrap.clientWidth, h = camwrap.clientHeight;
-  if (!w || !h) return;
-  const t = typeOf(S.curType);
-  const z = SIZES[t.size];
-  const ar = z.w / z.h;
-  const margin = 0.86;
-  const maxW = w * margin, maxH = h * margin;
-  let gw, gh;
-  if (ar >= 1) {
-    gw = maxW;
-    gh = gw / ar;
-    if (gh > maxH) { gh = maxH; gw = gh * ar; }
-  } else {
-    gh = maxH;
-    gw = gh * ar;
-    if (gw > maxW) { gw = maxW; gh = gw / ar; }
-  }
-  g.style.width = Math.round(gw) + 'px';
-  g.style.height = Math.round(gh) + 'px';
-}
-
-function updateCam() {
-  const wrap = $('typeChips');
-  wrap.innerHTML = '';
+/* Bottom Sheet */
+function openTypeSheet() {
+  const list = $('typeList');
+  list.innerHTML = '';
   TYPES.forEach(t => {
     const n = S.pages.filter(p => p.type === t.k).length;
-    const b = document.createElement('button');
-    b.className = 'chip' + (S.curType === t.k ? ' on' : '') + (t.need ? ' need' : '') + (n ? ' has' : '');
-    b.innerHTML = esc(t.label) + (n ? '<span class="n">' + n + '</span>' : '');
-    b.onclick = () => { S.curType = t.k; S.replaceId = null; updateCam(); };
-    wrap.appendChild(b);
+    const d = document.createElement('div');
+    d.className = 'type-row' + (S.curType === t.k ? ' on' : '');
+    d.innerHTML =
+      '<span class="icon">' + t.icon + '</span>' +
+      '<span class="label">' + esc(t.label) + '</span>' +
+      (n ? '<span class="badge-n">' + n + '</span>' : '');
+    d.onclick = () => {
+      S.curType = t.k;
+      S.replaceId = null;
+      closeTypeSheet();
+      updateProgress();
+      setGuide();
+    };
+    list.appendChild(d);
   });
-  const t = typeOf(S.curType);
-  $('typePill').textContent = (S.replaceId ? '🔁 استبدال: ' : '📌 ') + t.label + ' · ' + SIZES[t.size].short;
+  $('typeSheet').classList.remove('hidden');
+}
+function closeTypeSheet() { $('typeSheet').classList.add('hidden'); }
+
+/* ربط واجهة الإسكانر */
+function bindScannerUI() {
+  $('btnShot').onclick = shot;
+  $('btnFlip').onclick = () => {
+    facing = facing === 'environment' ? 'user' : 'environment';
+    startCam();
+  };
+  $('btnTorch').onclick = toggleTorch;
+  $('btnAuto').onclick = toggleAutoMode;
+  $('btnSheet').onclick = openTypeSheet;
+  $('sheetClose').onclick = closeTypeSheet;
+  $('typeSheet').onclick = e => { if (e.target.id === 'typeSheet') closeTypeSheet(); };
+  $('btnBack').onclick = () => go(1);
+  $('btnFloatReview').onclick = () => go(3);
+  const gal = () => $('fileGallery').click();
+  $('btnGallery').onclick = gal;
+  $('errGallery').onclick = gal;
+  $('errNative').onclick = () => $('fileNative').click();
+  $('fileGallery').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
+  $('fileNative').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
+}
+
+/** إظهار/إخفاء السكنر */
+function showScanner() {
+  $('scannerWrap').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
   requestAnimationFrame(setGuide);
-  const st = $('strip');
-  if (!S.pages.length) st.innerHTML = '<span class="empty">لا توجد صور بعد.</span>';
-  else {
-    st.innerHTML = '';
-    S.pages.forEach((p, i) => {
-      const d = document.createElement('div');
-      d.className = 'st';
-      d.innerHTML = '<img src="' + (p.turl || p.url) + '" alt=""><b>' + (i + 1) + '</b>';
-      d.onclick = () => openEditor(p.id);
-      st.appendChild(d);
-    });
-  }
-  $('b2next').textContent = 'مراجعة وتحسين (' + S.pages.length + ') ←';
+  setTimeout(startCam, 60);
+}
+function hideScanner() {
+  stopCam();
+  $('scannerWrap').classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
 /* =====================================================================
@@ -1492,7 +1843,8 @@ function deletePage(id) {
   invalidatePageCache(p);
   S.pages.splice(i, 1);
   renderGrid();
-  updateCam();
+  updateProgress();
+  updateGalleryBadge();
   saveDraft();
 }
 let thumbTok = 0;
@@ -1512,7 +1864,7 @@ async function refreshThumbs() {
 const refreshDebounced = debounce(refreshThumbs, 300);
 
 /* =====================================================================
-   ✅ بناء واجهة الفلاتر
+   بناء واجهة الفلاتر
 ===================================================================== */
 function buildFilterUI() {
   const wrap = $('filterUI');
@@ -1544,7 +1896,6 @@ function buildFilterUI() {
     wrap.appendChild(gDiv);
   });
 
-  // dropdown in editor
   const sel = $('edMode');
   sel.innerHTML = '<option value="">حسب الإعداد العام</option>' +
     FILTER_GROUPS.map(g =>
@@ -1560,7 +1911,6 @@ function syncSettingsUI() {
   $('rCon').value = s.contrast; $('oCon').textContent = s.contrast;
   $('rSharp').value = s.sharp; $('oSharp').textContent = s.sharp;
   $('rThr').value = s.thr; $('oThr').textContent = s.thr;
-  // إظهار عتبة B&W فقط عند اختيار bw1 أو bw2
   const needThr = s.mode === 'bw1' || s.mode === 'bw2' || S.pages.some(p => p.mode === 'bw1' || p.mode === 'bw2');
   $('thrWrap').classList.toggle('hidden', !needThr);
   $('tCrop').checked = s.autoCrop;
@@ -1732,7 +2082,8 @@ function edSave() {
   invalidatePageCache(p);
   closeEditor();
   renderGrid();
-  updateCam();
+  updateProgress();
+  updateGalleryBadge();
   syncSettingsUI();
   saveDraft();
   refreshThumbs();
@@ -2009,7 +2360,7 @@ function bindExport() {
   $('bNew').onclick = () => { if (confirm('بدء ملف جديد؟')) newFile(); };
 }
 function newFile() {
-  stopCam();
+  hideScanner();
   S.pages.forEach(p => p.url && URL.revokeObjectURL(p.url));
   bmCache.clear();
   renderCache.clear();
@@ -2048,8 +2399,16 @@ async function go(n) {
     b.classList.toggle('done', k < n);
   });
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (n === 2) { updateCam(); setTimeout(() => startCam(), 60); }
-  else stopCam();
+
+  // إظهار السكنر فقط في خطوة 2
+  if (n === 2) {
+    updateProgress();
+    updateGalleryBadge();
+    showScanner();
+  } else {
+    hideScanner();
+  }
+
   if (n === 3) { buildFilterUI(); syncSettingsUI(); renderGrid(); refreshThumbs(); }
   if (n === 4) prepareExport();
   saveDraft();
@@ -2119,38 +2478,30 @@ function init() {
   document.querySelectorAll('#steps button').forEach(b => b.onclick = () => go(+b.dataset.s));
   $('fNid').addEventListener('input', onNid);
   $('btnStart').onclick = () => go(2);
-  $('b2back').onclick = () => go(1);
-  $('b2next').onclick = () => go(3);
   $('b3add').onclick = () => go(2);
   $('b3next').onclick = () => go(4);
-  $('btnShot').onclick = shot;
-  $('btnFlip').onclick = () => {
-    facing = facing === 'environment' ? 'user' : 'environment';
-    startCam();
-  };
-  $('btnTorch').onclick = toggleTorch;
-  const gal = () => $('fileGallery').click();
-  $('btnGallery').onclick = gal;
-  $('errGallery').onclick = gal;
-  $('errNative').onclick = () => $('fileNative').click();
-  $('fileGallery').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
-  $('fileNative').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
+
+  bindScannerUI();
+
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopCam();
+    if (document.hidden) { if (S.step === 2) stopCam(); }
     else if (S.step === 2) startCam();
   });
   window.addEventListener('resize', () => setGuide());
   window.addEventListener('orientationchange', () => setTimeout(setGuide, 300));
+
   ['fName', 'fPhone'].forEach(id => $(id).addEventListener('input', () => {
     S.name = $('fName').value;
     S.phone = $('fPhone').value;
     saveDraft();
   }));
+
   bindSettings();
   bindEditor();
   bindExport();
   buildFilterUI();
-  updateCam();
+  updateProgress();
+  updateGalleryBadge();
   checkDraft();
   $('steps').querySelector('[data-s="1"]').classList.add('on');
   setTimeout(setGuide, 200);
