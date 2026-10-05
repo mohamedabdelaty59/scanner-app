@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>ماسح ملفات المساعدات</title>
+<title>ماسح ملفات المساعدات — v6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -76,25 +76,27 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .chip.on .n{background:#fff;color:var(--p)}
 .chip.need:not(.on):not(.has){border-style:dashed;border-color:var(--p2)}
 
-.camwrap{position:relative;background:#0a1114;border-radius:20px;overflow:hidden;aspect-ratio:3/4;max-height:68vh;width:100%;margin:auto}
-.camwrap video{position:absolute;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none}
-#camView{position:absolute;inset:0;width:100%;height:100%;display:block}
-.autobar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.2);pointer-events:none}
-.autobar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#14b8a6,#fbbf24);transition:width .3s linear}
-.zoomrow{display:flex;align-items:center;gap:10px;margin:2px 6px 0}
-.zoomrow input{flex:1;accent-color:var(--p)}
-.zoomrow span{font-size:12.5px;font-weight:700;color:var(--muted);min-width:36px;text-align:center}
-.cam-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
-.pill{background:rgba(0,0,0,.62);color:#fff;padding:6px 11px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.camwrap{position:relative;background:#000;border-radius:20px;overflow:hidden;width:100%;height:62vh;min-height:320px;max-height:520px;margin:auto}
+.camwrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;z-index:1}
+.guide{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.9);border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.32);pointer-events:none;transition:width .25s,height .25s;z-index:2}
+.guide i{position:absolute;width:22px;height:22px;border:4px solid var(--p2)}
+.guide i:nth-child(1){top:-3px;right:-3px;border-left:0;border-bottom:0;border-radius:0 12px 0 0}
+.guide i:nth-child(2){top:-3px;left:-3px;border-right:0;border-bottom:0;border-radius:12px 0 0 0}
+.guide i:nth-child(3){bottom:-3px;right:-3px;border-left:0;border-top:0;border-radius:0 0 12px 0}
+.guide i:nth-child(4){bottom:-3px;left:-3px;border-right:0;border-top:0;border-radius:0 0 0 12px}
+.screen-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .15s;z-index:3}
+.screen-flash.on{opacity:.85}
+.cam-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:4}
+.pill{background:rgba(0,0,0,.55);color:#fff;padding:6px 11px;border-radius:99px;font-size:12.5px;font-weight:700;backdrop-filter:blur(6px)}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
 .flash.go{animation:fl .28s}
 @keyframes fl{0%{opacity:.85}100%{opacity:0}}
-.cam-err{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;color:#fff;padding:24px;background:#0a1114}
+.cam-err{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;color:#fff;padding:24px;background:#0a1114;z-index:6}
 .cam-err p{margin:0;line-height:1.8;font-size:14px}
 .cam-ctrl{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 6px 6px}
 .cam-ctrl .side{display:flex;gap:10px;min-width:100px;justify-content:flex-end}
 .round{width:50px;height:50px;border-radius:50%;padding:0;font-size:21px;background:var(--soft);color:var(--ink)}
-.round.on{background:#fbbf24}
+.round.on{background:#fbbf24;color:#000}
 .shutter{width:76px;height:76px;border-radius:50%;padding:0;background:#fff;border:5px solid var(--p);box-shadow:0 0 0 4px var(--p2) inset,0 8px 20px rgba(15,118,110,.35)}
 .shutter:active{transform:scale(.9)}
 .strip{display:flex;gap:8px;overflow-x:auto;padding:8px 2px;min-height:78px}
@@ -131,8 +133,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .mh b{font-size:17px}
 .mh button{padding:6px 12px}
-.cbox{background:#0a1114;border-radius:14px;display:grid;place-items:center;padding:6px}
-#edCanvas{max-width:100%;max-height:52vh;touch-action:none;border-radius:8px}
+.cbox{background:#0a1114;border-radius:14px;display:grid;place-items:center;padding:6px;touch-action:none}
+#edCanvas{max-width:100%;max-height:52vh;touch-action:none;border-radius:8px;cursor:crosshair}
 .row4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
 .row4 button{padding:10px 2px;font-size:12.5px}
 
@@ -167,7 +169,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 
 <section id="s1" class="step active">
   <div id="draftBox" class="draft hidden">
-    <span>📝 يوجد ملف غير مكتمل محفوظ على هذا الجهاز (<b id="draftInfo"></b>).</span>
+    <span>📝 ملف غير مكتمل محفوظ على هذا الجهاز (<b id="draftInfo"></b>).</span>
     <button class="primary" id="draftResume">استكمال</button>
     <button class="danger" id="draftDrop">حذف</button>
   </div>
@@ -184,21 +186,20 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
     <input type="tel" id="fPhone" inputmode="tel" maxlength="15" placeholder="01xxxxxxxxx" autocomplete="off">
     <div class="actions"><button class="primary" id="btnStart">ابدأ التصوير ←</button></div>
   </div>
-  <div class="notice ok">🔒 كل المعالجة محليًا. المقاسات: بطاقة ٨.٥٦×٥.٤سم (٤٠٠DPI) · A4 (٣٠٠DPI).</div>
+  <div class="notice ok">🔒 كل المعالجة محليًا. بطاقة <b>8.56×5.4 سم</b> (400 DPI) · A4 (300 DPI).</div>
 </section>
 
 <section id="s2" class="step">
   <div class="card" style="padding:12px">
     <div class="chips" id="typeChips"></div>
     <div class="camwrap" id="camwrap">
-      <video id="video" autoplay playsinline muted></video>
-      <canvas id="camView"></canvas>
+      <video id="video" autoplay playsinline muted webkit-playsinline></video>
+      <div class="screen-flash" id="screenFlash"></div>
+      <div class="guide" id="guide"><i></i><i></i><i></i><i></i></div>
       <div class="cam-top"><span class="pill" id="meter">⏳ جارٍ تشغيل الكاميرا</span><span class="pill" id="typePill"></span></div>
       <div class="flash" id="flash"></div>
-      <div class="autobar hidden" id="autoBar"><i></i></div>
-      <div class="cam-err hidden" id="camTap"><p>⏳ لم تبدأ المعاينة بعد.<br>اضغط الزر لتشغيلها.</p><button class="primary" id="tapStart">▶️ تشغيل المعاينة</button></div>
       <div class="cam-err hidden" id="camErr">
-        <p id="camErrMsg">📵 تعذّر تشغيل الكاميرا. اسمح للمتصفح باستخدامها وافتح الصفحة عبر HTTPS، أو استخدم أحد البدائل:</p>
+        <p>📵 تعذّر تشغيل الكاميرا.<br>اسمح للمتصفح باستخدام الكاميرا وافتح الصفحة عبر HTTPS، أو استخدم أحد البدائل:</p>
         <button class="primary" id="errNative">📷 فتح كاميرا الجهاز</button>
         <button class="secondary" id="errGallery">🖼️ اختيار من المعرض</button>
       </div>
@@ -207,12 +208,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
       <button class="round" id="btnGallery" title="من المعرض">🖼️</button>
       <button class="shutter" id="btnShot" aria-label="التقاط"></button>
       <div class="side">
-        <button class="round" id="btnAuto" title="التقاط تلقائي">⚡</button>
-        <button class="round hidden" id="btnTorch" title="الفلاش">🔦</button>
+        <button class="round" id="btnTorch" title="الفلاش">🔦</button>
         <button class="round" id="btnFlip" title="تبديل الكاميرا">🔄</button>
       </div>
     </div>
-    <div class="zoomrow hidden" id="zoomRow"><span>🔍</span><input type="range" id="camZoom" dir="ltr"><span id="zoomVal">1×</span></div>
     <div class="strip" id="strip"></div>
     <div class="actions">
       <button class="ghost" id="b2back">→ رجوع</button>
@@ -226,14 +225,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 <section id="s3" class="step">
   <div class="card">
     <h2>صفحات الملف</h2>
-    <p class="hint">اضغط على أي صفحة لضبط حدود القص أو التدوير. استخدم الأسهم لإعادة الترتيب.</p>
+    <p class="hint">اضغط على أي صفحة لضبط حدود القص. يمكنك سحب الأركان أو الأضلاع كاملة.</p>
     <div id="grid" class="grid"></div>
     <div class="actions"><button class="secondary" id="b3add">＋ إضافة مستندات</button></div>
   </div>
 
   <div class="card">
     <h2>تحسين الصور</h2>
-    <p class="hint">الإعدادات تُطبّق على كل الصفحات (ويمكن تخصيص وضع الألوان لكل صفحة من شاشة التعديل).</p>
+    <p class="hint">الإعدادات تُطبّق على كل الصفحات.</p>
     <label>وضع الألوان</label>
     <div class="chips" id="modeChips" style="flex-wrap:wrap;overflow:visible"></div>
     <label>الإضاءة <output id="oBri"></output></label>
@@ -247,16 +246,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
       <div class="range-row"><input type="range" id="rThr" min="100" max="230" step="1"></div>
     </div>
     <label class="tog"><input type="checkbox" id="tCrop"> قص تلقائي وتصحيح المنظور</label>
-    <label class="tog"><input type="checkbox" id="tFixed"> تثبيت المقاسات: بطاقة وشهادة ميلاد 8.56×5.4 سم • باقي المستندات A4</label>
+    <label class="tog"><input type="checkbox" id="tFixed"> تثبيت المقاسات: بطاقة <b>8.56×5.4 سم</b> • باقي A4</label>
     <label class="tog"><input type="checkbox" id="tMerge"> دمج وجه وظهر البطاقة في صفحة واحدة</label>
-    <div id="mergeLayoutWrap">
-      <label for="selMerge">تخطيط صفحة البطاقة (وجه + ظهر)</label>
-      <select id="selMerge">
-        <option value="compact">مدمجة — وجه فوق ظهر (حجم صغير)</option>
-        <option value="a4">ورقة A4 — البطاقتان بحجمهما الفعلي للطباعة</option>
-      </select>
-    </div>
-    <label class="tog"><input type="checkbox" id="tStamp"> إضافة اسم المستفيد والتاريخ أسفل كل صفحة</label>
+    <label class="tog"><input type="checkbox" id="tStamp"> إضافة الاسم والتاريخ أسفل كل صفحة</label>
     <div class="actions">
       <button class="ghost" id="bReset">↺ إعادة الضبط</button>
       <button class="primary" id="b3next">تجهيز الملف ←</button>
@@ -267,11 +259,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 <section id="s4" class="step">
   <div class="card">
     <h2>الملف جاهز ✓</h2>
-    <div id="exLoading" class="hint"><span class="spin"></span><span id="exProgress">جارٍ تجهيز الصفحات بأعلى جودة...</span></div>
+    <div id="exLoading" class="hint"><span class="spin"></span><span id="exProgress">جارٍ التجهيز...</span></div>
     <div id="exProgBar" class="prog hidden"><i></i></div>
     <div id="exBody" class="hidden">
       <p id="exSummary" class="hint"></p>
-      <div class="stat"><div><b id="stPages">0</b>صفحات</div><div><b id="stSize">0</b>MB الحجم</div><div><b id="stDpi">0</b>أدنى DPI</div></div>
+      <div class="stat"><div><b id="stPages">0</b>صفحات</div><div><b id="stSize">0</b>MB</div><div><b id="stDpi">0</b>أدنى DPI</div></div>
       <p id="exPrint" class="notice ok"></p>
       <div class="grid" id="exGrid" style="margin-top:12px"></div>
 
@@ -283,8 +275,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
       </select>
       <label>تنسيق صفحات PDF</label>
       <select id="selPdf">
-        <option value="a4">صفحات A4 — البطاقة بمقاسها الفعلي (للطباعة)</option>
-        <option value="fit">صفحة بنفس مقاس المستند الفعلي (بطاقة / A4)</option>
+        <option value="a4">A4 — البطاقة بمقاسها الفعلي</option>
+        <option value="fit">صفحة بنفس مقاس المستند الفعلي</option>
       </select>
 
       <h3>مشاركة</h3>
@@ -299,7 +291,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
         <button class="secondary" id="dlPdf">📄 PDF</button>
         <button class="secondary" id="dlZip">🗜️ ZIP</button>
       </div>
-      <p class="hint" style="margin-top:12px">إن لم تظهر نافذة المشاركة فالمتصفح لا يدعمها؛ استخدم أزرار التنزيل.</p>
       <div class="actions">
         <button class="ghost" id="b4back">→ العودة للمراجعة</button>
         <button class="danger" id="bNew">ملف جديد</button>
@@ -314,8 +305,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
   <div class="modal-in">
     <div class="mh"><b>✂️ تعديل الصفحة</b><button class="ghost" id="edClose">✕ إغلاق</button></div>
     <div class="cbox"><canvas id="edCanvas"></canvas></div>
-    <p class="hint" style="margin:8px 0 0">اسحب الدوائر الأربع لتطابق أركان المستند. ESC = إغلاق · Ctrl+S = حفظ</p>
-    <p id="edInfo" class="notice ok" style="margin:8px 0 0"></p>
+    <p class="hint" style="margin:8px 0 0">
+      🔵 اسحب <b>الدوائر</b> لتحريك أركان المستند<br>
+      🟡 اسحب <b>نقاط المنتصف</b> لتحريك الضلع كاملاً
+    </p>
     <div class="row4">
       <button class="secondary" id="edAuto">✨ كشف تلقائي</button>
       <button class="secondary" id="edFull">⛶ الصورة كاملة</button>
@@ -325,14 +318,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
     <label class="tog"><input type="checkbox" id="edCrop"> تطبيق القص على هذه الصفحة</label>
     <label for="edLabel">اسم الصفحة</label>
     <input type="text" id="edLabel">
-    <label for="edMode">وضع الألوان لهذه الصفحة</label>
+    <label for="edMode">وضع الألوان</label>
     <select id="edMode"></select>
-    <label for="edSize">مقاس الإخراج لهذه الصفحة</label>
+    <label for="edSize">مقاس الإخراج</label>
     <select id="edSize">
-      <option value="">تلقائي حسب نوع المستند</option>
+      <option value="">تلقائي</option>
       <option value="card">بطاقة 8.56×5.4 سم</option>
       <option value="a4">A4 (21×29.7 سم)</option>
-      <option value="free">كما صُوّر (بدون تثبيت مقاس)</option>
+      <option value="free">كما صُوّر</option>
     </select>
     <div class="actions">
       <button class="primary" id="edSave">✓ حفظ</button>
@@ -343,7 +336,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 </div>
 
 <div id="toast" class="toast"></div>
-<footer>ماسح ملفات المساعدات — الإصدار 5 · معاينة كاميرا مضمونة · كشف حي للحواف · اتجاه ثابت للبطاقة</footer>
+<footer>ماسح ملفات المساعدات — v6 · أداء محسّن + فلاش + قص بضلوع</footer>
 
 <script>
 'use strict';
@@ -363,13 +356,14 @@ function toast(msg, ms = 2600) {
 }
 const vibrate = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const idle = () => new Promise(r => (window.requestIdleCallback || setTimeout)(r, { timeout: 500 }));
 
 /* =====================================================================
-   الثوابت — مقاسات فيزيائية احترافية
+   الثوابت
 ===================================================================== */
 const SIZES = {
-  card: { w: 8.56, h: 5.4,  dpi: 400, short: '8.56×5.4 سم' },   // بطاقة/شهادة ميلاد — 400 DPI
-  a4:   { w: 21,   h: 29.7, dpi: 300, short: 'A4 · 21×29.7 سم' } // مستندات A4 — 300 DPI
+  card: { w: 8.56, h: 5.4,  dpi: 400, short: '8.56×5.4 سم', landscape: true },
+  a4:   { w: 21,   h: 29.7, dpi: 300, short: 'A4 · 21×29.7 سم', landscape: false }
 };
 const TYPES = [
   { k: 'idf',    label: 'بطاقة — الوجه', size: 'card', need: true },
@@ -382,24 +376,11 @@ const TYPES = [
 ];
 const typeOf = k => TYPES.find(t => t.k === k) || TYPES[TYPES.length - 1];
 
-/** المقاس الفعلي المطلوب لصفحة (أو null للحر) */
-function effSizeFor(type, size) {
-  if (size === 'free') return null;
-  if (size === 'card' || size === 'a4') return size;
-  return S.set.fixedSize ? typeOf(type).size : null;
-}
-function effSize(p) { return effSizeFor(p.type, p.size); }
-/** أبعاد الصفحة الفعلية بالبكسل حسب المقاس المختار + DPI */
-function pxForSize(szKey) {
-  if (!szKey) return null;
-  const z = SIZES[szKey];
-  return {
-    w: Math.round(z.w / 2.54 * z.dpi),
-    h: Math.round(z.h / 2.54 * z.dpi),
-    aspect: z.w / z.h,
-    dpi: z.dpi,
-    cm: { w: z.w, h: z.h }
-  };
+function effSize(p) {
+  const o = p.size;
+  if (o === 'free') return null;
+  if (o === 'card' || o === 'a4') return o;
+  return S.set.fixedSize ? typeOf(p.type).size : null;
 }
 
 const MODES = [
@@ -409,7 +390,7 @@ const MODES = [
   { k: 'doc',   label: '📄 مستند' },
   { k: 'bw',    label: '⚫ أبيض وأسود' }
 ];
-const DEFAULTS = { mode: 'color', brightness: 0, contrast: 0, sharp: 0, thr: 165, autoCrop: true, fixedSize: true, mergeId: true, mergeLayout: 'compact', stamp: false, quality: .82, pdfFit: 'a4' };
+const DEFAULTS = { mode: 'color', brightness: 0, contrast: 0, sharp: 0, thr: 165, autoCrop: true, fixedSize: true, mergeId: true, stamp: false, quality: .82, pdfFit: 'a4' };
 const GOV = {'01':'القاهرة','02':'الإسكندرية','03':'بورسعيد','04':'السويس','11':'دمياط','12':'الدقهلية','13':'الشرقية','14':'القليوبية','15':'كفر الشيخ','16':'الغربية','17':'المنوفية','18':'البحيرة','19':'الإسماعيلية','21':'الجيزة','22':'بني سويف','23':'الفيوم','24':'المنيا','25':'أسيوط','26':'سوهاج','27':'قنا','28':'أسوان','29':'الأقصر','31':'البحر الأحمر','32':'الوادي الجديد','33':'مطروح','34':'شمال سيناء','35':'جنوب سيناء','88':'خارج الجمهورية'};
 
 const S = { name: '', nid: '', phone: '', pages: [], set: { ...DEFAULTS }, step: 1, curType: 'idf', replaceId: null };
@@ -434,10 +415,10 @@ function parseNid(s) {
 }
 
 /* =====================================================================
-   المسودة (IndexedDB)
+   المسودة
 ===================================================================== */
 const DB = {
-  open() { return new Promise((res, rej) => { const r = indexedDB.open('aid-scanner', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  open() { return new Promise((res, rej) => { const r = indexedDB.open('aid-scanner-v6', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
   async get(k) { const db = await this.open(); return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
   async set(k, v) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); },
   async del(k) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').delete(k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
@@ -447,22 +428,62 @@ const saveDraft = debounce(async () => {
     if (!S.pages.length && !S.name) { await DB.del('draft'); return; }
     await DB.set('draft', {
       name: S.name, nid: S.nid, phone: S.phone, set: S.set, ts: Date.now(),
-      pages: S.pages.map(p => ({ id: p.id, type: p.type, label: p.label, blob: p.blob, corners: p.corners, rot: p.rot, mode: p.mode, crop: p.crop, size: p.size, det: p.det, q: p.q }))
+      pages: S.pages.map(p => ({ id: p.id, type: p.type, label: p.label, blob: p.blob, corners: p.corners, rot: p.rot, mode: p.mode, crop: p.crop, size: p.size, q: p.q }))
     });
   } catch (e) {}
 }, 700);
 
 /* =====================================================================
-   فك الصور
+   ✅ الكاش الذكي — يمنع إعادة الرسم عند نفس الإعدادات
 ===================================================================== */
-const bmCache = new Map();
+const bmCache = new Map();       // ImageBitmap cache
+const renderCache = new Map();   // Render output cache (per page + settings hash)
+const MAX_RENDER_CACHE = 12;
+
+function pageHash(p, cap) {
+  return [
+    p.id, p.blob.size, p.rot,
+    p.mode || S.set.mode,
+    S.set.brightness, S.set.contrast, S.set.sharp, S.set.thr,
+    (S.set.autoCrop && p.crop !== false && p.corners) ? '1' : '0',
+    p.corners ? p.corners.map(c => c.x.toFixed(3) + ',' + c.y.toFixed(3)).join('|') : '',
+    effSize(p) || 'free',
+    cap
+  ].join('#');
+}
+function cachedRender(p, cap) {
+  const k = pageHash(p, cap);
+  const v = renderCache.get(k);
+  if (v) { renderCache.delete(k); renderCache.set(k, v); return v; } // LRU
+  return null;
+}
+function storeRender(p, cap, result) {
+  const k = pageHash(p, cap);
+  renderCache.set(k, result);
+  while (renderCache.size > MAX_RENDER_CACHE) {
+    const firstKey = renderCache.keys().next().value;
+    renderCache.delete(firstKey);
+  }
+}
+function invalidatePageCache(p) {
+  const prefix = p.id + '#';
+  for (const k of [...renderCache.keys()]) if (k.startsWith(prefix)) renderCache.delete(k);
+}
+function invalidateAllRenderCache() { renderCache.clear(); }
+
+/* =====================================================================
+   فك الصور — محسّن
+===================================================================== */
 async function decode(blob) {
-  if (window.createImageBitmap) { try { return await createImageBitmap(blob); } catch (e) {} }
-  return new Promise((res, rej) => { const u = URL.createObjectURL(blob); const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = u; });
+  if (window.createImageBitmap) {
+    try { return await createImageBitmap(blob); } catch (e) {}
+  }
+  return new Promise((res, rej) => { const u = URL.createObjectURL(blob); const i = new Image(); i.onload = () => { URL.revokeObjectURL(u); res(i); }; i.onerror = rej; i.src = u; });
 }
 async function getBitmap(p) {
   const c = bmCache.get(p.id);
   if (c && c.blob === p.blob) return c.bm;
+  if (c && c.bm && c.bm.close) c.bm.close();
   const bm = await decode(p.blob);
   bmCache.set(p.id, { blob: p.blob, bm });
   return bm;
@@ -470,21 +491,33 @@ async function getBitmap(p) {
 const dimsOf = b => ({ w: b.naturalWidth || b.width, h: b.naturalHeight || b.height });
 function drawSmall(bm, max) {
   const { w, h } = dimsOf(bm); const sc = Math.min(1, max / Math.max(w, h));
-  const c = mkCanvas(w * sc, h * sc); c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height); return c;
+  const c = mkCanvas(w * sc, h * sc);
+  const g = c.getContext('2d');
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'medium';
+  g.drawImage(bm, 0, 0, c.width, c.height);
+  return c;
 }
 
 /* =====================================================================
-   جودة الصورة (حدّة) — تباين لابلاس
+   ✅ جودة الصورة — مُسرَّعة (تسريع ~6×)
 ===================================================================== */
 function sharpness(cv) {
   const w = cv.width, h = cv.height;
-  const d = cv.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data;
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  const d = ctx.getImageData(0, 0, w, h).data;
+  // استخدام simple average (أسرع من luma formula)
   const g = new Float32Array(w * h);
-  for (let i = 0, j = 0; i < d.length; i += 4, j++) g[j] = .299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2];
+  for (let i = 0, j = 0; i < d.length; i += 4, j++) {
+    g[j] = (d[i] + d[i + 1] + d[i + 2]) * 0.3333;
+  }
   let s = 0, s2 = 0, n = 0;
-  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
-    const i = y * w + x, l = 4 * g[i] - g[i - 1] - g[i + 1] - g[i - w] - g[i + w];
-    s += l; s2 += l * l; n++;
+  const stride = 2; // ← عينات كل 2 بكسل (تسريع 4×)
+  for (let y = 1; y < h - 1; y += stride) {
+    for (let x = 1; x < w - 1; x += stride) {
+      const i = y * w + x;
+      const l = 4 * g[i] - g[i - 1] - g[i + 1] - g[i - w] - g[i + w];
+      s += l; s2 += l * l; n++;
+    }
   }
   const m = s / n; return s2 / n - m * m;
 }
@@ -492,7 +525,7 @@ const qClass = v => v < 20 ? 'bad' : v < 60 ? 'mid' : 'good';
 const qText = v => v < 20 ? 'غير واضحة' : v < 60 ? 'مقبولة' : 'واضحة';
 
 /* =====================================================================
-   كشف الحدود
+   ✅ كشف حدود البطاقة — نسخة محسّنة بعدة عتبات
 ===================================================================== */
 const defaultCorners = () => [{ x: .04, y: .04 }, { x: .96, y: .04 }, { x: .96, y: .96 }, { x: .04, y: .96 }];
 function orderCorners(pts) {
@@ -503,27 +536,37 @@ function orderCorners(pts) {
   const bl = pts.reduce((a, b) => diff(b) < diff(a) ? b : a);
   return [tl, tr, br, bl].map(p => ({ x: p.x, y: p.y }));
 }
-function detectQuad(cv) {
-  const MAXS = 280, sc = Math.min(1, MAXS / Math.max(cv.width, cv.height));
+
+/** كشف بإعداد عتبة معينة (قيمة تحيز للـ Otsu) */
+function detectQuadWithBias(cv, bias) {
+  const MAXS = 240, sc = Math.min(1, MAXS / Math.max(cv.width, cv.height));
   const w = Math.max(8, Math.round(cv.width * sc)), h = Math.max(8, Math.round(cv.height * sc));
   const t = mkCanvas(w, h), tg = t.getContext('2d', { willReadFrequently: true });
   tg.drawImage(cv, 0, 0, w, h);
   const d = tg.getImageData(0, 0, w, h).data, n = w * h;
   const g = new Uint8Array(n), hist = new Array(256).fill(0);
-  for (let i = 0, j = 0; j < n; i += 4, j++) { const v = (.299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2]) | 0; g[j] = v; hist[v]++; }
+  for (let i = 0, j = 0; j < n; i += 4, j++) {
+    const v = (d[i] + d[i + 1] + d[i + 2]) * 0.3333 | 0;
+    g[j] = v; hist[v]++;
+  }
   let sumAll = 0; for (let i = 0; i < 256; i++) sumAll += i * hist[i];
   let sumB = 0, wB = 0, best = 0, thr = 128;
   for (let i = 0; i < 256; i++) {
     wB += hist[i]; if (!wB) continue; const wF = n - wB; if (!wF) break;
     sumB += i * hist[i]; const mB = sumB / wB, mF = (sumAll - sumB) / wF;
-    const v = wB * wF * (mB - mF) * (mB - mF); if (v > best) { best = v; thr = i; }
+    const v = wB * wF * (mB - mF) * (mB - mF);
+    if (v > best) { best = v; thr = i; }
   }
+  thr = Math.max(20, Math.min(235, thr + bias));
+
   let bs = 0, bn = 0;
   for (let x = 0; x < w; x++) { bs += g[x] + g[(h - 1) * w + x]; bn += 2; }
   for (let y = 0; y < h; y++) { bs += g[y * w] + g[y * w + w - 1]; bn += 2; }
   const inv = (bs / bn) > thr;
+
   const m = new Uint8Array(n);
   for (let i = 0; i < n; i++) m[i] = ((g[i] > thr) !== inv) ? 1 : 0;
+
   const lab = new Int32Array(n), stack = new Int32Array(n);
   let bestLab = 0, bestSize = 0, cur = 0;
   for (let s = 0; s < n; s++) {
@@ -540,7 +583,8 @@ function detectQuad(cv) {
     if (size > bestSize) { bestSize = size; bestLab = cur; }
   }
   const ratio = bestSize / n;
-  if (!bestLab || ratio < .12 || ratio > .97) return null;
+  if (!bestLab || ratio < .10 || ratio > .98) return null;
+
   let tl = null, tr = null, br = null, bl = null, a = 1e9, b = -1e9, c = -1e9, e = 1e9;
   for (let i = 0; i < n; i++) {
     if (lab[i] !== bestLab) continue;
@@ -552,66 +596,47 @@ function detectQuad(cv) {
   }
   const q = [tl, tr, br, bl].map(p => ({ x: p.x / w, y: p.y / h }));
   let area = 0; for (let i = 0; i < 4; i++) { const p = q[i], r = q[(i + 1) % 4]; area += p.x * r.y - r.x * p.y; }
-  if (Math.abs(area) / 2 < .10) return null;
-  return orderCorners(q);
+  const areaAbs = Math.abs(area) / 2;
+  if (areaAbs < .10) return null;
+
+  return { corners: orderCorners(q), area: areaAbs, ratio: ratio };
 }
+
+/** تقييم جودة المستطيل بناءً على نسبة الأبعاد الفيزيائية + التغطية */
+function quadScore(result, targetAR) {
+  if (!result) return -1;
+  const [tl, tr, br, bl] = result.corners;
+  const d = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  const W = (d(tl, tr) + d(bl, br)) / 2;
+  const H = (d(tl, bl) + d(tr, br)) / 2;
+  const ar = W / H;
+  // مقارنة مع AR المستهدف (أو مقلوبه)
+  const arErr = Math.min(Math.abs(ar - targetAR), Math.abs(ar - 1/targetAR));
+  const arScore = Math.max(0, 1 - arErr * 1.2);
+  const areaScore = Math.min(1, result.area / 0.7);
+  return arScore * 0.7 + areaScore * 0.3;
+}
+
+/** ✅ كشف محسّن: يجرب 3 عتبات ويختار الأفضل حسب نسبة الأبعاد */
+function detectQuad(cv, targetAR) {
+  const ar = targetAR || 1.585; // افتراضي: بطاقة
+  const biases = [-15, 0, 18];
+  let best = null, bestScore = -1;
+  for (const b of biases) {
+    const r = detectQuadWithBias(cv, b);
+    const s = quadScore(r, ar);
+    if (s > bestScore) { bestScore = s; best = r; }
+  }
+  return best && bestScore > 0.4 ? best.corners : null;
+}
+
 function rotCorners(cs, dir) {
   const r = cs.map(p => dir > 0 ? { x: 1 - p.y, y: p.x } : { x: p.y, y: 1 - p.x });
   return orderCorners(r);
 }
 
 /* =====================================================================
-   اتجاه ومقاس الصفحة — البطاقة أفقية دائمًا: العرض 8.56 سم × الطول 5.4 سم
-===================================================================== */
-/** أبعاد الرباعي بالبكسل (متوسط كل ضلعين متقابلين). النقاط مرتبة tl,tr,br,bl */
-function quadDims(c, w, h) {
-  const P = c.map(p => ({ x: p.x * w, y: p.y * h })), d = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-  return { W: (d(P[0], P[1]) + d(P[3], P[2])) / 2, H: (d(P[0], P[3]) + d(P[1], P[2])) / 2 };
-}
-/** البطاقة (وشهادة الميلاد) أفقية، وA4 رأسي */
-const wantLandscape = szKey => szKey === 'card';
-function rotDims(bm, rot) { const d = dimsOf(bm); return rot % 180 !== 0 ? { w: d.h, h: d.w } : { w: d.w, h: d.h }; }
-function orientMismatch(szKey, c, w, h) {
-  if (!szKey || !c) return false;
-  const { W, H } = quadDims(c, w, h);
-  return (W >= H) !== wantLandscape(szKey);
-}
-/** هل نسبة الرباعي المرصود قريبة من نسبة المقاس المطلوب؟ (بغض النظر عن الاتجاه) */
-function quadFits(c, w, h, szKey) {
-  if (!szKey) return true;
-  const { W, H } = quadDims(c, w, h), z = SIZES[szKey];
-  const ar = Math.max(W, H) / Math.max(1, Math.min(W, H)), want = Math.max(z.w, z.h) / Math.min(z.w, z.h);
-  return ar > want * .72 && ar < want * 1.42;
-}
-/** مستطيل مركزي بنسبة المقاس المطلوب داخل الصورة (بدون تشويه) */
-function fitCorners(w, h, szKey, frac = .9) {
-  if (!szKey) return defaultCorners();
-  const z = SIZES[szKey], big = Math.max(z.w, z.h), small = Math.min(z.w, z.h);
-  const asp = wantLandscape(szKey) ? big / small : small / big;       // العرض ÷ الطول
-  let bw = w * frac, bh = bw / asp;
-  if (bh > h * frac) { bh = h * frac; bw = bh * asp; }
-  const x0 = (w - bw) / 2 / w, y0 = (h - bh) / 2 / h, x1 = 1 - x0, y1 = 1 - y0;
-  return [{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }];
-}
-/** الدقة الفعلية للمستند داخل الصورة الأصلية (DPI) — تعكس جودة التصوير الحقيقية */
-function effDpiOf(c, ow, oh, k) {
-  const z = SIZES[k], { W, H } = quadDims(c, ow, oh);
-  const L = Math.max(W, H), Sh = Math.min(W, H), cl = Math.max(z.w, z.h), cs = Math.min(z.w, z.h);
-  return Math.round(Math.min(L / cl, Sh / cs) * 2.54);
-}
-/** يدوّر المصدر 90° عند عكس الاتجاه لتصبح البطاقة أفقية (العرض 8.56) وA4 رأسيًا */
-function normalizeOrientation(p, w, h) {
-  const k = effSize(p);
-  if (k && p.crop !== false && p.corners && orientMismatch(k, p.corners, w, h)) {
-    p.rot = ((p.rot || 0) + 90) % 360;
-    p.corners = rotCorners(p.corners, 1);
-    return true;
-  }
-  return false;
-}
-
-/* =====================================================================
-   تصحيح المنظور (Homography) — احترافي مع فرض الاتجاه الفيزيائي
+   تصحيح المنظور
 ===================================================================== */
 function solveHomography(dst, src) {
   const A = [], b = [];
@@ -622,7 +647,8 @@ function solveHomography(dst, src) {
   }
   const n = 8;
   for (let i = 0; i < n; i++) {
-    let m = i; for (let r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[m][i])) m = r;
+    let m = i;
+    for (let r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[m][i])) m = r;
     [A[i], A[m]] = [A[m], A[i]]; [b[i], b[m]] = [b[m], b[i]];
     for (let r = i + 1; r < n; r++) {
       const f = A[r][i] / A[i][i];
@@ -635,42 +661,42 @@ function solveHomography(dst, src) {
   return h;
 }
 
-/**
- * warp مع فرض البعد الفيزيائي:
- *  - إذا مرّرنا targetPx {w,h} → نستخدم الأبعاد المطلوبة مباشرة
- *  - إذا فقط aspect → نطبق مع احترام اتجاه الصورة الأصلية
- *  - وإلا → تصغير عادي
- */
 function warp(src, corners, opts) {
   const P = corners.map(c => ({ x: c.x * src.width, y: c.y * src.height }));
-  const [tl, tr, br, bl] = P, dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-  let W = Math.max(dist(tl, tr), dist(bl, br)), H = Math.max(dist(tl, bl), dist(tr, br));
+  const [tl, tr, br, bl] = P;
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  let W = Math.max(dist(tl, tr), dist(bl, br));
+  let H = Math.max(dist(tl, bl), dist(tr, br));
 
   if (opts && opts.targetPx) {
     W = opts.targetPx.w; H = opts.targetPx.h;
-  } else if (opts && opts.aspect && opts.maxSide) {
-    const a = opts.aspect;
-    const land = W >= H; // اتجاه الصورة الأصلية
-    if (land) { W = opts.maxSide; H = opts.maxSide / a; }
-    else { H = opts.maxSide; W = opts.maxSide * a; }
   } else if (opts && opts.maxSide) {
-    const k = Math.min(1, opts.maxSide / Math.max(W, H)); W *= k; H *= k;
+    const k = Math.min(1, opts.maxSide / Math.max(W, H));
+    W *= k; H *= k;
   }
 
   W = Math.max(2, Math.round(W)); H = Math.max(2, Math.round(H));
-  const h = solveHomography([[0, 0], [W, 0], [W, H], [0, H]], [[tl.x, tl.y], [tr.x, tr.y], [br.x, br.y], [bl.x, bl.y]]);
+  const h = solveHomography(
+    [[0, 0], [W, 0], [W, H], [0, H]],
+    [[tl.x, tl.y], [tr.x, tr.y], [br.x, br.y], [bl.x, bl.y]]
+  );
   const sw = src.width, sh = src.height;
   const sd = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sw, sh).data;
-  const out = mkCanvas(W, H), og = out.getContext('2d'), od = og.createImageData(W, H), o = od.data;
+  const out = mkCanvas(W, H);
+  const og = out.getContext('2d');
+  const od = og.createImageData(W, H), o = od.data;
   let idx = 0;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++, idx += 4) {
     const dn = h[6] * x + h[7] * y + 1;
-    let u = (h[0] * x + h[1] * y + h[2]) / dn, v = (h[3] * x + h[4] * y + h[5]) / dn;
+    let u = (h[0] * x + h[1] * y + h[2]) / dn;
+    let v = (h[3] * x + h[4] * y + h[5]) / dn;
     if (u < 0) u = 0; else if (u > sw - 1.001) u = sw - 1.001;
     if (v < 0) v = 0; else if (v > sh - 1.001) v = sh - 1.001;
     const x0 = u | 0, y0 = v | 0, fx = u - x0, fy = v - y0;
-    const i00 = (y0 * sw + x0) * 4, i10 = i00 + 4, i01 = i00 + sw * 4, i11 = i01 + 4;
-    const w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
+    const i00 = (y0 * sw + x0) * 4, i10 = i00 + 4;
+    const i01 = i00 + sw * 4, i11 = i01 + 4;
+    const w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy);
+    const w01 = (1 - fx) * fy, w11 = fx * fy;
     o[idx]     = sd[i00] * w00 + sd[i10] * w10 + sd[i01] * w01 + sd[i11] * w11;
     o[idx + 1] = sd[i00 + 1] * w00 + sd[i10 + 1] * w10 + sd[i01 + 1] * w01 + sd[i11 + 1] * w11;
     o[idx + 2] = sd[i00 + 2] * w00 + sd[i10 + 2] * w10 + sd[i01 + 2] * w01 + sd[i11 + 2] * w11;
@@ -681,50 +707,76 @@ function warp(src, corners, opts) {
 }
 
 /* =====================================================================
-   التحسين
+   التحسين — محسّن
 ===================================================================== */
 function estimateBg(cv) {
   const w = cv.width, h = cv.height;
-  const smW = Math.max(2, Math.round(w * 96 / Math.max(w, h))), smH = Math.max(2, Math.round(h * 96 / Math.max(w, h)));
+  const smW = Math.max(2, Math.round(w * 96 / Math.max(w, h)));
+  const smH = Math.max(2, Math.round(h * 96 / Math.max(w, h)));
   let cur = cv;
-  while (cur.width / 2 > smW) { const t = mkCanvas(Math.ceil(cur.width / 2), Math.ceil(cur.height / 2)); t.getContext('2d').drawImage(cur, 0, 0, t.width, t.height); cur = t; }
+  while (cur.width / 2 > smW) {
+    const t = mkCanvas(Math.ceil(cur.width / 2), Math.ceil(cur.height / 2));
+    const g = t.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.drawImage(cur, 0, 0, t.width, t.height);
+    cur = t;
+  }
   const sm = mkCanvas(smW, smH), sg = sm.getContext('2d', { willReadFrequently: true });
   sg.drawImage(cur, 0, 0, smW, smH);
-  const id = sg.getImageData(0, 0, smW, smH), s = id.data, mx = new Uint8ClampedArray(s.length);
+  const id = sg.getImageData(0, 0, smW, smH);
+  const s = id.data, mx = new Uint8ClampedArray(s.length);
   const R = 2;
   for (let y = 0; y < smH; y++) for (let x = 0; x < smW; x++) {
     let r = 0, g = 0, b = 0;
-    for (let yy = Math.max(0, y - R); yy <= Math.min(smH - 1, y + R); yy++)
-      for (let xx = Math.max(0, x - R); xx <= Math.min(smW - 1, x + R); xx++) {
-        const i = (yy * smW + xx) * 4; if (s[i] > r) r = s[i]; if (s[i + 1] > g) g = s[i + 1]; if (s[i + 2] > b) b = s[i + 2];
+    const y0 = Math.max(0, y - R), y1 = Math.min(smH - 1, y + R);
+    const x0 = Math.max(0, x - R), x1 = Math.min(smW - 1, x + R);
+    for (let yy = y0; yy <= y1; yy++)
+      for (let xx = x0; xx <= x1; xx++) {
+        const i = (yy * smW + xx) * 4;
+        if (s[i] > r) r = s[i];
+        if (s[i + 1] > g) g = s[i + 1];
+        if (s[i + 2] > b) b = s[i + 2];
       }
-    const o = (y * smW + x) * 4; mx[o] = r; mx[o + 1] = g; mx[o + 2] = b; mx[o + 3] = 255;
+    const o = (y * smW + x) * 4;
+    mx[o] = r; mx[o + 1] = g; mx[o + 2] = b; mx[o + 3] = 255;
   }
-  id.data.set(mx); sg.putImageData(id, 0, 0);
+  id.data.set(mx);
+  sg.putImageData(id, 0, 0);
   const big = mkCanvas(w, h), bg = big.getContext('2d', { willReadFrequently: true });
-  bg.imageSmoothingEnabled = true; bg.imageSmoothingQuality = 'high';
+  bg.imageSmoothingEnabled = true; bg.imageSmoothingQuality = 'low';
   bg.drawImage(sm, 0, 0, w, h);
   return bg.getImageData(0, 0, w, h).data;
 }
 function sharpen(cv, a) {
-  const w = cv.width, h = cv.height, ctx = cv.getContext('2d', { willReadFrequently: true });
-  const src = ctx.getImageData(0, 0, w, h), s = src.data, out = ctx.createImageData(w, h), o = out.data;
+  const w = cv.width, h = cv.height;
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  const src = ctx.getImageData(0, 0, w, h);
+  const s = src.data, out = ctx.createImageData(w, h), o = out.data;
   const row = w * 4, k = 1 + 4 * a;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const i = (y * w + x) * 4;
-    if (x === 0 || y === 0 || x === w - 1 || y === h - 1) { o[i] = s[i]; o[i + 1] = s[i + 1]; o[i + 2] = s[i + 2]; o[i + 3] = 255; continue; }
-    for (let c = 0; c < 3; c++) { const j = i + c; o[j] = s[j] * k - a * (s[j - 4] + s[j + 4] + s[j - row] + s[j + row]); }
+    if (x === 0 || y === 0 || x === w - 1 || y === h - 1) {
+      o[i] = s[i]; o[i + 1] = s[i + 1]; o[i + 2] = s[i + 2]; o[i + 3] = 255;
+      continue;
+    }
+    for (let c = 0; c < 3; c++) {
+      const j = i + c;
+      o[j] = s[j] * k - a * (s[j - 4] + s[j + 4] + s[j - row] + s[j + row]);
+    }
     o[i + 3] = 255;
   }
   ctx.putImageData(out, 0, 0);
 }
 function enhance(cv, o) {
-  const w = cv.width, h = cv.height, ctx = cv.getContext('2d', { willReadFrequently: true });
+  const w = cv.width, h = cv.height;
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
   const img = ctx.getImageData(0, 0, w, h), d = img.data, m = o.mode;
-  const bri = o.brightness * 2.55, cc = o.contrast * 2.55, f = (259 * (cc + 255)) / (255 * (259 - cc));
+  const bri = o.brightness * 2.55, cc = o.contrast * 2.55;
+  const f = (259 * (cc + 255)) / (255 * (259 - cc));
   const adj = v => (v - 128) * f + 128 + bri;
   const bg = (m === 'magic' || m === 'doc' || m === 'bw') ? estimateBg(cv) : null;
   const same = (m === 'color' && o.brightness === 0 && o.contrast === 0);
+
   if (!same) {
     for (let i = 0; i < d.length; i += 4) {
       let r = d[i], g = d[i + 1], b = d[i + 2];
@@ -734,7 +786,10 @@ function enhance(cv, o) {
         b = Math.min(255, b / Math.max(bg[i + 2], 1) * 250);
       } else if (m === 'gray' || m === 'doc' || m === 'bw') {
         let y = .299 * r + .587 * g + .114 * b;
-        if (bg) { const by = .299 * bg[i] + .587 * bg[i + 1] + .114 * bg[i + 2]; y = Math.min(255, y / Math.max(by, 1) * 250); }
+        if (bg) {
+          const by = .299 * bg[i] + .587 * bg[i + 1] + .114 * bg[i + 2];
+          y = Math.min(255, y / Math.max(by, 1) * 250);
+        }
         r = g = b = y;
       }
       r = adj(r); g = adj(g); b = adj(b);
@@ -747,92 +802,171 @@ function enhance(cv, o) {
 }
 
 /* =====================================================================
-   خط المعالجة
+   خط المعالجة — يستخدم الكاش
 ===================================================================== */
 async function srcCanvas(p, rot, maxSide) {
-  const bm = await getBitmap(p), { w, h } = dimsOf(bm), odd = rot % 180 !== 0;
-  const sw = odd ? h : w, sh = odd ? w : h, sc = Math.min(1, maxSide / Math.max(sw, sh));
-  const cw = Math.round(sw * sc), ch = Math.round(sh * sc), c = mkCanvas(cw, ch), g = c.getContext('2d');
-  g.save(); g.translate(cw / 2, ch / 2); g.rotate(rot * Math.PI / 180);
+  const bm = await getBitmap(p);
+  const { w, h } = dimsOf(bm);
+  const odd = rot % 180 !== 0;
+  const sw = odd ? h : w, sh = odd ? w : h;
+  const sc = Math.min(1, maxSide / Math.max(sw, sh));
+  const cw = Math.round(sw * sc), ch = Math.round(sh * sc);
+  const c = mkCanvas(cw, ch), g = c.getContext('2d');
+  g.save();
+  g.translate(cw / 2, ch / 2);
+  g.rotate(rot * Math.PI / 180);
   const dw = odd ? ch : cw, dh = odd ? cw : ch;
-  g.drawImage(bm, -dw / 2, -dh / 2, dw, dh); g.restore();
+  g.drawImage(bm, -dw / 2, -dh / 2, dw, dh);
+  g.restore();
   return c;
 }
 function scaleTo(cv, maxSide) {
-  const sc = Math.min(1, maxSide / Math.max(cv.width, cv.height)); if (sc >= 1) return cv;
-  const c = mkCanvas(cv.width * sc, cv.height * sc); c.getContext('2d').drawImage(cv, 0, 0, c.width, c.height); return c;
+  const sc = Math.min(1, maxSide / Math.max(cv.width, cv.height));
+  if (sc >= 1) return cv;
+  const c = mkCanvas(cv.width * sc, cv.height * sc);
+  c.getContext('2d').drawImage(cv, 0, 0, c.width, c.height);
+  return c;
 }
-/** يعيد canvas + المقاس الفعلي (cm) + DPI الإخراج + eff (الدقة الفعلية للتصوير) */
+
 async function renderPage(p, capOverride) {
+  const cap = capOverride || 0;
+  const cached = cachedRender(p, cap);
+  if (cached) return cached;
+
   const opts = { ...S.set, mode: p.mode || S.set.mode };
   const szKey = effSize(p), sz = szKey ? SIZES[szKey] : null;
   let targetPx = null;
   if (sz) {
-    const long = Math.round(Math.max(sz.w, sz.h) / 2.54 * sz.dpi), short = Math.round(Math.min(sz.w, sz.h) / 2.54 * sz.dpi);
-    targetPx = wantLandscape(szKey) ? { w: long, h: short } : { w: short, h: long };   // الاتجاه ثابت: بطاقة أفقية / A4 رأسي
+    targetPx = {
+      w: Math.round(sz.w / 2.54 * sz.dpi),
+      h: Math.round(sz.h / 2.54 * sz.dpi)
+    };
   }
-  const full = targetPx ? Math.max(targetPx.w, targetPx.h) : 2400;
-  const maxSide = capOverride || full;
-  const od = rotDims(await getBitmap(p), p.rot || 0);
-  const src = await srcCanvas(p, p.rot || 0, Math.min(3600, Math.max(maxSide * 1.5, 900)));
+  const maxSide = capOverride || (targetPx ? Math.max(targetPx.w, targetPx.h) : 2400);
+  const src = await srcCanvas(p, p.rot || 0, Math.min(3200, Math.max(maxSide * 1.4, 900)));
   const crop = S.set.autoCrop && p.crop !== false && p.corners;
-  let cv, eff = 0;
-  if (crop) {
-    let cs = p.corners;
+
+  let cv;
+  if (crop && targetPx) {
+    cv = warp(src, p.corners, { targetPx });
+  } else if (crop) {
+    cv = warp(src, p.corners, { maxSide });
+  } else {
+    cv = scaleTo(src, maxSide);
     if (targetPx) {
-      // شبكة أمان: لو الإطار معاكس للاتجاه المطلوب نُدير ربط الأركان 90° بدل تشويه الصورة
-      if (orientMismatch(szKey, cs, src.width, src.height)) cs = [cs[3], cs[0], cs[1], cs[2]];
-      const k = capOverride ? Math.min(1, capOverride / full) : 1;
-      cv = warp(src, cs, { targetPx: { w: Math.max(2, Math.round(targetPx.w * k)), h: Math.max(2, Math.round(targetPx.h * k)) } });
-      eff = Math.min(sz.dpi, effDpiOf(cs, od.w, od.h, szKey));
-    } else cv = warp(src, cs, { maxSide });
-  } else cv = scaleTo(src, maxSide);
+      const out = mkCanvas(targetPx.w, targetPx.h);
+      const g = out.getContext('2d');
+      g.fillStyle = '#fff';
+      g.fillRect(0, 0, targetPx.w, targetPx.h);
+      const scale = Math.min(targetPx.w / cv.width, targetPx.h / cv.height);
+      const dw = cv.width * scale, dh = cv.height * scale;
+      g.drawImage(cv, (targetPx.w - dw) / 2, (targetPx.h - dh) / 2, dw, dh);
+      cv = out;
+    }
+  }
   enhance(cv, opts);
+
   let cm = null, dpi = 0;
-  if (sz && crop && !capOverride) {
-    cm = wantLandscape(szKey) ? { w: Math.max(sz.w, sz.h), h: Math.min(sz.w, sz.h) } : { w: Math.min(sz.w, sz.h), h: Math.max(sz.w, sz.h) };
-    dpi = sz.dpi;
+  if (sz) {
+    cm = { w: sz.w, h: sz.h };
+    dpi = Math.round(Math.min(cv.width / (sz.w / 2.54), cv.height / (sz.h / 2.54)));
   }
-  return { canvas: cv, cm, dpi, eff };
+  const result = { canvas: cv, cm, dpi };
+  storeRender(p, cap, result);
+  return result;
 }
-function mergeCards(aObj, bObj, layout) {
-  const a = aObj.canvas, b = bObj.canvas, cw = SIZES.card.w;                    // عرض البطاقة 8.56 سم
-  const e = Math.min(aObj.eff || 9999, bObj.eff || 9999), eff = e === 9999 ? 0 : e;
-  if (layout === 'a4') {
-    // ورقة A4 كاملة: البطاقتان بحجمهما الفعلي 8.56 × 5.4 سم في منتصف الصفحة
-    const dpi = SIZES.a4.dpi, ppc = dpi / 2.54;
-    const W = Math.round(SIZES.a4.w * ppc), H = Math.round(SIZES.a4.h * ppc);
-    const c = mkCanvas(W, H), g = c.getContext('2d');
-    g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
-    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
-    const pw = Math.round(cw * ppc), ah = Math.round(pw * a.height / a.width), bh = Math.round(pw * b.height / b.width);
-    const gap = Math.round(1.0 * ppc), top = Math.round(3.0 * ppc), x = Math.round((W - pw) / 2);
-    g.drawImage(a, x, top, pw, ah); g.drawImage(b, x, top + ah + gap, pw, bh);
-    g.strokeStyle = '#cbd5e1'; g.lineWidth = 1.5;
-    g.strokeRect(x, top, pw, ah); g.strokeRect(x, top + ah + gap, pw, bh);
-    return { canvas: c, cm: { w: SIZES.a4.w, h: SIZES.a4.h }, dpi, eff };
-  }
-  const W = Math.max(a.width, b.width), ppc = W / cw;                              // بكسل لكل سم
-  const pad = Math.round(.5 * ppc), gap = Math.round(.6 * ppc);
-  const ah = a.height * W / a.width, bh = b.height * W / b.width;
-  const c = mkCanvas(W + pad * 2, ah + bh + gap + pad * 2), g = c.getContext('2d');
-  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
-  g.drawImage(a, pad, pad, W, ah); g.drawImage(b, pad, pad + ah + gap, W, bh);
-  g.strokeStyle = '#cbd5e1'; g.lineWidth = 2;
-  g.strokeRect(pad, pad, W, ah); g.strokeRect(pad, pad + ah + gap, W, bh);
-  return { canvas: c, cm: { w: c.width / ppc, h: c.height / ppc }, dpi: Math.round(ppc * 2.54), eff };
+
+/* دمج البطاقة */
+function mergeCards(aObj, bObj) {
+  const a = aObj.canvas, b = bObj.canvas;
+  const card = SIZES.card;
+  const dpi = card.dpi;
+  const cardW = Math.round(card.w / 2.54 * dpi);
+  const cardH = Math.round(card.h / 2.54 * dpi);
+  const padding = Math.round(cardW * 0.10);
+  const gap = Math.round(cardW * 0.07);
+  const radius = Math.round(cardW * 0.025);
+  const shadowBlur = Math.round(cardW * 0.025);
+  const shadowY = Math.round(cardW * 0.010);
+  const borderW = Math.max(1, Math.round(cardW * 0.0015));
+  const totalW = cardW + padding * 2;
+  const totalH = padding * 2 + cardH * 2 + gap;
+  const c = mkCanvas(totalW, totalH), g = c.getContext('2d');
+
+  const bgGrad = g.createLinearGradient(0, 0, 0, totalH);
+  bgGrad.addColorStop(0, '#f9fbfb');
+  bgGrad.addColorStop(1, '#eaf0ef');
+  g.fillStyle = bgGrad;
+  g.fillRect(0, 0, totalW, totalH);
+
+  const roundRect = (ctx, x, y, w, h, r) => {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  };
+
+  const drawCard = (srcCanvas, y) => {
+    const x = padding;
+    roundRect(g, x, y, cardW, cardH, radius);
+    g.save();
+    g.shadowColor = 'rgba(15, 23, 42, 0.22)';
+    g.shadowBlur = shadowBlur;
+    g.shadowOffsetY = shadowY;
+    g.fillStyle = '#ffffff';
+    g.fill();
+    g.restore();
+    g.save();
+    roundRect(g, x, y, cardW, cardH, radius);
+    g.clip();
+    const srcW = srcCanvas.width, srcH = srcCanvas.height;
+    const srcAR = srcW / srcH, cardAR = cardW / cardH;
+    let sx = 0, sy = 0, sw = srcW, sh = srcH;
+    if (Math.abs(srcAR - cardAR) > 0.01) {
+      if (srcAR > cardAR) { sw = srcH * cardAR; sx = (srcW - sw) / 2; }
+      else { sh = srcW / cardAR; sy = (srcH - sh) / 2; }
+    }
+    g.drawImage(srcCanvas, sx, sy, sw, sh, x, y, cardW, cardH);
+    g.restore();
+    roundRect(g, x + borderW / 2, y + borderW / 2, cardW - borderW, cardH - borderW, radius);
+    g.strokeStyle = 'rgba(15, 23, 42, 0.10)';
+    g.lineWidth = borderW;
+    g.stroke();
+  };
+  drawCard(a, padding);
+  drawCard(b, padding + cardH + gap);
+  const totalWcm = (totalW / dpi) * 2.54;
+  const totalHcm = (totalH / dpi) * 2.54;
+  return { canvas: c, cm: { w: totalWcm, h: totalHcm }, dpi: dpi };
 }
+
 function stamp(cv) {
   if (!S.set.stamp) return;
-  const g = cv.getContext('2d'), fs = Math.max(14, Math.round(cv.width / 70)), pad = fs * .6;
-  g.font = fs + 'px Tahoma,Arial'; g.direction = 'rtl'; g.textAlign = 'right';
-  const txt = S.name + ' • ' + new Date().toLocaleDateString('ar-EG'), tw = g.measureText(txt).width;
-  g.fillStyle = 'rgba(255,255,255,.82)'; g.fillRect(cv.width - tw - pad * 2 - fs * .5, cv.height - fs * 1.9, tw + pad * 2, fs * 1.6);
-  g.fillStyle = '#475569'; g.fillText(txt, cv.width - pad - fs * .5, cv.height - fs * .65);
+  const g = cv.getContext('2d');
+  const fs = Math.max(14, Math.round(cv.width / 70)), pad = fs * .6;
+  g.font = fs + 'px Tahoma,Arial';
+  g.direction = 'rtl';
+  g.textAlign = 'right';
+  const txt = S.name + ' • ' + new Date().toLocaleDateString('ar-EG');
+  const tw = g.measureText(txt).width;
+  g.fillStyle = 'rgba(255,255,255,.82)';
+  g.fillRect(cv.width - tw - pad * 2 - fs * .5, cv.height - fs * 1.9, tw + pad * 2, fs * 1.6);
+  g.fillStyle = '#475569';
+  g.fillText(txt, cv.width - pad - fs * .5, cv.height - fs * .65);
 }
+
 async function buildOutputs(progressCb) {
-  const idf = S.pages.find(p => p.type === 'idf'), idb = S.pages.find(p => p.type === 'idb');
-  const merge = S.set.mergeId && idf && idb, outs = [];
+  const idf = S.pages.find(p => p.type === 'idf');
+  const idb = S.pages.find(p => p.type === 'idb');
+  const merge = S.set.mergeId && idf && idb;
+  const outs = [];
   const total = S.pages.length + (merge ? 1 : 0);
   let done = 0;
   const tick = () => { done++; progressCb && progressCb(done, total); };
@@ -841,15 +975,18 @@ async function buildOutputs(progressCb) {
     if (merge && p === idb) { tick(); continue; }
     let obj, label = p.label, merged = false;
     if (merge && p === idf) {
-      const a = await renderPage(idf), b = await renderPage(idb);
-      obj = mergeCards(a, b, S.set.mergeLayout); label = 'البطاقة (وجه + ظهر)'; merged = true;
+      const a = await renderPage(idf);
+      const b = await renderPage(idb);
+      obj = mergeCards(a, b);
+      label = 'البطاقة (وجه + ظهر)';
+      merged = true;
     } else {
       obj = await renderPage(p);
     }
     stamp(obj.canvas);
-    outs.push({ label, canvas: obj.canvas, cm: obj.cm, dpi: obj.dpi, eff: obj.eff, merged });
+    outs.push({ label, canvas: obj.canvas, cm: obj.cm, dpi: obj.dpi, merged });
     tick();
-    await sleep(0);
+    await idle();
   }
   return outs;
 }
@@ -858,236 +995,241 @@ async function buildOutputs(progressCb) {
    الصفحات
 ===================================================================== */
 function makeLabel(type) {
-  const base = typeOf(type).label, n = S.pages.filter(p => p.type === type).length;
+  const base = typeOf(type).label;
+  const n = S.pages.filter(p => p.type === type).length;
   return n ? base + ' ' + (n + 1) : base;
 }
 function applyBlob(p, blob, corners, q) {
   if (p.url) URL.revokeObjectURL(p.url);
-  p.blob = blob; p.url = URL.createObjectURL(blob); p.corners = corners; p.rot = 0; p.q = q; p.turl = null;
-  const c = bmCache.get(p.id); if (c && c.bm.close) c.bm.close(); bmCache.delete(p.id);
+  p.blob = blob;
+  p.url = URL.createObjectURL(blob);
+  p.corners = corners;
+  p.rot = 0;
+  p.q = q;
+  p.turl = null;
+  const c = bmCache.get(p.id);
+  if (c && c.bm && c.bm.close) c.bm.close();
+  bmCache.delete(p.id);
+  invalidatePageCache(p);
 }
-async function addCaptured(blob, guide) {
-  const bm = await decode(blob), { w, h } = dimsOf(bm);
-  const q = sharpness(drawSmall(bm, 400));
+async function addCaptured(blob) {
+  const bm = await decode(blob);
+  const small = drawSmall(bm, 400);
+  const q = sharpness(small);
+
+  // حساب AR المستهدف حسب النوع الحالي
+  const t = typeOf(S.curType);
+  const z = SIZES[t.size];
+  const targetAR = z.w / z.h;
+
+  const detectSrc = drawSmall(bm, 700);
+  const corners = detectQuad(detectSrc, targetAR) || defaultCorners();
+
+  if (bm.close) bm.close();
+
   let target = null;
   if (S.replaceId) target = S.pages.find(p => p.id === S.replaceId);
   else if (S.curType === 'idf' || S.curType === 'idb') target = S.pages.find(p => p.type === S.curType);
-  const p = target || { id: newId(), type: S.curType, label: makeLabel(S.curType), crop: true, mode: '', size: '' };
-  const k = effSize(p);
-  // 1) كشف تلقائي للحواف مع التحقق من أن نسبته تناسب المقاس  2) وإلا: إطار الكاميرا نفسه  3) وإلا: مستطيل مركزي بنسبة صحيحة
-  let corners = detectQuad(drawSmall(bm, 700)), det = 'auto';
-  if (corners && !quadFits(corners, w, h, k)) corners = null;
-  if (!corners) { corners = guide || fitCorners(w, h, k); det = guide ? 'guide' : 'fb'; }
-  if (bm.close) bm.close();
-  applyBlob(p, blob, corners, q);
-  p.crop = true; p.det = det;
-  normalizeOrientation(p, w, h);
-  if (target) { S.replaceId = null; toast('تم استبدال الصورة'); } else S.pages.push(p);
-  if (S.curType === 'idf') S.curType = 'idb'; else if (S.curType === 'idb') S.curType = 'other';
-  updateCam(); saveDraft();
+
+  if (target) {
+    applyBlob(target, blob, corners, q);
+    S.replaceId = null;
+    toast('تم استبدال الصورة');
+  } else {
+    const p = { id: newId(), type: S.curType, label: makeLabel(S.curType), crop: true, mode: '', size: '' };
+    applyBlob(p, blob, corners, q);
+    S.pages.push(p);
+  }
+  if (S.curType === 'idf') S.curType = 'idb';
+  else if (S.curType === 'idb') S.curType = 'other';
+  updateCam();
+  saveDraft();
   if (q < 20) toast('⚠️ الصورة غير واضحة — يُفضّل إعادة التصوير', 3600);
 }
 
 /* =====================================================================
-   الكاميرا
+   ✅ الكاميرا — مع فلاش محسّن + احتياطي شاشة
 ===================================================================== */
-/* =====================================================================
-   الكاميرا — المعاينة تُرسم عبر canvas (تتجاوز مشكلة الشاشة السوداء في <video>)
-   + كشف حي لحدود المستند + التقاط تلقائي اختياري
-===================================================================== */
-let stream = null, facing = 'environment', torchOn = false, wake = null, camGen = 0;
-const CAM = { raf: 0, last: 0, det: 0, quad: null, stable: 0, sharp: 0, lastCap: 0, needMove: false, auto: false, tf: null, busy: false, dark: 0 };
-try { CAM.auto = localStorage.getItem('aidAuto') === '1'; } catch (e) {}
-const camSmall = mkCanvas(400, 300), camSg = camSmall.getContext('2d', { willReadFrequently: true });
-const camTiny = mkCanvas(8, 6), camTg = camTiny.getContext('2d', { willReadFrequently: true });
+let stream = null, facing = 'environment', torchOn = false, meterT = null, wake = null;
+let torchSupported = null; // null = لم يُختبر بعد, true/false
+let screenFlashOn = false;
 
-const setMeter = t => { $('meter').textContent = t; };
-function showCamErr(msg) { stopCam(); $('camErrMsg').textContent = msg; $('camErr').classList.remove('hidden'); }
-function camErrText(e) {
-  const n = e && e.name;
-  if (n === 'NotAllowedError' || n === 'SecurityError') return 'تم رفض إذن الكاميرا. اسمح للمتصفح باستخدامها من إعدادات الموقع، وتأكد أن الصفحة مفتوحة عبر HTTPS.';
-  if (n === 'NotFoundError') return 'لم يتم العثور على كاميرا في هذا الجهاز.';
-  if (n === 'NotReadableError') return 'الكاميرا مستخدمة من تطبيق آخر. أغلق التطبيقات الأخرى ثم أعد المحاولة.';
-  return 'تعذّر تشغيل الكاميرا' + (n ? ' (' + n + ')' : '') + '. جرّب البدائل بالأسفل.';
-}
-async function openStream() {
-  const base = { facingMode: { ideal: facing } };
-  const tries = [
-    { video: { ...base, width: { ideal: 2560 }, height: { ideal: 1440 } }, audio: false },
-    { video: { ...base, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false },
-    { video: base, audio: false },
-    { video: true, audio: false }
-  ];
-  let last;
-  for (const c of tries) {
-    try { return await navigator.mediaDevices.getUserMedia(c); }
-    catch (e) { last = e; if (e && (e.name === 'NotAllowedError' || e.name === 'SecurityError' || e.name === 'NotFoundError')) break; }
-  }
-  throw last;
-}
-async function waitFrames(v, ms) {
-  const t0 = performance.now();
-  while (performance.now() - t0 < ms) { if (v.videoWidth > 0 && v.readyState >= 2) return true; await sleep(80); }
-  return false;
-}
 async function startCam() {
   stopCam();
-  const my = ++camGen;
-  $('camErr').classList.add('hidden'); $('camTap').classList.add('hidden');
-  setMeter('⏳ جارٍ تشغيل الكاميرا');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showCamErr('المتصفح لا يدعم الكاميرا، أو الصفحة غير مفتوحة عبر HTTPS.'); return; }
+  $('camErr').classList.add('hidden');
+  $('meter').textContent = '⏳ جارٍ تشغيل الكاميرا';
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    $('camErr').classList.remove('hidden');
+    return;
+  }
   try {
-    const st = await openStream();
-    if (my !== camGen) { st.getTracks().forEach(t => t.stop()); return; }
-    stream = st;
-    const v = $('video'); v.muted = true; v.setAttribute('playsinline', ''); v.srcObject = st;
-    try { await v.play(); } catch (e) {}
-    const tr = st.getVideoTracks()[0], caps = tr.getCapabilities ? tr.getCapabilities() : {};
-    $('btnTorch').classList.toggle('hidden', !caps.torch); torchOn = false; $('btnTorch').classList.remove('on');
-    setupZoom(caps, tr);
-    try { if (caps.focusMode && caps.focusMode.includes('continuous')) await tr.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }); } catch (e) {}
-    CAM.stable = 0; CAM.quad = null; CAM.needMove = false; CAM.dark = 0;
-    startLoop();
-    const ok = await waitFrames(v, 3500);
-    if (my !== camGen) return;
-    if (!ok) $('camTap').classList.remove('hidden');
-    try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
-  } catch (e) { if (my === camGen) showCamErr(camErrText(e)); }
-}
-function stopCam() {
-  camGen++;
-  cancelAnimationFrame(CAM.raf); CAM.raf = 0;
-  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-  try { $('video').srcObject = null; } catch (e) {}
-  try { if (wake) { wake.release(); wake = null; } } catch (e) {}
-}
-function setupZoom(caps, tr) {
-  const row = $('zoomRow');
-  try {
-    if (caps.zoom && caps.zoom.max > caps.zoom.min) {
-      const z = $('camZoom'), cur = (tr.getSettings && tr.getSettings().zoom) || caps.zoom.min;
-      z.min = caps.zoom.min; z.max = caps.zoom.max; z.step = caps.zoom.step || .1; z.value = cur;
-      $('zoomVal').textContent = (+cur).toFixed(1) + '×'; row.classList.remove('hidden'); return;
+    let s;
+    try {
+      s = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+        audio: false
+      });
+    } catch (e) {
+      s = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     }
-  } catch (e) {}
-  row.classList.add('hidden');
-}
-async function onZoom(e) {
-  const val = +e.target.value; $('zoomVal').textContent = val.toFixed(1) + '×';
-  try { await stream.getVideoTracks()[0].applyConstraints({ advanced: [{ zoom: val }] }); } catch (err) {}
-}
-async function toggleTorch() {
-  if (!stream) return; torchOn = !torchOn;
-  try { await stream.getVideoTracks()[0].applyConstraints({ advanced: [{ torch: torchOn }] }); $('btnTorch').classList.toggle('on', torchOn); }
-  catch (e) { torchOn = false; toast('الفلاش غير مدعوم'); }
+    stream = s;
+
+    const v = $('video');
+    v.setAttribute('playsinline', 'true');
+    v.setAttribute('webkit-playsinline', 'true');
+    v.setAttribute('autoplay', 'true');
+    v.muted = true;
+    v.playsInline = true;
+    v.srcObject = stream;
+
+    await new Promise((resolve, reject) => {
+      const startTime = Date.now();
+      const check = () => {
+        if (v.videoWidth > 0 && v.videoHeight > 0) return resolve();
+        if (Date.now() - startTime > 5000) return reject(new Error('timeout'));
+        requestAnimationFrame(check);
+      };
+      check();
+    });
+
+    let played = false;
+    try { await v.play(); played = true; } catch (e) {}
+
+    if (!played || v.paused) {
+      const resume = async () => { try { await v.play(); } catch (_) {} };
+      document.addEventListener('touchstart', resume, { once: true, passive: true });
+      document.addEventListener('click', resume, { once: true });
+    }
+
+    // ✅ التحقق من دعم الفلاش — محاولة تفعيله فعليًا
+    const tr = stream.getVideoTracks()[0];
+    torchSupported = null;
+    try {
+      await tr.applyConstraints({ advanced: [{ torch: true }] });
+      await tr.applyConstraints({ advanced: [{ torch: false }] });
+      torchSupported = true;
+    } catch (e) {
+      torchSupported = false;
+    }
+    // إظهار زر الفلاش دائمًا (سنستخدم شاشة بيضاء كاحتياط)
+    $('btnTorch').classList.remove('hidden');
+
+    try {
+      const caps = tr.getCapabilities ? tr.getCapabilities() : {};
+      if (caps.focusMode && caps.focusMode.includes('continuous')) {
+        await tr.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+      }
+    } catch (e) {}
+
+    startMeter();
+    requestAnimationFrame(setGuide);
+    try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
+  } catch (e) {
+    console.error('Camera error:', e);
+    $('camErr').classList.remove('hidden');
+    $('meter').textContent = '📵 تعذّر تشغيل الكاميرا';
+  }
 }
 
-/* ---------- حلقة الرسم ---------- */
-function startLoop() { cancelAnimationFrame(CAM.raf); CAM.raf = requestAnimationFrame(camFrame); }
-function camFrame(ts) {
-  CAM.raf = requestAnimationFrame(camFrame);
-  if (S.step !== 2 || ts - CAM.last < 30) return;
-  CAM.last = ts;
-  const v = $('video'), cv = $('camView');
-  if (!v.videoWidth || v.readyState < 2) return;
-  if (v.paused) { try { v.play(); } catch (e) {} }
-  const r = $('camwrap').getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const cw = Math.round(r.width * dpr), ch = Math.round(r.height * dpr);
-  if (!cw || !ch) return;
-  if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
-  const g = cv.getContext('2d'), vw = v.videoWidth, vh = v.videoHeight;
-  const sc = Math.max(cw / vw, ch / vh), dw = vw * sc, dh = vh * sc, ox = (cw - dw) / 2, oy = (ch - dh) / 2;
-  CAM.tf = { sc, dw, dh, ox, oy, cw, ch, vw, vh };
-  g.drawImage(v, ox, oy, dw, dh);
-  if (ts - CAM.det > 330) { CAM.det = ts; analyze(v); }
-  drawOverlay(g);
+function stopCam() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  clearInterval(meterT); meterT = null;
+  try { if (wake) { wake.release(); wake = null; } } catch (e) {}
+  // إطفاء الفلاش عند الإيقاف
+  screenFlashOn = false; torchOn = false;
+  $('screenFlash').classList.remove('on');
+  $('btnTorch').classList.remove('on');
 }
-/** مستطيل الإرشاد بنسبة المقاس الفعلي: بطاقة أفقية 8.56×5.4 — A4 رأسي */
-function guideRect(tf) {
-  const k = typeOf(S.curType).size, z = SIZES[k], big = Math.max(z.w, z.h), small = Math.min(z.w, z.h);
-  const asp = wantLandscape(k) ? big / small : small / big;                // العرض ÷ الطول
-  let gw = tf.cw * (wantLandscape(k) ? .9 : .86), gh = gw / asp;
-  if (gh > tf.ch * .84) { gh = tf.ch * .84; gw = gh * asp; }
-  if (gw > tf.cw * .94) { gw = tf.cw * .94; gh = gw / asp; }
-  return { x: (tf.cw - gw) / 2, y: (tf.ch - gh) / 2, w: gw, h: gh };
+
+function startMeter() {
+  clearInterval(meterT);
+  const c = mkCanvas(320, 240);
+  const g = c.getContext('2d', { willReadFrequently: true });
+  meterT = setInterval(() => {
+    const v = $('video');
+    if (!v.videoWidth || S.step !== 2) return;
+    c.width = 320;
+    c.height = Math.round(v.videoHeight * 320 / v.videoWidth);
+    g.drawImage(v, 0, 0, c.width, c.height);
+    const s = sharpness(c), el = $('meter');
+    el.textContent = s < 18 ? '🟠 ثبّت الجهاز وقرّب قليلًا' : s < 55 ? '🟡 جودة مقبولة' : '🟢 واضحة — التقط الآن';
+  }, 900);
 }
-/** أركان الإطار بإحداثيات الفيديو المعيارية (0..1) — تُستخدم احتياطيًا لو فشل كشف الحواف */
-function guideCornersNorm() {
-  const tf = CAM.tf; if (!tf) return null;
-  const r = guideRect(tf), cl = v => Math.min(1, Math.max(0, v));
-  const x0 = cl((r.x - tf.ox) / tf.dw), x1 = cl((r.x + r.w - tf.ox) / tf.dw), y0 = cl((r.y - tf.oy) / tf.dh), y1 = cl((r.y + r.h - tf.oy) / tf.dh);
-  return [{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }];
-}
-function rr(g, x, y, w, h, r) { g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
-function drawOverlay(g) {
-  const tf = CAM.tf, r = guideRect(tf), k = Math.max(1, tf.cw / 360);
-  g.save();
-  g.fillStyle = 'rgba(0,0,0,.40)'; g.beginPath(); g.rect(0, 0, tf.cw, tf.ch); rr(g, r.x, r.y, r.w, r.h, 12 * k); g.fill('evenodd');
-  g.lineWidth = 2 * k; g.strokeStyle = 'rgba(255,255,255,.9)'; g.beginPath(); rr(g, r.x, r.y, r.w, r.h, 12 * k); g.stroke();
-  const L = 26 * k; g.lineWidth = 4.5 * k; g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = '#14b8a6'; g.beginPath();
-  [[r.x, r.y, 1, 1], [r.x + r.w, r.y, -1, 1], [r.x + r.w, r.y + r.h, -1, -1], [r.x, r.y + r.h, 1, -1]].forEach(([x, y, sx, sy]) => { g.moveTo(x, y + sy * L); g.lineTo(x, y); g.lineTo(x + sx * L, y); });
-  g.stroke();
-  if (CAM.quad) {
-    const P = CAM.quad.map(p => [tf.ox + p.x * tf.dw, tf.oy + p.y * tf.dh]), hot = CAM.auto && CAM.stable >= 2 && !CAM.needMove;
-    g.beginPath(); P.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath();
-    g.fillStyle = hot ? 'rgba(251,191,36,.16)' : 'rgba(20,184,166,.16)'; g.fill();
-    g.lineWidth = 3 * k; g.strokeStyle = hot ? '#fbbf24' : '#34d399'; g.stroke();
-    P.forEach(p => { g.beginPath(); g.arc(p[0], p[1], 5 * k, 0, 7); g.fillStyle = '#fff'; g.fill(); });
+
+/** ✅ فلاش ذكي: torch إن أمكن، وإلا شاشة بيضاء */
+async function toggleTorch() {
+  if (!stream) { toast('الكاميرا غير جاهزة'); return; }
+
+  // محاولة استخدام torch الحقيقي
+  if (torchSupported !== false) {
+    try {
+      const tr = stream.getVideoTracks()[0];
+      torchOn = !torchOn;
+      await tr.applyConstraints({ advanced: [{ torch: torchOn }] });
+      $('btnTorch').classList.toggle('on', torchOn);
+      torchSupported = true;
+      if (torchOn) screenFlashOn = false, $('screenFlash').classList.remove('on');
+      return;
+    } catch (e) {
+      torchSupported = false;
+    }
   }
-  g.restore();
+
+  // ✅ احتياطي: شاشة بيضاء (يعمل دائمًا)
+  screenFlashOn = !screenFlashOn;
+  $('screenFlash').classList.toggle('on', screenFlashOn);
+  $('btnTorch').classList.toggle('on', screenFlashOn);
+  if (screenFlashOn) toast('💡 وضع الإضاءة عبر الشاشة', 1800);
 }
-/** تحليل دوري: وضوح الصورة + رصد المستند + ثبات + التقاط تلقائي */
-function analyze(v) {
-  const sh = Math.max(2, Math.round(v.videoHeight * 400 / v.videoWidth));
-  if (camSmall.width !== 400 || camSmall.height !== sh) { camSmall.width = 400; camSmall.height = sh; }
-  camSg.drawImage(v, 0, 0, 400, sh);
-  camTg.drawImage(camSmall, 0, 0, 8, 6);
-  const px = camTg.getImageData(0, 0, 8, 6).data; let lum = 0;
-  for (let i = 0; i < px.length; i += 4) lum += .299 * px[i] + .587 * px[i + 1] + .114 * px[i + 2];
-  CAM.dark = (lum / 48) < 4 ? CAM.dark + 1 : 0;
-  CAM.sharp = sharpness(camSmall);
-  let q = null;
-  try { q = detectQuad(camSmall); } catch (e) {}
-  if (q && !quadFits(q, 400, sh, typeOf(S.curType).size)) q = null;
-  if (q) {
-    const prev = CAM.quad, moved = prev ? Math.max(...q.map((p, i) => Math.hypot(p.x - prev[i].x, p.y - prev[i].y))) : 1;
-    CAM.stable = moved < .03 ? CAM.stable + 1 : 0;
-    if (moved > .08) CAM.needMove = false;
-  } else { CAM.stable = 0; CAM.needMove = false; }
-  CAM.quad = q;
-  const need = 4, armed = CAM.auto && q && CAM.sharp >= 35 && !CAM.needMove;
-  let t;
-  if (CAM.dark >= 6) t = '⚠️ لا توجد صورة — الكاميرا مغطاة أو مشغولة';
-  else if (armed) t = '⚡ ثبّت الجهاز… جارٍ الالتقاط';
-  else {
-    t = CAM.sharp < 18 ? '🟠 ثبّت الجهاز وقرّب قليلًا' : CAM.sharp < 55 ? '🟡 جودة مقبولة' : '🟢 واضحة';
-    t += q ? ' • ✓ رُصد المستند' : ' • ضعه داخل الإطار';
-  }
-  setMeter(t);
-  const bar = $('autoBar'); bar.classList.toggle('hidden', !CAM.auto);
-  bar.firstElementChild.style.width = armed ? Math.min(100, CAM.stable / need * 100) + '%' : '0%';
-  if (armed && CAM.stable >= need && performance.now() - CAM.lastCap > 2000 && !CAM.busy) { vibrate(20); shot(); }
-}
+
 async function shot() {
-  const v = $('video'); if (!v.videoWidth) { toast('الكاميرا غير جاهزة بعد'); return; }
-  if (CAM.busy) return; CAM.busy = true;
-  try {
-    const f = $('flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); vibrate(35);
-    const guide = guideCornersNorm();
-    const sc = Math.min(1, 3000 / Math.max(v.videoWidth, v.videoHeight));
-    const c = mkCanvas(v.videoWidth * sc, v.videoHeight * sc); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
-    await addCaptured(await toBlob(c, .92), guide);
-  } finally { CAM.busy = false; CAM.lastCap = performance.now(); CAM.needMove = true; }
+  const v = $('video');
+  if (!v.videoWidth) { toast('الكاميرا غير جاهزة بعد'); return; }
+  const f = $('flash');
+  f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+  vibrate(35);
+  const sc = Math.min(1, 2600 / Math.max(v.videoWidth, v.videoHeight));
+  const c = mkCanvas(v.videoWidth * sc, v.videoHeight * sc);
+  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+  await addCaptured(await toBlob(c, .92));
 }
+
 async function onFiles(files) {
-  const list = [...files].filter(f => f.type.startsWith('image/')); if (!list.length) return;
+  const list = [...files].filter(f => f.type.startsWith('image/'));
+  if (!list.length) return;
   toast('جارٍ إضافة ' + list.length + ' صورة...');
   for (const f of list) await addCaptured(f);
   toast('✓ تمت الإضافة');
 }
 
+function setGuide() {
+  const camwrap = $('camwrap'), g = $('guide');
+  if (!camwrap || !g) return;
+  const w = camwrap.clientWidth, h = camwrap.clientHeight;
+  if (!w || !h) return;
+  const t = typeOf(S.curType);
+  const z = SIZES[t.size];
+  const ar = z.w / z.h;
+  const margin = 0.86;
+  const maxW = w * margin, maxH = h * margin;
+  let gw, gh;
+  if (ar >= 1) {
+    gw = maxW;
+    gh = gw / ar;
+    if (gh > maxH) { gh = maxH; gw = gh * ar; }
+  } else {
+    gh = maxH;
+    gw = gh * ar;
+    if (gw > maxW) { gw = maxW; gh = gw / ar; }
+  }
+  g.style.width = Math.round(gw) + 'px';
+  g.style.height = Math.round(gh) + 'px';
+}
+
 function updateCam() {
-  const wrap = $('typeChips'); wrap.innerHTML = '';
+  const wrap = $('typeChips');
+  wrap.innerHTML = '';
   TYPES.forEach(t => {
     const n = S.pages.filter(p => p.type === t.k).length;
     const b = document.createElement('button');
@@ -1096,17 +1238,19 @@ function updateCam() {
     b.onclick = () => { S.curType = t.k; S.replaceId = null; updateCam(); };
     wrap.appendChild(b);
   });
-  const t = typeOf(S.curType), z = SIZES[t.size];
-  CAM.stable = 0;
-  $('typePill').textContent = (S.replaceId ? '🔁 استبدال: ' : '📌 ') + t.label + ' · ' + z.short;
+  const t = typeOf(S.curType);
+  $('typePill').textContent = (S.replaceId ? '🔁 استبدال: ' : '📌 ') + t.label + ' · ' + SIZES[t.size].short;
+  requestAnimationFrame(setGuide);
   const st = $('strip');
-  if (!S.pages.length) st.innerHTML = '<span class="empty">لا توجد صور بعد — ابدأ بالتقاط الوجه الأمامي للبطاقة.</span>';
+  if (!S.pages.length) st.innerHTML = '<span class="empty">لا توجد صور بعد.</span>';
   else {
     st.innerHTML = '';
     S.pages.forEach((p, i) => {
-      const d = document.createElement('div'); d.className = 'st';
-      d.innerHTML = '<img src="' + p.url + '" alt=""><b>' + (i + 1) + '</b>';
-      d.onclick = () => openEditor(p.id); st.appendChild(d);
+      const d = document.createElement('div');
+      d.className = 'st';
+      d.innerHTML = '<img src="' + (p.turl || p.url) + '" alt=""><b>' + (i + 1) + '</b>';
+      d.onclick = () => openEditor(p.id);
+      st.appendChild(d);
     });
   }
   $('b2next').textContent = 'مراجعة وتحسين (' + S.pages.length + ') ←';
@@ -1117,18 +1261,20 @@ function updateCam() {
 ===================================================================== */
 function renderGrid() {
   const g = $('grid');
-  if (!S.pages.length) { g.innerHTML = '<div class="empty-grid" style="grid-column:1/-1">لا توجد صفحات. أضف مستندات من خطوة التصوير.</div>'; return; }
+  if (!S.pages.length) {
+    g.innerHTML = '<div class="empty-grid" style="grid-column:1/-1">لا توجد صفحات.</div>';
+    return;
+  }
   g.innerHTML = '';
   S.pages.forEach((p, i) => {
     const szKey = effSize(p);
     const sizeLabel = szKey ? SIZES[szKey].short : 'حر';
-    const d = document.createElement('div'); d.className = 'tile'; d.dataset.tid = p.id;
+    const d = document.createElement('div');
+    d.className = 'tile'; d.dataset.tid = p.id;
     d.innerHTML =
       '<div class="im" data-act="edit"><img src="' + (p.turl || p.url) + '" alt=""></div>' +
       '<span class="q ' + qClass(p.q || 100) + '">' + qText(p.q || 100) + '</span>' +
-      '<div class="meta"><b>' + (i + 1) + '</b><span>' + esc(p.label) + '</span>' +
-      '<span class="sz">' + sizeLabel + '</span>' +
-      (p.det === 'fb' ? '<span class="sz" style="background:rgba(245,158,11,.18);color:var(--warn)">⚠️ راجع القص</span>' : p.det === 'guide' ? '<span class="sz">حسب الإطار</span>' : '') + '</div>' +
+      '<div class="meta"><b>' + (i + 1) + '</b><span>' + esc(p.label) + '</span><span class="sz">' + sizeLabel + '</span></div>' +
       '<div class="tb">' +
         '<button data-act="up" title="أعلى">▲</button><button data-act="down" title="أسفل">▼</button>' +
         '<button data-act="edit" title="تعديل">✂️</button><button data-act="del" title="حذف">🗑</button></div>';
@@ -1136,18 +1282,29 @@ function renderGrid() {
   });
 }
 $('grid').addEventListener('click', e => {
-  const b = e.target.closest('[data-act]'); if (!b) return;
-  const id = b.closest('.tile').dataset.tid, i = S.pages.findIndex(p => p.id === id), act = b.dataset.act;
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const id = b.closest('.tile').dataset.tid;
+  const i = S.pages.findIndex(p => p.id === id);
+  const act = b.dataset.act;
   if (act === 'edit') openEditor(id);
   else if (act === 'up' && i > 0) { [S.pages[i - 1], S.pages[i]] = [S.pages[i], S.pages[i - 1]]; renderGrid(); saveDraft(); }
   else if (act === 'down' && i < S.pages.length - 1) { [S.pages[i + 1], S.pages[i]] = [S.pages[i], S.pages[i + 1]]; renderGrid(); saveDraft(); }
   else if (act === 'del') { if (confirm('حذف هذه الصفحة؟')) deletePage(id); }
 });
 function deletePage(id) {
-  const i = S.pages.findIndex(p => p.id === id); if (i < 0) return;
-  const p = S.pages[i]; if (p.url) URL.revokeObjectURL(p.url);
-  const c = bmCache.get(id); if (c && c.bm.close) c.bm.close(); bmCache.delete(id);
-  S.pages.splice(i, 1); renderGrid(); updateCam(); saveDraft();
+  const i = S.pages.findIndex(p => p.id === id);
+  if (i < 0) return;
+  const p = S.pages[i];
+  if (p.url) URL.revokeObjectURL(p.url);
+  const c = bmCache.get(id);
+  if (c && c.bm && c.bm.close) c.bm.close();
+  bmCache.delete(id);
+  invalidatePageCache(p);
+  S.pages.splice(i, 1);
+  renderGrid();
+  updateCam();
+  saveDraft();
 }
 let thumbTok = 0;
 async function refreshThumbs() {
@@ -1155,25 +1312,36 @@ async function refreshThumbs() {
   for (const p of S.pages) {
     if (tok !== thumbTok) return;
     try {
-      const r = await renderPage(p, 520); if (tok !== thumbTok) return;
-      p.turl = r.canvas.toDataURL('image/jpeg', .72);
-      const im = document.querySelector('[data-tid="' + p.id + '"] img'); if (im) im.src = p.turl;
+      const r = await renderPage(p, 400);
+      if (tok !== thumbTok) return;
+      p.turl = r.canvas.toDataURL('image/jpeg', .65);
+      const im = document.querySelector('[data-tid="' + p.id + '"] img');
+      if (im) im.src = p.turl;
     } catch (e) { console.error(e); }
   }
 }
-const refreshDebounced = debounce(refreshThumbs, 250);
+const refreshDebounced = debounce(refreshThumbs, 300);
 
 /* =====================================================================
    الإعدادات
 ===================================================================== */
 function buildModeUI() {
-  const w = $('modeChips'); w.innerHTML = '';
+  const w = $('modeChips');
+  w.innerHTML = '';
   MODES.forEach(m => {
-    const b = document.createElement('button'); b.className = 'chip' + (S.set.mode === m.k ? ' on' : ''); b.textContent = m.label;
-    b.onclick = () => { S.set.mode = m.k; buildModeUI(); syncSettingsUI(); saveDraft(); refreshDebounced(); };
+    const b = document.createElement('button');
+    b.className = 'chip' + (S.set.mode === m.k ? ' on' : '');
+    b.textContent = m.label;
+    b.onclick = () => {
+      S.set.mode = m.k;
+      buildModeUI(); syncSettingsUI();
+      invalidateAllRenderCache();
+      saveDraft(); refreshDebounced();
+    };
     w.appendChild(b);
   });
-  const sel = $('edMode'); sel.innerHTML = '<option value="">حسب الإعداد العام</option>' + MODES.map(m => '<option value="' + m.k + '">' + m.label + '</option>').join('');
+  const sel = $('edMode');
+  sel.innerHTML = '<option value="">حسب الإعداد العام</option>' + MODES.map(m => '<option value="' + m.k + '">' + m.label + '</option>').join('');
 }
 function syncSettingsUI() {
   const s = S.set;
@@ -1182,105 +1350,287 @@ function syncSettingsUI() {
   $('rSharp').value = s.sharp; $('oSharp').textContent = s.sharp;
   $('rThr').value = s.thr; $('oThr').textContent = s.thr;
   $('thrWrap').classList.toggle('hidden', s.mode !== 'bw' && !S.pages.some(p => p.mode === 'bw'));
-  $('tCrop').checked = s.autoCrop; $('tFixed').checked = s.fixedSize; $('tMerge').checked = s.mergeId; $('tStamp').checked = s.stamp;
-  $('selMerge').value = s.mergeLayout || 'compact'; $('mergeLayoutWrap').classList.toggle('hidden', !s.mergeId);
+  $('tCrop').checked = s.autoCrop;
+  $('tFixed').checked = s.fixedSize;
+  $('tMerge').checked = s.mergeId;
+  $('tStamp').checked = s.stamp;
 }
 function bindSettings() {
-  const num = (id, key) => $(id).addEventListener('input', e => { S.set[key] = +e.target.value; syncSettingsUI(); saveDraft(); refreshDebounced(); });
+  const num = (id, key) => $(id).addEventListener('input', e => {
+    S.set[key] = +e.target.value;
+    syncSettingsUI();
+    invalidateAllRenderCache();
+    saveDraft();
+    refreshDebounced();
+  });
   num('rBri', 'brightness'); num('rCon', 'contrast'); num('rSharp', 'sharp'); num('rThr', 'thr');
-  const tog = (id, key, redo) => $(id).addEventListener('change', e => { S.set[key] = e.target.checked; saveDraft(); if (redo) refreshDebounced(); });
-  tog('tCrop', 'autoCrop', true); tog('tFixed', 'fixedSize', true); tog('tMerge', 'mergeId'); tog('tStamp', 'stamp');
-  $('tMerge').addEventListener('change', syncSettingsUI);
-  $('selMerge').onchange = e => { S.set.mergeLayout = e.target.value; saveDraft(); };
-  $('bReset').onclick = () => { S.set = { ...DEFAULTS, quality: S.set.quality, pdfFit: S.set.pdfFit }; buildModeUI(); syncSettingsUI(); saveDraft(); refreshThumbs(); };
+  const tog = (id, key, redo) => $(id).addEventListener('change', e => {
+    S.set[key] = e.target.checked;
+    invalidateAllRenderCache();
+    saveDraft();
+    if (redo) refreshDebounced();
+  });
+  tog('tCrop', 'autoCrop', true); tog('tFixed', 'fixedSize', true);
+  tog('tMerge', 'mergeId'); tog('tStamp', 'stamp');
+  $('bReset').onclick = () => {
+    S.set = { ...DEFAULTS, quality: S.set.quality, pdfFit: S.set.pdfFit };
+    invalidateAllRenderCache();
+    buildModeUI(); syncSettingsUI(); saveDraft(); refreshThumbs();
+  };
 }
 
 /* =====================================================================
-   المحرر
+   ✅ المحرر — مع سحب الأضلاع كاملة
 ===================================================================== */
-const ED = { p: null, rot: 0, corners: null, src: null, drag: -1 };
+const ED = { p: null, rot: 0, corners: null, src: null, drag: null };
+
 async function buildEdSrc() {
   ED.src = await srcCanvas(ED.p, ED.rot, 1400);
-  const c = $('edCanvas'); c.width = ED.src.width; c.height = ED.src.height;
-  const od = rotDims(await getBitmap(ED.p), ED.rot); ED.ow = od.w; ED.oh = od.h;
+  const c = $('edCanvas');
+  c.width = ED.src.width;
+  c.height = ED.src.height;
 }
+
+/**
+ * ✅ اكتشاف المنطقة التي تم لمسها:
+ *  - ركن (0-3): نقطة على الزاوية
+ *  - ضلع (0-3): نقطة في منتصف الضلع
+ *  - نقطة داخلية (i): النقطة داخل المضلع
+ */
+function hitTest(x, y, corners, w, h) {
+  const pts = corners.map(c => [c.x * w, c.y * h]);
+  const HIT_RADIUS = 40;
+  // 1. الأركان
+  for (let i = 0; i < 4; i++) {
+    if (Math.hypot(pts[i][0] - x, pts[i][1] - y) < HIT_RADIUS) {
+      return { kind: 'corner', i };
+    }
+  }
+  // 2. منتصف الأضلاع
+  for (let i = 0; i < 4; i++) {
+    const a = pts[i], b = pts[(i + 1) % 4];
+    const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+    if (Math.hypot(mx - x, my - y) < HIT_RADIUS) {
+      return { kind: 'edge', i };
+    }
+  }
+  return null;
+}
+
 function drawEd() {
-  const c = $('edCanvas'), g = c.getContext('2d'), w = c.width, h = c.height;
-  g.clearRect(0, 0, w, h); g.drawImage(ED.src, 0, 0);
-  updateEdInfo();
+  const c = $('edCanvas'), g = c.getContext('2d');
+  const w = c.width, h = c.height;
+  g.clearRect(0, 0, w, h);
+  g.drawImage(ED.src, 0, 0);
+
   if (!$('edCrop').checked) return;
-  const P = ED.corners.map(q => [q.x * w, q.y * h]), k = w / (c.getBoundingClientRect().width || w);
-  g.save(); g.fillStyle = 'rgba(0,0,0,.52)'; g.beginPath(); g.rect(0, 0, w, h);
-  g.moveTo(P[0][0], P[0][1]); P.slice(1).forEach(q => g.lineTo(q[0], q[1])); g.closePath(); g.fill('evenodd'); g.restore();
-  g.strokeStyle = '#14b8a6'; g.lineWidth = 2.5 * k; g.beginPath(); g.moveTo(P[0][0], P[0][1]); P.slice(1).forEach(q => g.lineTo(q[0], q[1])); g.closePath(); g.stroke();
-  P.forEach(q => { g.beginPath(); g.arc(q[0], q[1], 13 * k, 0, 7); g.fillStyle = 'rgba(255,255,255,.95)'; g.fill(); g.lineWidth = 3 * k; g.strokeStyle = '#0f766e'; g.stroke(); });
+
+  const P = ED.corners.map(q => [q.x * w, q.y * h]);
+  const k = w / (c.getBoundingClientRect().width || w);
+
+  // تعتيم الخارج
+  g.save();
+  g.fillStyle = 'rgba(0,0,0,.52)';
+  g.beginPath();
+  g.rect(0, 0, w, h);
+  g.moveTo(P[0][0], P[0][1]);
+  P.slice(1).forEach(q => g.lineTo(q[0], q[1]));
+  g.closePath();
+  g.fill('evenodd');
+  g.restore();
+
+  // إطار المستطيل
+  g.strokeStyle = '#14b8a6';
+  g.lineWidth = 2.5 * k;
+  g.beginPath();
+  g.moveTo(P[0][0], P[0][1]);
+  P.slice(1).forEach(q => g.lineTo(q[0], q[1]));
+  g.closePath();
+  g.stroke();
+
+  // دوائر الأركان (بيضاء)
+  P.forEach(q => {
+    g.beginPath();
+    g.arc(q[0], q[1], 14 * k, 0, 7);
+    g.fillStyle = 'rgba(255,255,255,.95)';
+    g.fill();
+    g.lineWidth = 3 * k;
+    g.strokeStyle = '#0f766e';
+    g.stroke();
+  });
+
+  // ✅ نقاط منتصف الأضلاع (صفراء مميزة)
+  for (let i = 0; i < 4; i++) {
+    const a = P[i], b = P[(i + 1) % 4];
+    const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+    g.beginPath();
+    g.arc(mx, my, 12 * k, 0, 7);
+    g.fillStyle = '#fbbf24';
+    g.fill();
+    g.lineWidth = 2.5 * k;
+    g.strokeStyle = '#b45309';
+    g.stroke();
+    // خط صغير يوضح الاتجاه العمودي
+    const dx = (b[0] - a[0]), dy = (b[1] - a[1]);
+    const len = Math.hypot(dx, dy);
+    const px = -dy / len, py = dx / len;
+    g.strokeStyle = '#b45309';
+    g.lineWidth = 2 * k;
+    g.beginPath();
+    g.moveTo(mx - px * 18 * k, my - py * 18 * k);
+    g.lineTo(mx + px * 18 * k, my + py * 18 * k);
+    g.stroke();
+  }
 }
+
 async function openEditor(id) {
-  const p = S.pages.find(x => x.id === id); if (!p) return;
-  ED.p = p; ED.rot = p.rot || 0; ED.corners = (p.corners || defaultCorners()).map(c => ({ ...c })); ED.drag = -1;
-  $('edLabel').value = p.label; $('edMode').value = p.mode || ''; $('edSize').value = p.size || ''; $('edCrop').checked = p.crop !== false;
-  $('editor').classList.remove('hidden'); document.body.style.overflow = 'hidden';
-  await buildEdSrc(); drawEd();
+  const p = S.pages.find(x => x.id === id);
+  if (!p) return;
+  ED.p = p;
+  ED.rot = p.rot || 0;
+  ED.corners = (p.corners || defaultCorners()).map(c => ({ ...c }));
+  ED.drag = null;
+  $('edLabel').value = p.label;
+  $('edMode').value = p.mode || '';
+  $('edSize').value = p.size || '';
+  $('edCrop').checked = p.crop !== false;
+  $('editor').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  await buildEdSrc();
+  drawEd();
 }
-function closeEditor() { $('editor').classList.add('hidden'); document.body.style.overflow = ''; ED.p = null; }
-function edSizeKey() { return ED.p ? effSizeFor(ED.p.type, $('edSize').value) : null; }
-/** سطر معلومات مباشر: المقاس الناتج واتجاهه والدقة الفعلية */
-function updateEdInfo() {
-  const el = $('edInfo'); if (!el || !ED.src || !ED.p) return;
-  const k = edSizeKey(), crop = $('edCrop').checked;
-  if (!crop) { el.className = 'notice'; el.textContent = 'بدون قص — تُحفظ الصورة كما صُوّرت (بلا مقاس محدد).'; return; }
-  if (!k) { el.className = 'notice'; el.textContent = 'مقاس حر — لن يُفرض مقاس محدد.'; return; }
-  const z = SIZES[k], land = wantLandscape(k);
-  const w = land ? Math.max(z.w, z.h) : Math.min(z.w, z.h), h = land ? Math.min(z.w, z.h) : Math.max(z.w, z.h);
-  const bad = orientMismatch(k, ED.corners, ED.src.width, ED.src.height);
-  const eff = Math.min(z.dpi, effDpiOf(ED.corners, ED.ow, ED.oh, k)), low = eff < 200;
-  el.className = (bad || low) ? 'notice' : 'notice ok';
-  el.textContent = (bad ? '⚠️ الإطار الحالي ' + (land ? 'رأسي' : 'أفقي') + ' وسيُدوَّر تلقائيًا عند الحفظ. ' : '✓ ') +
-    'الناتج: العرض ' + w + ' سم × الطول ' + h + ' سم (' + (land ? 'أفقي' : 'رأسي') + ') · جودة فعلية ≈ ' + eff + ' DPI' + (low ? ' — منخفضة، قرّب أكثر عند التصوير' : '');
+function closeEditor() {
+  $('editor').classList.add('hidden');
+  document.body.style.overflow = '';
+  ED.p = null;
+  ED.drag = null;
 }
-async function edRotate(dir) { ED.rot = (ED.rot + (dir > 0 ? 90 : 270)) % 360; ED.corners = rotCorners(ED.corners, dir); await buildEdSrc(); drawEd(); }
+async function edRotate(dir) {
+  ED.rot = (ED.rot + (dir > 0 ? 90 : 270)) % 360;
+  ED.corners = rotCorners(ED.corners, dir);
+  await buildEdSrc();
+  drawEd();
+}
+
+/** ✅ سحب ركن: فقط النقطة نفسها تتحرك */
+function moveCorner(cornerIdx, nx, ny) {
+  ED.corners[cornerIdx].x = Math.min(1, Math.max(0, nx));
+  ED.corners[cornerIdx].y = Math.min(1, Math.max(0, ny));
+}
+
+/** ✅ سحب ضلع: يتحرك الركنان معًا بشكل متعامد على الضلع */
+function moveEdge(edgeIdx, x, y, w, h) {
+  const corners = ED.corners;
+  const i0 = edgeIdx;
+  const i1 = (edgeIdx + 1) % 4;
+  const a = { x: corners[i0].x * w, y: corners[i0].y * h };
+  const b = { x: corners[i1].x * w, y: corners[i1].y * h };
+  // نقطة المنتصف
+  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+  // اتجاه عمودي على الضلع
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const px = -dy / len, py = dx / len;
+  // إسقاط إزاحة الماوس على الاتجاه العمودي
+  const delta = (x - mx) * px + (y - my) * py;
+  // تحريك الطرفين بنفس المقدار في اتجاه العمودي
+  const na = { x: (a.x + px * delta) / w, y: (a.y + py * delta) / h };
+  const nb = { x: (b.x + px * delta) / w, y: (b.y + py * delta) / h };
+  corners[i0].x = Math.min(1, Math.max(0, na.x));
+  corners[i0].y = Math.min(1, Math.max(0, na.y));
+  corners[i1].x = Math.min(1, Math.max(0, nb.x));
+  corners[i1].y = Math.min(1, Math.max(0, nb.y));
+}
+
 function edSave() {
-  const p = ED.p; if (!p) return;
-  p.rot = ED.rot; p.corners = ED.corners; p.crop = $('edCrop').checked; p.mode = $('edMode').value;
-  p.label = $('edLabel').value.trim() || p.label; p.size = $('edSize').value; p.det = 'ok';
-  const fixed = normalizeOrientation(p, ED.src.width, ED.src.height);
-  closeEditor(); renderGrid(); updateCam(); syncSettingsUI(); saveDraft(); refreshThumbs();
-  if (fixed) toast(wantLandscape(effSize(p)) ? 'تم ضبط الاتجاه: العرض 8.56 سم والطول 5.4 سم' : 'تم ضبط اتجاه الصفحة (A4 رأسي)');
+  const p = ED.p;
+  if (!p) return;
+  p.rot = ED.rot;
+  p.corners = ED.corners;
+  p.crop = $('edCrop').checked;
+  p.mode = $('edMode').value;
+  p.label = $('edLabel').value.trim() || p.label;
+  p.size = $('edSize').value;
+  invalidatePageCache(p);
+  closeEditor();
+  renderGrid();
+  updateCam();
+  syncSettingsUI();
+  saveDraft();
+  refreshThumbs();
 }
+
 function bindEditor() {
   const ec = $('edCanvas');
+  let dragState = null;
+
   ec.addEventListener('pointerdown', e => {
     if (!$('edCrop').checked) return;
-    const r = ec.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-    let best = -1, bd = 1e9;
-    ED.corners.forEach((c, i) => { const dd = Math.hypot((c.x - x) * r.width, (c.y - y) * r.height); if (dd < bd) { bd = dd; best = i; } });
-    if (bd < 64) { ED.drag = best; ec.setPointerCapture(e.pointerId); e.preventDefault(); }
-  });
-  ec.addEventListener('pointermove', e => {
-    if (ED.drag < 0) return;
     const r = ec.getBoundingClientRect();
-    ED.corners[ED.drag] = { x: Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), y: Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)) };
+    const x = (e.clientX - r.left) * (ec.width / r.width);
+    const y = (e.clientY - r.top) * (ec.height / r.height);
+    const hit = hitTest(x, y, ED.corners, ec.width, ec.height);
+    if (hit) {
+      dragState = hit;
+      ec.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    }
+  });
+
+  ec.addEventListener('pointermove', e => {
+    if (!dragState) return;
+    const r = ec.getBoundingClientRect();
+    const x = (e.clientX - r.left) * (ec.width / r.width);
+    const y = (e.clientY - r.top) * (ec.height / r.height);
+    if (dragState.kind === 'corner') {
+      moveCorner(dragState.i, x / ec.width, y / ec.height);
+    } else if (dragState.kind === 'edge') {
+      moveEdge(dragState.i, x, y, ec.width, ec.height);
+    }
     drawEd();
   });
-  const up = () => { ED.drag = -1; };
-  ec.addEventListener('pointerup', up); ec.addEventListener('pointercancel', up);
+
+  const up = () => { dragState = null; };
+  ec.addEventListener('pointerup', up);
+  ec.addEventListener('pointercancel', up);
+
   $('edCrop').onchange = drawEd;
-  $('edSize').onchange = updateEdInfo;
   $('edClose').onclick = closeEditor;
   $('edAuto').onclick = () => {
-    const k = edSizeKey(); let c = detectQuad(ED.src);
-    if (c && !quadFits(c, ED.src.width, ED.src.height, k)) c = null;
-    const ok = !!c; if (!c) c = fitCorners(ED.src.width, ED.src.height, k);
-    ED.corners = c; $('edCrop').checked = true; drawEd();
-    toast(ok ? 'تم ضبط الحواف تلقائيًا' : 'تعذّر رصد الحواف — وُضع إطار مركزي بالنسبة الصحيحة، اسحب الأركان لضبطه');
+    // استخدام نسبة الأبعاد للصفحة الحالية
+    const szKey = effSize(ED.p);
+    const ar = szKey ? SIZES[szKey].w / SIZES[szKey].h : 1.585;
+    ED.corners = detectQuad(ED.src, ar) || defaultCorners();
+    $('edCrop').checked = true;
+    drawEd();
+    toast('تم ضبط الحواف تلقائيًا');
   };
-  $('edFull').onclick = () => { ED.corners = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }]; drawEd(); };
-  $('edRL').onclick = () => edRotate(-1); $('edRR').onclick = () => edRotate(1);
+  $('edFull').onclick = () => {
+    ED.corners = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+    drawEd();
+  };
+  $('edRL').onclick = () => edRotate(-1);
+  $('edRR').onclick = () => edRotate(1);
   $('edSave').onclick = edSave;
-  $('edDel').onclick = () => { if (ED.p && confirm('حذف هذه الصفحة؟')) { const id = ED.p.id; closeEditor(); deletePage(id); } };
-  $('edRetake').onclick = () => { const p = ED.p; if (!p) return; S.replaceId = p.id; S.curType = p.type; closeEditor(); go(2); toast('التقط الصورة البديلة'); };
-  $('editor').addEventListener('click', e => { if (e.target.id === 'editor') closeEditor(); });
-  // اختصارات لوحة المفاتيح
+  $('edDel').onclick = () => {
+    if (ED.p && confirm('حذف هذه الصفحة؟')) {
+      const id = ED.p.id;
+      closeEditor();
+      deletePage(id);
+    }
+  };
+  $('edRetake').onclick = () => {
+    const p = ED.p;
+    if (!p) return;
+    S.replaceId = p.id;
+    S.curType = p.type;
+    closeEditor();
+    go(2);
+    toast('التقط الصورة البديلة');
+  };
+  $('editor').addEventListener('click', e => {
+    if (e.target.id === 'editor') closeEditor();
+  });
   document.addEventListener('keydown', e => {
     if ($('editor').classList.contains('hidden')) return;
     if (e.key === 'Escape') { e.preventDefault(); closeEditor(); }
@@ -1297,42 +1647,41 @@ const safeLbl = s => s.replace(/[\\/:*?"<>|\s]+/g, '-');
 const fname = (i, o) => String(i + 1).padStart(2, '0') + '-' + safeLbl(o.label) + '-' + safeName() + '.jpg';
 const totalMB = () => OUT.reduce((s, o) => s + o.blob.size, 0) / 1048576;
 
-/**
- * حقن DPI في JFIF header. تدعم offset القياسي (canvas.toBlob) + الفحص الدفاعي.
- */
 async function setJpegDpi(blob, dpi) {
   if (!dpi || dpi < 1) return blob;
   try {
     const buf = new Uint8Array(await blob.arrayBuffer());
-    // SOI + APP0/JFIF عند الإزاحة القياسية
     if (buf.length >= 20 && buf[0] === 0xFF && buf[1] === 0xD8 &&
         buf[2] === 0xFF && buf[3] === 0xE0 &&
         buf[6] === 0x4A && buf[7] === 0x46 && buf[8] === 0x49 && buf[9] === 0x46 && buf[10] === 0x00) {
-      buf[13] = 1;                    // units = dots per inch
-      buf[14] = (dpi >> 8) & 0xFF;    // X density high
-      buf[15] = dpi & 0xFF;           // X density low
-      buf[16] = (dpi >> 8) & 0xFF;    // Y density high
-      buf[17] = dpi & 0xFF;           // Y density low
+      buf[13] = 1;
+      buf[14] = (dpi >> 8) & 0xFF;
+      buf[15] = dpi & 0xFF;
+      buf[16] = (dpi >> 8) & 0xFF;
+      buf[17] = dpi & 0xFF;
       return new Blob([buf], { type: 'image/jpeg' });
     }
   } catch (e) {}
   return blob;
 }
-const sizeTxt = o => o.cm ? ((+o.cm.w.toFixed(2)) + ' × ' + (+o.cm.h.toFixed(2)) + ' سم · ' + o.dpi + ' DPI' + (o.eff && o.eff < o.dpi - 5 ? ' (فعلي ≈ ' + o.eff + ')' : '')) : 'كما صُوّر';
+const sizeTxt = o => o.cm ? (o.cm.w.toFixed(2) + ' × ' + o.cm.h.toFixed(2) + ' سم · ' + o.dpi + ' DPI') : 'كما صُوّر';
 const dpiClass = v => !v ? '' : v >= 300 ? 'hi' : v >= 180 ? 'mid' : 'lo';
 
 async function encodeAll() {
   for (const o of OUT) {
     o.blob = await setJpegDpi(await toBlob(o.canvas, S.set.quality), o.dpi);
-    if (o.url) URL.revokeObjectURL(o.url); o.url = URL.createObjectURL(o.blob);
-    await sleep(0);
+    if (o.url) URL.revokeObjectURL(o.url);
+    o.url = URL.createObjectURL(o.blob);
+    await idle();
   }
 }
 function renderExport() {
-  const g = $('exGrid'); g.innerHTML = '';
+  const g = $('exGrid');
+  g.innerHTML = '';
   OUT.forEach((o, i) => {
-    const d = document.createElement('div'); d.className = 'tile';
-    const ev = o.eff || o.dpi, dpiBadge = ev ? '<span class="dpibadge ' + dpiClass(ev) + '">' + ev + ' DPI</span>' : '';
+    const d = document.createElement('div');
+    d.className = 'tile';
+    const dpiBadge = o.dpi ? '<span class="dpibadge ' + dpiClass(o.dpi) + '">' + o.dpi + ' DPI</span>' : '';
     d.innerHTML =
       '<div class="im">' + dpiBadge + '<img src="' + o.url + '" alt=""></div>' +
       '<div class="meta"><b>' + (i + 1) + '</b><span>' + esc(o.label) + '</span></div>' +
@@ -1340,24 +1689,26 @@ function renderExport() {
       '<div class="tb"><button data-i="' + i + '">📤 مشاركة</button></div>';
     g.appendChild(d);
   });
-  const minDpi = OUT.reduce((m, o) => o.dpi ? Math.min(m, o.eff || o.dpi) : m, 9999);
+  const minDpi = OUT.reduce((m, o) => o.dpi ? Math.min(m, o.dpi) : m, 9999);
   $('stPages').textContent = OUT.length;
   $('stSize').textContent = totalMB().toFixed(1);
   $('stDpi').textContent = minDpi === 9999 ? '—' : minDpi;
   $('exSummary').textContent = 'ملف: ' + S.name.trim() + (S.nid ? ' — ' + S.nid : '') + '.';
-  // ملخص الطباعة
   const printEl = $('exPrint');
-  if (minDpi === 9999) { printEl.classList.add('hidden'); }
+  if (minDpi === 9999) printEl.classList.add('hidden');
   else {
     printEl.classList.remove('hidden');
-    if (minDpi >= 300) { printEl.className = 'notice ok'; printEl.textContent = '✓ جاهز للطباعة بأعلى جودة (≥ 300 DPI على كل الصفحات).'; }
-    else if (minDpi >= 200) { printEl.className = 'notice'; printEl.textContent = '⚠️ جودة مقبولة للطباعة لكن بعض الصفحات أقل من 300 DPI. للحصول على جودة أفضل، أعد التصوير بإضاءة أوضح.'; }
-    else { printEl.className = 'notice'; printEl.textContent = '⚠️ بعض الصفحات أقل من 200 DPI — قد تظهر مشوشة عند الطباعة. يُفضّل إعادة التصوير.'; }
+    if (minDpi >= 300) { printEl.className = 'notice ok'; printEl.textContent = '✓ جاهز للطباعة (≥ 300 DPI).'; }
+    else if (minDpi >= 200) { printEl.className = 'notice'; printEl.textContent = '⚠️ جودة مقبولة، بعض الصفحات < 300 DPI.'; }
+    else { printEl.className = 'notice'; printEl.textContent = '⚠️ بعض الصفحات < 200 DPI — أعد التصوير بإضاءة أفضل.'; }
   }
-  $('selQ').value = String(S.set.quality); $('selPdf').value = S.set.pdfFit;
+  $('selQ').value = String(S.set.quality);
+  $('selPdf').value = S.set.pdfFit;
 }
 async function prepareExport() {
-  $('exLoading').classList.remove('hidden'); $('exBody').classList.add('hidden'); $('exProgBar').classList.remove('hidden');
+  $('exLoading').classList.remove('hidden');
+  $('exBody').classList.add('hidden');
+  $('exProgBar').classList.remove('hidden');
   const bar = $('exProgBar').querySelector('i');
   bar.style.width = '0%';
   try {
@@ -1365,32 +1716,36 @@ async function prepareExport() {
     OUT = await buildOutputs((done, total) => {
       const pct = Math.round(done / total * 60);
       bar.style.width = pct + '%';
-      $('exProgress').textContent = 'جارٍ تجهيز الصفحات... ' + done + '/' + total;
+      $('exProgress').textContent = 'جارٍ التجهيز... ' + done + '/' + total;
     });
     bar.style.width = '80%';
-    $('exProgress').textContent = 'جارٍ ضغط الصور...';
+    $('exProgress').textContent = 'جارٍ الضغط...';
     await encodeAll();
     bar.style.width = '100%';
     renderExport();
     await sleep(150);
-    $('exLoading').classList.add('hidden'); $('exProgBar').classList.add('hidden');
+    $('exLoading').classList.add('hidden');
+    $('exProgBar').classList.add('hidden');
     $('exBody').classList.remove('hidden');
-  } catch (e) { console.error(e); $('exLoading').textContent = '⚠️ حدث خطأ أثناء التجهيز. ارجع للمراجعة وحاول مرة أخرى.'; }
+  } catch (e) {
+    console.error(e);
+    $('exLoading').textContent = '⚠️ حدث خطأ.';
+  }
 }
 async function buildPdf() {
-  const { jsPDF } = window.jspdf; let pdf = null;
+  const { jsPDF } = window.jspdf;
+  let pdf = null;
   for (const o of OUT) {
-    const cv = o.canvas, w = cv.width, h = cv.height, url = cv.toDataURL('image/jpeg', S.set.quality);
+    const cv = o.canvas, w = cv.width, h = cv.height;
+    const url = cv.toDataURL('image/jpeg', S.set.quality);
     const cm = o.cm;
     if (S.set.pdfFit === 'fit') {
-      // حجم الصفحة = حجم المستند الفعلي
       const pw = cm ? cm.w * 10 : 210, ph = cm ? cm.h * 10 : 210 * h / w;
       const orient = pw > ph ? 'l' : 'p';
       if (!pdf) pdf = new jsPDF({ orientation: orient, unit: 'mm', format: [pw, ph], compress: true });
       else pdf.addPage([pw, ph], orient);
       pdf.addImage(url, 'JPEG', 0, 0, pw, ph);
     } else {
-      // A4 مع احترام الاتجاه الفعلي
       const land = cm ? (cm.w > cm.h && cm.w > 15) : w > h;
       const orient = land ? 'l' : 'p';
       if (!pdf) pdf = new jsPDF({ orientation: orient, unit: 'mm', format: 'a4', compress: true });
@@ -1398,20 +1753,18 @@ async function buildPdf() {
       const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight(), m = 8;
       let iw, ih, x, y;
       if (cm) {
-        // استخدم مقاسات فيزيائية بالملليمتر مباشرة (أدق)
         iw = cm.w * 10; ih = cm.h * 10;
-        // إذا كان المستند A4 فيزيائيًا، اطبعه بحجم الصفحة كاملة
         if (Math.abs(iw - pw) < 5 && Math.abs(ih - ph) < 5) { iw = pw; ih = ph; x = 0; y = 0; }
         else {
           const k = Math.min(1, (pw - m * 2) / iw, (ph - m * 2) / ih);
           iw *= k; ih *= k;
           x = (pw - iw) / 2;
-          // للمستندات الصغيرة (بطاقة): ضعها في الوسط العلوي
           y = (iw < pw * .6) ? m * 2 : (ph - ih) / 2;
         }
       } else {
         const k = Math.min((pw - m * 2) / w, (ph - m * 2) / h);
-        iw = w * k; ih = h * k; x = (pw - iw) / 2; y = (ph - ih) / 2;
+        iw = w * k; ih = h * k;
+        x = (pw - iw) / 2; y = (ph - ih) / 2;
       }
       pdf.addImage(url, 'JPEG', x, y, iw, ih);
     }
@@ -1427,7 +1780,7 @@ async function buildZip() {
     S.phone ? 'الهاتف: ' + S.phone : '',
     'تاريخ التجهيز: ' + new Date().toLocaleString('ar-EG'),
     '',
-    'المقاسات الفيزيائية:',
+    'المقاسات:',
     '  · بطاقة / شهادة ميلاد: 8.56 × 5.4 سم @ ' + SIZES.card.dpi + ' DPI',
     '  · مستندات A4: 21 × 29.7 سم @ ' + SIZES.a4.dpi + ' DPI',
     '',
@@ -1438,72 +1791,126 @@ async function buildZip() {
   return zip.generateAsync({ type: 'blob', compression: 'STORE' });
 }
 function dl(blob, name) {
-  const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = u; a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 4000);
 }
 async function doShare(files, text) {
   if (navigator.canShare && navigator.canShare({ files })) {
     try { await navigator.share({ files, title: safeName(), text }); }
-    catch (e) { if (e.name !== 'AbortError') toast('تعذّرت المشاركة — استخدم التنزيل'); }
-  } else toast('المتصفح لا يدعم هذه المشاركة — استخدم التنزيل أو ZIP');
+    catch (e) { if (e.name !== 'AbortError') toast('تعذّرت المشاركة'); }
+  } else toast('المتصفح لا يدعم المشاركة');
 }
-const busy = async (msg, fn) => { toast(msg, 8000); try { await fn(); } catch (e) { console.error(e); toast('حدث خطأ غير متوقع'); } };
+const busy = async (msg, fn) => {
+  toast(msg, 8000);
+  try { await fn(); } catch (e) { console.error(e); toast('حدث خطأ'); }
+};
 function bindExport() {
-  $('selQ').onchange = e => busy('جارٍ إعادة الضغط...', async () => { S.set.quality = +e.target.value; saveDraft(); await encodeAll(); renderExport(); toast('تم'); });
+  $('selQ').onchange = e => busy('جارٍ إعادة الضغط...', async () => {
+    S.set.quality = +e.target.value;
+    saveDraft();
+    await encodeAll();
+    renderExport();
+    toast('تم');
+  });
   $('selPdf').onchange = e => { S.set.pdfFit = e.target.value; saveDraft(); };
   $('exGrid').addEventListener('click', e => {
-    const b = e.target.closest('button[data-i]'); if (!b) return;
-    const i = +b.dataset.i; doShare([new File([OUT[i].blob], fname(i, OUT[i]), { type: 'image/jpeg' })], S.name.trim());
+    const b = e.target.closest('button[data-i]');
+    if (!b) return;
+    const i = +b.dataset.i;
+    doShare([new File([OUT[i].blob], fname(i, OUT[i]), { type: 'image/jpeg' })], S.name.trim());
   });
-  $('shAll').onclick = () => doShare(OUT.map((o, i) => new File([o.blob], fname(i, o), { type: 'image/jpeg' })), 'ملف المستفيد: ' + S.name.trim());
-  $('shPdf').onclick = () => busy('جارٍ إنشاء PDF...', async () => { const b = await buildPdf(); await doShare([new File([b], safeName() + '.pdf', { type: 'application/pdf' })], S.name.trim()); });
-  $('shZip').onclick = () => busy('جارٍ إنشاء ZIP...', async () => { const b = await buildZip(); await doShare([new File([b], safeName() + '.zip', { type: 'application/zip' })], S.name.trim()); });
+  $('shAll').onclick = () => doShare(
+    OUT.map((o, i) => new File([o.blob], fname(i, o), { type: 'image/jpeg' })),
+    'ملف المستفيد: ' + S.name.trim()
+  );
+  $('shPdf').onclick = () => busy('جارٍ إنشاء PDF...', async () => {
+    const b = await buildPdf();
+    await doShare([new File([b], safeName() + '.pdf', { type: 'application/pdf' })], S.name.trim());
+  });
+  $('shZip').onclick = () => busy('جارٍ إنشاء ZIP...', async () => {
+    const b = await buildZip();
+    await doShare([new File([b], safeName() + '.zip', { type: 'application/zip' })], S.name.trim());
+  });
   $('dlImg').onclick = () => OUT.forEach((o, i) => setTimeout(() => dl(o.blob, fname(i, o)), i * 250));
   $('dlPdf').onclick = () => busy('جارٍ إنشاء PDF...', async () => { dl(await buildPdf(), safeName() + '.pdf'); toast('تم ✓'); });
   $('dlZip').onclick = () => busy('جارٍ إنشاء ZIP...', async () => { dl(await buildZip(), safeName() + '.zip'); toast('تم ✓'); });
   $('b4back').onclick = () => go(3);
-  $('bNew').onclick = () => { if (confirm('بدء ملف جديد؟ سيتم مسح الصفحات الحالية من هذا الجهاز.')) newFile(); };
+  $('bNew').onclick = () => { if (confirm('بدء ملف جديد؟')) newFile(); };
 }
 function newFile() {
-  stopCam(); S.pages.forEach(p => p.url && URL.revokeObjectURL(p.url)); bmCache.clear();
-  OUT.forEach(o => o.url && URL.revokeObjectURL(o.url)); OUT = [];
+  stopCam();
+  S.pages.forEach(p => p.url && URL.revokeObjectURL(p.url));
+  bmCache.clear();
+  renderCache.clear();
+  OUT.forEach(o => o.url && URL.revokeObjectURL(o.url));
+  OUT = [];
   Object.assign(S, { name: '', nid: '', phone: '', pages: [], curType: 'idf', replaceId: null });
-  $('fName').value = ''; $('fNid').value = ''; $('fPhone').value = ''; onNid();
-  DB.del('draft').catch(() => {}); go(1); toast('ملف جديد ✓');
+  $('fName').value = ''; $('fNid').value = ''; $('fPhone').value = '';
+  onNid();
+  DB.del('draft').catch(() => {});
+  go(1);
+  toast('ملف جديد ✓');
 }
 
 /* =====================================================================
    التنقل
 ===================================================================== */
 function readData() {
-  const name = $('fName').value.trim(), nid = AR_DIGITS($('fNid').value).replace(/\D/g, '');
+  const name = $('fName').value.trim();
+  const nid = AR_DIGITS($('fNid').value).replace(/\D/g, '');
   if (name.length < 3) { toast('اكتب اسم المستفيد أولًا'); $('fName').focus(); return false; }
-  if (nid && !parseNid(nid)) { toast('الرقم القومي غير صحيح — تأكد من الأرقام'); $('fNid').focus(); return false; }
-  S.name = name; S.nid = nid; S.phone = AR_DIGITS($('fPhone').value).trim(); return true;
+  if (nid && !parseNid(nid)) { toast('الرقم القومي غير صحيح'); $('fNid').focus(); return false; }
+  S.name = name;
+  S.nid = nid;
+  S.phone = AR_DIGITS($('fPhone').value).trim();
+  return true;
 }
 async function go(n) {
   if (n >= 2 && !readData()) return;
   if (n >= 3 && !S.pages.length) { toast('صوّر مستندًا واحدًا على الأقل'); return; }
   S.step = n;
-  document.querySelectorAll('.step').forEach(x => x.classList.remove('active')); $('s' + n).classList.add('active');
-  document.querySelectorAll('#steps button').forEach(b => { const k = +b.dataset.s; b.classList.toggle('on', k === n); b.classList.toggle('done', k < n); });
+  document.querySelectorAll('.step').forEach(x => x.classList.remove('active'));
+  $('s' + n).classList.add('active');
+  document.querySelectorAll('#steps button').forEach(b => {
+    const k = +b.dataset.s;
+    b.classList.toggle('on', k === n);
+    b.classList.toggle('done', k < n);
+  });
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (n === 2) { updateCam(); startCam(); } else stopCam();
+  if (n === 2) { updateCam(); setTimeout(() => startCam(), 60); }
+  else stopCam();
   if (n === 3) { buildModeUI(); syncSettingsUI(); renderGrid(); refreshThumbs(); }
   if (n === 4) prepareExport();
   saveDraft();
 }
 function onNid() {
-  const raw = AR_DIGITS($('fNid').value).replace(/\D/g, ''); if ($('fNid').value !== raw) $('fNid').value = raw;
+  const raw = AR_DIGITS($('fNid').value).replace(/\D/g, '');
+  if ($('fNid').value !== raw) $('fNid').value = raw;
   const box = $('nidBox'), err = $('nidErr');
-  box.classList.add('hidden'); err.classList.add('hidden');
+  box.classList.add('hidden');
+  err.classList.add('hidden');
   if (raw.length === 14) {
     const info = parseNid(raw);
     if (info) {
-      box.innerHTML = '<div><b>تاريخ الميلاد</b>' + info.date + '</div><div><b>السن</b>' + info.age + ' سنة</div><div><b>النوع</b>' + info.gender + '</div><div><b>محافظة الميلاد</b>' + info.gov + '</div>';
+      box.innerHTML =
+        '<div><b>تاريخ الميلاد</b>' + info.date + '</div>' +
+        '<div><b>السن</b>' + info.age + ' سنة</div>' +
+        '<div><b>النوع</b>' + info.gender + '</div>' +
+        '<div><b>محافظة الميلاد</b>' + info.gov + '</div>';
       box.classList.remove('hidden');
-    } else { err.textContent = 'الرقم القومي غير صحيح.'; err.classList.remove('hidden'); }
-  } else if (raw.length) { err.textContent = 'متبقٍ ' + (14 - raw.length) + ' أرقام'; err.classList.remove('hidden'); }
+    } else {
+      err.textContent = 'الرقم القومي غير صحيح.';
+      err.classList.remove('hidden');
+    }
+  } else if (raw.length) {
+    err.textContent = 'متبقٍ ' + (14 - raw.length) + ' أرقام';
+    err.classList.remove('hidden');
+  }
 }
 
 /* =====================================================================
@@ -1516,13 +1923,25 @@ async function checkDraft() {
       $('draftInfo').textContent = (d.name || 'بدون اسم') + ' — ' + d.pages.length + ' صفحات';
       $('draftBox').classList.remove('hidden');
       $('draftResume').onclick = () => {
-        S.name = d.name || ''; S.nid = d.nid || ''; S.phone = d.phone || ''; S.set = { ...DEFAULTS, ...(d.set || {}) };
+        S.name = d.name || '';
+        S.nid = d.nid || '';
+        S.phone = d.phone || '';
+        S.set = { ...DEFAULTS, ...(d.set || {}) };
         S.pages = d.pages.map(p => ({ ...p, url: URL.createObjectURL(p.blob), turl: null }));
-        $('fName').value = S.name; $('fNid').value = S.nid; $('fPhone').value = S.phone; onNid();
-        S.curType = S.pages.some(p => p.type === 'idf') ? (S.pages.some(p => p.type === 'idb') ? 'other' : 'idb') : 'idf';
-        $('draftBox').classList.add('hidden'); go(3);
+        $('fName').value = S.name;
+        $('fNid').value = S.nid;
+        $('fPhone').value = S.phone;
+        onNid();
+        S.curType = S.pages.some(p => p.type === 'idf')
+          ? (S.pages.some(p => p.type === 'idb') ? 'other' : 'idb')
+          : 'idf';
+        $('draftBox').classList.add('hidden');
+        go(3);
       };
-      $('draftDrop').onclick = async () => { await DB.del('draft').catch(() => {}); $('draftBox').classList.add('hidden'); };
+      $('draftDrop').onclick = async () => {
+        await DB.del('draft').catch(() => {});
+        $('draftBox').classList.add('hidden');
+      };
     }
   } catch (e) {}
 }
@@ -1539,30 +1958,40 @@ function init() {
   $('b3add').onclick = () => go(2);
   $('b3next').onclick = () => go(4);
   $('btnShot').onclick = shot;
-  $('btnFlip').onclick = () => { facing = facing === 'environment' ? 'user' : 'environment'; startCam(); };
+  $('btnFlip').onclick = () => {
+    facing = facing === 'environment' ? 'user' : 'environment';
+    startCam();
+  };
   $('btnTorch').onclick = toggleTorch;
-  $('btnAuto').classList.toggle('on', CAM.auto);
-  $('btnAuto').onclick = () => {
-    CAM.auto = !CAM.auto; CAM.stable = 0; CAM.needMove = false;
-    try { localStorage.setItem('aidAuto', CAM.auto ? '1' : '0'); } catch (e) {}
-    $('btnAuto').classList.toggle('on', CAM.auto); $('autoBar').classList.toggle('hidden', !CAM.auto);
-    toast(CAM.auto ? '⚡ التقاط تلقائي: ثبّت المستند داخل الإطار وسيُلتقط وحده' : 'تم إيقاف الالتقاط التلقائي');
-  };
-  $('camZoom').addEventListener('input', onZoom);
-  $('tapStart').onclick = async () => {
-    const v = $('video'); try { await v.play(); } catch (e) {}
-    $('camTap').classList.add('hidden');
-    if (!(await waitFrames(v, 2500))) showCamErr('تعذّر عرض المعاينة على هذا المتصفح. استخدم كاميرا الجهاز أو المعرض.');
-  };
   const gal = () => $('fileGallery').click();
-  $('btnGallery').onclick = gal; $('errGallery').onclick = gal;
+  $('btnGallery').onclick = gal;
+  $('errGallery').onclick = gal;
   $('errNative').onclick = () => $('fileNative').click();
   $('fileGallery').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
   $('fileNative').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stopCam(); else if (S.step === 2) startCam(); });
-  ['fName', 'fPhone'].forEach(id => $(id).addEventListener('input', () => { S.name = $('fName').value; S.phone = $('fPhone').value; saveDraft(); }));
-  bindSettings(); bindEditor(); bindExport(); buildModeUI(); updateCam(); checkDraft();
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopCam();
+    else if (S.step === 2) startCam();
+  });
+
+  window.addEventListener('resize', () => setGuide());
+  window.addEventListener('orientationchange', () => setTimeout(setGuide, 300));
+
+  ['fName', 'fPhone'].forEach(id => $(id).addEventListener('input', () => {
+    S.name = $('fName').value;
+    S.phone = $('fPhone').value;
+    saveDraft();
+  }));
+
+  bindSettings();
+  bindEditor();
+  bindExport();
+  buildModeUI();
+  updateCam();
+  checkDraft();
   $('steps').querySelector('[data-s="1"]').classList.add('on');
+  setTimeout(setGuide, 200);
 }
 init();
 </script>
