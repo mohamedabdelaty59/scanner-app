@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>ماسح ملفات المساعدات — v6</title>
+<title>ماسح ملفات المساعدات — v7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -70,11 +70,17 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:8px 13px;border-radius:99px;font-size:13.5px;font-weight:700;cursor:pointer;position:relative}
-.chip.on{background:var(--p);border-color:var(--p);color:#fff}
+.chips-wrap{display:flex;gap:8px;flex-wrap:wrap;padding:2px 0 10px}
+.chip{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:8px 13px;border-radius:99px;font-size:13.5px;font-weight:700;cursor:pointer;position:relative;transition:.15s}
+.chip.on{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 4px 12px rgba(15,118,110,.3)}
+.chip:hover{border-color:var(--p2)}
 .chip .n{display:inline-grid;place-items:center;min-width:19px;height:19px;border-radius:99px;background:var(--p2);color:#fff;font-size:11px;margin-inline-start:6px;padding:0 5px}
 .chip.on .n{background:#fff;color:var(--p)}
 .chip.need:not(.on):not(.has){border-style:dashed;border-color:var(--p2)}
+
+/* Filter group headers */
+.fgroup{margin:10px 0 6px}
+.fgroup b{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px;letter-spacing:.3px}
 
 .camwrap{position:relative;background:#000;border-radius:20px;overflow:hidden;width:100%;height:62vh;min-height:320px;max-height:520px;margin:auto}
 .camwrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;z-index:1}
@@ -91,7 +97,27 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
 .flash.go{animation:fl .28s}
 @keyframes fl{0%{opacity:.85}100%{opacity:0}}
-.cam-err{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;color:#fff;padding:24px;background:#0a1114;z-index:6}
+
+/* ✅ Reference preview (وجه البطاقة كمرجع أثناء تصوير الظهر) */
+.ref-preview{
+  position:absolute;bottom:12px;left:12px;z-index:6;
+  width:100px;height:auto;
+  border-radius:10px;overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.5);
+  border:2px solid rgba(255,255,255,.85);
+  background:#fff;
+  opacity:0;transform:translateY(20px);
+  transition:.35s;pointer-events:none;
+}
+.ref-preview.on{opacity:1;transform:translateY(0)}
+.ref-preview img{display:block;width:100%;height:auto}
+.ref-preview::after{
+  content:'الوجه ✓';position:absolute;bottom:0;left:0;right:0;
+  background:rgba(21,128,61,.9);color:#fff;text-align:center;
+  font-size:10px;font-weight:800;padding:2px 0;
+}
+
+.cam-err{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;color:#fff;padding:24px;background:#0a1114;z-index:7}
 .cam-err p{margin:0;line-height:1.8;font-size:14px}
 .cam-ctrl{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 6px 6px}
 .cam-ctrl .side{display:flex;gap:10px;min-width:100px;justify-content:flex-end}
@@ -197,6 +223,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
       <div class="screen-flash" id="screenFlash"></div>
       <div class="guide" id="guide"><i></i><i></i><i></i><i></i></div>
       <div class="cam-top"><span class="pill" id="meter">⏳ جارٍ تشغيل الكاميرا</span><span class="pill" id="typePill"></span></div>
+      <div class="ref-preview" id="refPreview"><img id="refPreviewImg" src="" alt=""></div>
       <div class="flash" id="flash"></div>
       <div class="cam-err hidden" id="camErr">
         <p>📵 تعذّر تشغيل الكاميرا.<br>اسمح للمتصفح باستخدام الكاميرا وافتح الصفحة عبر HTTPS، أو استخدم أحد البدائل:</p>
@@ -231,10 +258,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
   </div>
 
   <div class="card">
-    <h2>تحسين الصور</h2>
-    <p class="hint">الإعدادات تُطبّق على كل الصفحات.</p>
-    <label>وضع الألوان</label>
-    <div class="chips" id="modeChips" style="flex-wrap:wrap;overflow:visible"></div>
+    <h2>🎨 فلاتر الصور</h2>
+    <p class="hint">اختر الفلتر المناسب ثم اضبط يدويًا عند الحاجة. كل فلتر له استخدام مختلف.</p>
+    <div id="filterUI"></div>
     <label>الإضاءة <output id="oBri"></output></label>
     <div class="range-row"><input type="range" id="rBri" min="-40" max="40" step="1"></div>
     <label>التباين <output id="oCon"></output></label>
@@ -242,7 +268,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
     <label>الحدة <output id="oSharp"></output></label>
     <div class="range-row"><input type="range" id="rSharp" min="0" max="1.5" step=".1"></div>
     <div id="thrWrap">
-      <label>حد الأبيض والأسود <output id="oThr"></output></label>
+      <label>عتبة الأبيض/الأسود <output id="oThr"></output></label>
       <div class="range-row"><input type="range" id="rThr" min="100" max="230" step="1"></div>
     </div>
     <label class="tog"><input type="checkbox" id="tCrop"> قص تلقائي وتصحيح المنظور</label>
@@ -306,8 +332,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
     <div class="mh"><b>✂️ تعديل الصفحة</b><button class="ghost" id="edClose">✕ إغلاق</button></div>
     <div class="cbox"><canvas id="edCanvas"></canvas></div>
     <p class="hint" style="margin:8px 0 0">
-      🔵 اسحب <b>الدوائر</b> لتحريك أركان المستند<br>
-      🟡 اسحب <b>نقاط المنتصف</b> لتحريك الضلع كاملاً
+      🔵 اسحب <b>الدوائر البيضاء</b> لتحريك الأركان<br>
+      🟡 اسحب <b>النقاط الصفراء</b> لتحريك الضلع كاملاً
     </p>
     <div class="row4">
       <button class="secondary" id="edAuto">✨ كشف تلقائي</button>
@@ -318,7 +344,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
     <label class="tog"><input type="checkbox" id="edCrop"> تطبيق القص على هذه الصفحة</label>
     <label for="edLabel">اسم الصفحة</label>
     <input type="text" id="edLabel">
-    <label for="edMode">وضع الألوان</label>
+    <label for="edMode">فلتر لهذه الصفحة</label>
     <select id="edMode"></select>
     <label for="edSize">مقاس الإخراج</label>
     <select id="edSize">
@@ -336,7 +362,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px 12px 26p
 </div>
 
 <div id="toast" class="toast"></div>
-<footer>ماسح ملفات المساعدات — v6 · أداء محسّن + فلاش + قص بضلوع</footer>
+<footer>ماسح ملفات المساعدات — v7 · 12 فلتر احترافي + تبديل تلقائي</footer>
 
 <script>
 'use strict';
@@ -359,7 +385,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const idle = () => new Promise(r => (window.requestIdleCallback || setTimeout)(r, { timeout: 500 }));
 
 /* =====================================================================
-   الثوابت
+   الثوابت والمقاسات
 ===================================================================== */
 const SIZES = {
   card: { w: 8.56, h: 5.4,  dpi: 400, short: '8.56×5.4 سم', landscape: true },
@@ -383,14 +409,57 @@ function effSize(p) {
   return S.set.fixedSize ? typeOf(p.type).size : null;
 }
 
-const MODES = [
-  { k: 'color', label: '🎨 ملوّن' },
-  { k: 'magic', label: '✨ تحسين ذكي' },
-  { k: 'gray',  label: '🩶 رمادي' },
-  { k: 'doc',   label: '📄 مستند' },
-  { k: 'bw',    label: '⚫ أبيض وأسود' }
+/* =====================================================================
+   ✅ الفلاتر — 12 وضع احترافي مُجمَّع في 6 مجموعات
+===================================================================== */
+const FILTER_GROUPS = [
+  {
+    name: 'أساسي',
+    modes: [
+      { k: 'original', label: '🖼️ أصلي', desc: 'بدون معالجة' }
+    ]
+  },
+  {
+    name: 'Magic — إزالة الظل + إبراز الألوان',
+    modes: [
+      { k: 'magic1', label: '✨ Magic 1', desc: 'خفيف' },
+      { k: 'magic2', label: '💫 Magic 2', desc: 'متوسط' },
+      { k: 'magic3', label: '🌟 Magic 3', desc: 'قوي' }
+    ]
+  },
+  {
+    name: 'Polish — تباين محلي قوي للوثائق',
+    modes: [
+      { k: 'polish1', label: '💎 Polish 1', desc: 'ناعم' },
+      { k: 'polish2', label: '💠 Polish 2', desc: 'متوسط' },
+      { k: 'polish3', label: '🔷 Polish 3', desc: 'قوي' }
+    ]
+  },
+  {
+    name: 'رمادي',
+    modes: [
+      { k: 'gray1', label: '⬜ Gray 1', desc: 'ناعم' },
+      { k: 'gray2', label: '◻️ Gray 2', desc: 'عالي التباين' }
+    ]
+  },
+  {
+    name: 'أبيض وأسود',
+    modes: [
+      { k: 'bw1', label: '⚫ B&W 1', desc: 'عتبة يدوية' },
+      { k: 'bw2', label: '⚪ B&W 2', desc: 'عتبة تلقائية' }
+    ]
+  },
+  {
+    name: 'Eco — توفير الحبر',
+    modes: [
+      { k: 'eco', label: '🌿 Eco', desc: 'للنماذج الرسمية' }
+    ]
+  }
 ];
-const DEFAULTS = { mode: 'color', brightness: 0, contrast: 0, sharp: 0, thr: 165, autoCrop: true, fixedSize: true, mergeId: true, stamp: false, quality: .82, pdfFit: 'a4' };
+const ALL_MODES = FILTER_GROUPS.flatMap(g => g.modes);
+const modeOf = k => ALL_MODES.find(m => m.k === k) || ALL_MODES[0];
+
+const DEFAULTS = { mode: 'original', brightness: 0, contrast: 0, sharp: 0, thr: 165, autoCrop: true, fixedSize: true, mergeId: true, stamp: false, quality: .82, pdfFit: 'a4', autoSwitch: true };
 const GOV = {'01':'القاهرة','02':'الإسكندرية','03':'بورسعيد','04':'السويس','11':'دمياط','12':'الدقهلية','13':'الشرقية','14':'القليوبية','15':'كفر الشيخ','16':'الغربية','17':'المنوفية','18':'البحيرة','19':'الإسماعيلية','21':'الجيزة','22':'بني سويف','23':'الفيوم','24':'المنيا','25':'أسيوط','26':'سوهاج','27':'قنا','28':'أسوان','29':'الأقصر','31':'البحر الأحمر','32':'الوادي الجديد','33':'مطروح','34':'شمال سيناء','35':'جنوب سيناء','88':'خارج الجمهورية'};
 
 const S = { name: '', nid: '', phone: '', pages: [], set: { ...DEFAULTS }, step: 1, curType: 'idf', replaceId: null };
@@ -418,7 +487,7 @@ function parseNid(s) {
    المسودة
 ===================================================================== */
 const DB = {
-  open() { return new Promise((res, rej) => { const r = indexedDB.open('aid-scanner-v6', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  open() { return new Promise((res, rej) => { const r = indexedDB.open('aid-scanner-v7', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
   async get(k) { const db = await this.open(); return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
   async set(k, v) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); },
   async del(k) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').delete(k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
@@ -434,11 +503,11 @@ const saveDraft = debounce(async () => {
 }, 700);
 
 /* =====================================================================
-   ✅ الكاش الذكي — يمنع إعادة الرسم عند نفس الإعدادات
+   كاش
 ===================================================================== */
-const bmCache = new Map();       // ImageBitmap cache
-const renderCache = new Map();   // Render output cache (per page + settings hash)
-const MAX_RENDER_CACHE = 12;
+const bmCache = new Map();
+const renderCache = new Map();
+const MAX_RENDER_CACHE = 15;
 
 function pageHash(p, cap) {
   return [
@@ -454,15 +523,14 @@ function pageHash(p, cap) {
 function cachedRender(p, cap) {
   const k = pageHash(p, cap);
   const v = renderCache.get(k);
-  if (v) { renderCache.delete(k); renderCache.set(k, v); return v; } // LRU
+  if (v) { renderCache.delete(k); renderCache.set(k, v); return v; }
   return null;
 }
 function storeRender(p, cap, result) {
   const k = pageHash(p, cap);
   renderCache.set(k, result);
   while (renderCache.size > MAX_RENDER_CACHE) {
-    const firstKey = renderCache.keys().next().value;
-    renderCache.delete(firstKey);
+    renderCache.delete(renderCache.keys().next().value);
   }
 }
 function invalidatePageCache(p) {
@@ -472,7 +540,7 @@ function invalidatePageCache(p) {
 function invalidateAllRenderCache() { renderCache.clear(); }
 
 /* =====================================================================
-   فك الصور — محسّن
+   فك الصور
 ===================================================================== */
 async function decode(blob) {
   if (window.createImageBitmap) {
@@ -499,19 +567,16 @@ function drawSmall(bm, max) {
 }
 
 /* =====================================================================
-   ✅ جودة الصورة — مُسرَّعة (تسريع ~6×)
+   جودة الصورة
 ===================================================================== */
 function sharpness(cv) {
   const w = cv.width, h = cv.height;
   const ctx = cv.getContext('2d', { willReadFrequently: true });
   const d = ctx.getImageData(0, 0, w, h).data;
-  // استخدام simple average (أسرع من luma formula)
   const g = new Float32Array(w * h);
-  for (let i = 0, j = 0; i < d.length; i += 4, j++) {
-    g[j] = (d[i] + d[i + 1] + d[i + 2]) * 0.3333;
-  }
+  for (let i = 0, j = 0; i < d.length; i += 4, j++) g[j] = (d[i] + d[i + 1] + d[i + 2]) * 0.3333;
   let s = 0, s2 = 0, n = 0;
-  const stride = 2; // ← عينات كل 2 بكسل (تسريع 4×)
+  const stride = 2;
   for (let y = 1; y < h - 1; y += stride) {
     for (let x = 1; x < w - 1; x += stride) {
       const i = y * w + x;
@@ -525,7 +590,7 @@ const qClass = v => v < 20 ? 'bad' : v < 60 ? 'mid' : 'good';
 const qText = v => v < 20 ? 'غير واضحة' : v < 60 ? 'مقبولة' : 'واضحة';
 
 /* =====================================================================
-   ✅ كشف حدود البطاقة — نسخة محسّنة بعدة عتبات
+   كشف الحدود
 ===================================================================== */
 const defaultCorners = () => [{ x: .04, y: .04 }, { x: .96, y: .04 }, { x: .96, y: .96 }, { x: .04, y: .96 }];
 function orderCorners(pts) {
@@ -536,8 +601,6 @@ function orderCorners(pts) {
   const bl = pts.reduce((a, b) => diff(b) < diff(a) ? b : a);
   return [tl, tr, br, bl].map(p => ({ x: p.x, y: p.y }));
 }
-
-/** كشف بإعداد عتبة معينة (قيمة تحيز للـ Otsu) */
 function detectQuadWithBias(cv, bias) {
   const MAXS = 240, sc = Math.min(1, MAXS / Math.max(cv.width, cv.height));
   const w = Math.max(8, Math.round(cv.width * sc)), h = Math.max(8, Math.round(cv.height * sc));
@@ -558,15 +621,12 @@ function detectQuadWithBias(cv, bias) {
     if (v > best) { best = v; thr = i; }
   }
   thr = Math.max(20, Math.min(235, thr + bias));
-
   let bs = 0, bn = 0;
   for (let x = 0; x < w; x++) { bs += g[x] + g[(h - 1) * w + x]; bn += 2; }
   for (let y = 0; y < h; y++) { bs += g[y * w] + g[y * w + w - 1]; bn += 2; }
   const inv = (bs / bn) > thr;
-
   const m = new Uint8Array(n);
   for (let i = 0; i < n; i++) m[i] = ((g[i] > thr) !== inv) ? 1 : 0;
-
   const lab = new Int32Array(n), stack = new Int32Array(n);
   let bestLab = 0, bestSize = 0, cur = 0;
   for (let s = 0; s < n; s++) {
@@ -584,7 +644,6 @@ function detectQuadWithBias(cv, bias) {
   }
   const ratio = bestSize / n;
   if (!bestLab || ratio < .10 || ratio > .98) return null;
-
   let tl = null, tr = null, br = null, bl = null, a = 1e9, b = -1e9, c = -1e9, e = 1e9;
   for (let i = 0; i < n; i++) {
     if (lab[i] !== bestLab) continue;
@@ -598,11 +657,8 @@ function detectQuadWithBias(cv, bias) {
   let area = 0; for (let i = 0; i < 4; i++) { const p = q[i], r = q[(i + 1) % 4]; area += p.x * r.y - r.x * p.y; }
   const areaAbs = Math.abs(area) / 2;
   if (areaAbs < .10) return null;
-
   return { corners: orderCorners(q), area: areaAbs, ratio: ratio };
 }
-
-/** تقييم جودة المستطيل بناءً على نسبة الأبعاد الفيزيائية + التغطية */
 function quadScore(result, targetAR) {
   if (!result) return -1;
   const [tl, tr, br, bl] = result.corners;
@@ -610,16 +666,13 @@ function quadScore(result, targetAR) {
   const W = (d(tl, tr) + d(bl, br)) / 2;
   const H = (d(tl, bl) + d(tr, br)) / 2;
   const ar = W / H;
-  // مقارنة مع AR المستهدف (أو مقلوبه)
   const arErr = Math.min(Math.abs(ar - targetAR), Math.abs(ar - 1/targetAR));
   const arScore = Math.max(0, 1 - arErr * 1.2);
   const areaScore = Math.min(1, result.area / 0.7);
   return arScore * 0.7 + areaScore * 0.3;
 }
-
-/** ✅ كشف محسّن: يجرب 3 عتبات ويختار الأفضل حسب نسبة الأبعاد */
 function detectQuad(cv, targetAR) {
-  const ar = targetAR || 1.585; // افتراضي: بطاقة
+  const ar = targetAR || 1.585;
   const biases = [-15, 0, 18];
   let best = null, bestScore = -1;
   for (const b of biases) {
@@ -629,7 +682,6 @@ function detectQuad(cv, targetAR) {
   }
   return best && bestScore > 0.4 ? best.corners : null;
 }
-
 function rotCorners(cs, dir) {
   const r = cs.map(p => dir > 0 ? { x: 1 - p.y, y: p.x } : { x: p.y, y: 1 - p.x });
   return orderCorners(r);
@@ -660,21 +712,18 @@ function solveHomography(dst, src) {
   for (let i = n - 1; i >= 0; i--) { let s = b[i]; for (let c = i + 1; c < n; c++) s -= A[i][c] * h[c]; h[i] = s / A[i][i]; }
   return h;
 }
-
 function warp(src, corners, opts) {
   const P = corners.map(c => ({ x: c.x * src.width, y: c.y * src.height }));
   const [tl, tr, br, bl] = P;
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   let W = Math.max(dist(tl, tr), dist(bl, br));
   let H = Math.max(dist(tl, bl), dist(tr, br));
-
   if (opts && opts.targetPx) {
     W = opts.targetPx.w; H = opts.targetPx.h;
   } else if (opts && opts.maxSide) {
     const k = Math.min(1, opts.maxSide / Math.max(W, H));
     W *= k; H *= k;
   }
-
   W = Math.max(2, Math.round(W)); H = Math.max(2, Math.round(H));
   const h = solveHomography(
     [[0, 0], [W, 0], [W, H], [0, H]],
@@ -707,7 +756,7 @@ function warp(src, corners, opts) {
 }
 
 /* =====================================================================
-   التحسين — محسّن
+   تقدير الخلفية
 ===================================================================== */
 function estimateBg(cv) {
   const w = cv.width, h = cv.height;
@@ -747,7 +796,12 @@ function estimateBg(cv) {
   bg.drawImage(sm, 0, 0, w, h);
   return bg.getImageData(0, 0, w, h).data;
 }
+
+/* =====================================================================
+   إزالة الحدة (Shallow)
+===================================================================== */
 function sharpen(cv, a) {
+  if (a <= 0) return;
   const w = cv.width, h = cv.height;
   const ctx = cv.getContext('2d', { willReadFrequently: true });
   const src = ctx.getImageData(0, 0, w, h);
@@ -767,42 +821,152 @@ function sharpen(cv, a) {
   }
   ctx.putImageData(out, 0, 0);
 }
+
+/* =====================================================================
+   ✅ المعالجة الرئيسية — 12 فلتر
+===================================================================== */
 function enhance(cv, o) {
   const w = cv.width, h = cv.height;
   const ctx = cv.getContext('2d', { willReadFrequently: true });
-  const img = ctx.getImageData(0, 0, w, h), d = img.data, m = o.mode;
-  const bri = o.brightness * 2.55, cc = o.contrast * 2.55;
-  const f = (259 * (cc + 255)) / (255 * (259 - cc));
-  const adj = v => (v - 128) * f + 128 + bri;
-  const bg = (m === 'magic' || m === 'doc' || m === 'bw') ? estimateBg(cv) : null;
-  const same = (m === 'color' && o.brightness === 0 && o.contrast === 0);
+  const img = ctx.getImageData(0, 0, w, h);
+  const d = img.data;
+  const mode = o.mode || 'original';
 
-  if (!same) {
-    for (let i = 0; i < d.length; i += 4) {
-      let r = d[i], g = d[i + 1], b = d[i + 2];
-      if (m === 'magic') {
-        r = Math.min(255, r / Math.max(bg[i], 1) * 250);
-        g = Math.min(255, g / Math.max(bg[i + 1], 1) * 250);
-        b = Math.min(255, b / Math.max(bg[i + 2], 1) * 250);
-      } else if (m === 'gray' || m === 'doc' || m === 'bw') {
-        let y = .299 * r + .587 * g + .114 * b;
-        if (bg) {
-          const by = .299 * bg[i] + .587 * bg[i + 1] + .114 * bg[i + 2];
-          y = Math.min(255, y / Math.max(by, 1) * 250);
-        }
-        r = g = b = y;
+  // إعدادات المستخدم الأساسية (تُطبَّق على كل الأوضاع)
+  const bri = o.brightness * 2.55;
+  const cc = o.contrast * 2.55;
+  const f = (259 * (cc + 255)) / (255 * (259 - cc));
+  const adj = v => {
+    let x = (v - 128) * f + 128 + bri;
+    return x < 0 ? 0 : x > 255 ? 255 : x;
+  };
+
+  // وضع "أصلي" — فقط تعديلات المستخدم
+  if (mode === 'original') {
+    if (bri !== 0 || cc !== 0) {
+      for (let i = 0; i < d.length; i += 4) {
+        d[i] = adj(d[i]);
+        d[i + 1] = adj(d[i + 1]);
+        d[i + 2] = adj(d[i + 2]);
       }
-      r = adj(r); g = adj(g); b = adj(b);
-      if (m === 'bw') { const v = r > o.thr ? 255 : 0; r = g = b = v; }
-      d[i] = r; d[i + 1] = g; d[i + 2] = b;
+      ctx.putImageData(img, 0, 0);
+    }
+    if (o.sharp > 0) sharpen(cv, o.sharp);
+    return;
+  }
+
+  // باقي الأوضاع تحتاج خلفية
+  const bg = estimateBg(cv);
+
+  if (mode === 'magic1' || mode === 'magic2' || mode === 'magic3') {
+    const power = mode === 'magic1' ? 0.85 : mode === 'magic2' ? 1.0 : 1.15;
+    const satBoost = mode === 'magic1' ? 1.05 : mode === 'magic2' ? 1.15 : 1.25;
+    for (let i = 0; i < d.length; i += 4) {
+      let r = Math.min(255, d[i] / Math.max(bg[i], 1) * 250 * power + d[i] * (1 - power));
+      let g = Math.min(255, d[i + 1] / Math.max(bg[i + 1], 1) * 250 * power + d[i + 1] * (1 - power));
+      let b = Math.min(255, d[i + 2] / Math.max(bg[i + 2], 1) * 250 * power + d[i + 2] * (1 - power));
+      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+      r = gray + (r - gray) * satBoost;
+      g = gray + (g - gray) * satBoost;
+      b = gray + (b - gray) * satBoost;
+      d[i]     = adj(r);
+      d[i + 1] = adj(g);
+      d[i + 2] = adj(b);
     }
     ctx.putImageData(img, 0, 0);
+    sharpen(cv, (o.sharp || 0) + (mode === 'magic1' ? 0.15 : mode === 'magic2' ? 0.30 : 0.45));
+    return;
   }
-  if (o.sharp > 0 && m !== 'bw') sharpen(cv, o.sharp);
+
+  if (mode === 'polish1' || mode === 'polish2' || mode === 'polish3') {
+    const p = mode === 'polish1' ? 0.7 : mode === 'polish2' ? 1.1 : 1.5;
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i + 1], b = d[i + 2];
+      const dr = r - bg[i] * 0.88;
+      const dg = g - bg[i + 1] * 0.88;
+      const db = b - bg[i + 2] * 0.88;
+      r = Math.max(0, Math.min(255, dr * (1 + p * 0.35) + 128));
+      g = Math.max(0, Math.min(255, dg * (1 + p * 0.35) + 128));
+      b = Math.max(0, Math.min(255, db * (1 + p * 0.35) + 128));
+      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+      const sat = 1 + p * 0.18;
+      r = gray + (r - gray) * sat;
+      g = gray + (g - gray) * sat;
+      b = gray + (b - gray) * sat;
+      d[i]     = adj(r);
+      d[i + 1] = adj(g);
+      d[i + 2] = adj(b);
+    }
+    ctx.putImageData(img, 0, 0);
+    sharpen(cv, (o.sharp || 0) + p * 0.35);
+    return;
+  }
+
+  if (mode === 'gray1' || mode === 'gray2') {
+    const contrast = mode === 'gray1' ? 1.0 : 1.35;
+    for (let i = 0; i < d.length; i += 4) {
+      let y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      const by = 0.299 * bg[i] + 0.587 * bg[i + 1] + 0.114 * bg[i + 2];
+      y = Math.min(255, y / Math.max(by, 1) * 250);
+      if (contrast !== 1) y = Math.max(0, Math.min(255, (y - 128) * contrast + 128));
+      d[i] = d[i + 1] = d[i + 2] = adj(y);
+    }
+    ctx.putImageData(img, 0, 0);
+    if (o.sharp > 0) sharpen(cv, o.sharp);
+    return;
+  }
+
+  if (mode === 'bw1' || mode === 'bw2') {
+    let thr = o.thr;
+    if (mode === 'bw2') {
+      // عتبة تلقائية Otsu
+      const hist = new Array(256).fill(0);
+      for (let i = 0; i < d.length; i += 4) {
+        const y = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) | 0;
+        hist[y]++;
+      }
+      const n = d.length / 4;
+      let sum = 0;
+      for (let i = 0; i < 256; i++) sum += i * hist[i];
+      let sumB = 0, wB = 0, best = 0;
+      for (let i = 0; i < 256; i++) {
+        wB += hist[i];
+        if (!wB) continue;
+        const wF = n - wB;
+        if (!wF) break;
+        sumB += i * hist[i];
+        const mB = sumB / wB;
+        const mF = (sum - sumB) / wF;
+        const v = wB * wF * (mB - mF) ** 2;
+        if (v > best) { best = v; thr = i; }
+      }
+    }
+    for (let i = 0; i < d.length; i += 4) {
+      const y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      const v = y > thr ? 255 : 0;
+      d[i] = d[i + 1] = d[i + 2] = v;
+    }
+    ctx.putImageData(img, 0, 0);
+    return;
+  }
+
+  if (mode === 'eco') {
+    for (let i = 0; i < d.length; i += 4) {
+      let y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      const by = 0.299 * bg[i] + 0.587 * bg[i + 1] + 0.114 * bg[i + 2];
+      y = Math.min(255, y / Math.max(by, 1) * 250);
+      if (y > 180) y = 255;
+      else if (y < 60) y = 0;
+      else y = (y - 60) / 120 * 255;
+      d[i] = d[i + 1] = d[i + 2] = adj(y);
+    }
+    ctx.putImageData(img, 0, 0);
+    return;
+  }
 }
 
 /* =====================================================================
-   خط المعالجة — يستخدم الكاش
+   خط المعالجة
 ===================================================================== */
 async function srcCanvas(p, rot, maxSide) {
   const bm = await getBitmap(p);
@@ -827,7 +991,6 @@ function scaleTo(cv, maxSide) {
   c.getContext('2d').drawImage(cv, 0, 0, c.width, c.height);
   return c;
 }
-
 async function renderPage(p, capOverride) {
   const cap = capOverride || 0;
   const cached = cachedRender(p, cap);
@@ -876,7 +1039,6 @@ async function renderPage(p, capOverride) {
   return result;
 }
 
-/* دمج البطاقة */
 function mergeCards(aObj, bObj) {
   const a = aObj.canvas, b = bObj.canvas;
   const card = SIZES.card;
@@ -1012,12 +1174,24 @@ function applyBlob(p, blob, corners, q) {
   bmCache.delete(p.id);
   invalidatePageCache(p);
 }
+
+/** ✅ التبديل التلقائي بعد التقاط الوجه */
+async function showReference(p) {
+  // استخدم المصغّرة إن وُجدت
+  try {
+    const r = await renderPage(p, 240);
+    const dataUrl = r.canvas.toDataURL('image/jpeg', 0.7);
+    $('refPreviewImg').src = dataUrl;
+    $('refPreview').classList.add('on');
+    setTimeout(() => $('refPreview').classList.remove('on'), 8000);
+  } catch (e) {}
+}
+
 async function addCaptured(blob) {
   const bm = await decode(blob);
   const small = drawSmall(bm, 400);
   const q = sharpness(small);
 
-  // حساب AR المستهدف حسب النوع الحالي
   const t = typeOf(S.curType);
   const z = SIZES[t.size];
   const targetAR = z.w / z.h;
@@ -1031,27 +1205,48 @@ async function addCaptured(blob) {
   if (S.replaceId) target = S.pages.find(p => p.id === S.replaceId);
   else if (S.curType === 'idf' || S.curType === 'idb') target = S.pages.find(p => p.type === S.curType);
 
+  let newPage = null;
   if (target) {
     applyBlob(target, blob, corners, q);
     S.replaceId = null;
     toast('تم استبدال الصورة');
+    newPage = target;
   } else {
     const p = { id: newId(), type: S.curType, label: makeLabel(S.curType), crop: true, mode: '', size: '' };
     applyBlob(p, blob, corners, q);
     S.pages.push(p);
+    newPage = p;
   }
-  if (S.curType === 'idf') S.curType = 'idb';
-  else if (S.curType === 'idb') S.curType = 'other';
-  updateCam();
+
+  // ✅ منطق التبديل التلقائي
+  const wasIdf = newPage.type === 'idf';
+  const hasIdb = S.pages.some(p => p.type === 'idb');
+
+  if (wasIdf && !hasIdb && S.set.autoSwitch !== false) {
+    // تبديل تلقائي إلى الظهر
+    S.curType = 'idb';
+    updateCam();
+    // عرض الوجه كمرجع
+    showReference(newPage);
+    vibrate([40, 60, 40]);
+    toast('📷 ممتاز! الآن صوّر ظهر البطاقة', 4000);
+  } else {
+    // السلوك الافتراضي
+    if (S.curType === 'idf') S.curType = 'idb';
+    else if (S.curType === 'idb') S.curType = 'other';
+    updateCam();
+    $('refPreview').classList.remove('on');
+  }
+
   saveDraft();
   if (q < 20) toast('⚠️ الصورة غير واضحة — يُفضّل إعادة التصوير', 3600);
 }
 
 /* =====================================================================
-   ✅ الكاميرا — مع فلاش محسّن + احتياطي شاشة
+   الكاميرا
 ===================================================================== */
 let stream = null, facing = 'environment', torchOn = false, meterT = null, wake = null;
-let torchSupported = null; // null = لم يُختبر بعد, true/false
+let torchSupported = null;
 let screenFlashOn = false;
 
 async function startCam() {
@@ -1102,7 +1297,6 @@ async function startCam() {
       document.addEventListener('click', resume, { once: true });
     }
 
-    // ✅ التحقق من دعم الفلاش — محاولة تفعيله فعليًا
     const tr = stream.getVideoTracks()[0];
     torchSupported = null;
     try {
@@ -1112,7 +1306,6 @@ async function startCam() {
     } catch (e) {
       torchSupported = false;
     }
-    // إظهار زر الفلاش دائمًا (سنستخدم شاشة بيضاء كاحتياط)
     $('btnTorch').classList.remove('hidden');
 
     try {
@@ -1136,7 +1329,6 @@ function stopCam() {
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   clearInterval(meterT); meterT = null;
   try { if (wake) { wake.release(); wake = null; } } catch (e) {}
-  // إطفاء الفلاش عند الإيقاف
   screenFlashOn = false; torchOn = false;
   $('screenFlash').classList.remove('on');
   $('btnTorch').classList.remove('on');
@@ -1157,11 +1349,9 @@ function startMeter() {
   }, 900);
 }
 
-/** ✅ فلاش ذكي: torch إن أمكن، وإلا شاشة بيضاء */
 async function toggleTorch() {
   if (!stream) { toast('الكاميرا غير جاهزة'); return; }
 
-  // محاولة استخدام torch الحقيقي
   if (torchSupported !== false) {
     try {
       const tr = stream.getVideoTracks()[0];
@@ -1169,14 +1359,13 @@ async function toggleTorch() {
       await tr.applyConstraints({ advanced: [{ torch: torchOn }] });
       $('btnTorch').classList.toggle('on', torchOn);
       torchSupported = true;
-      if (torchOn) screenFlashOn = false, $('screenFlash').classList.remove('on');
+      if (torchOn) { screenFlashOn = false; $('screenFlash').classList.remove('on'); }
       return;
     } catch (e) {
       torchSupported = false;
     }
   }
 
-  // ✅ احتياطي: شاشة بيضاء (يعمل دائمًا)
   screenFlashOn = !screenFlashOn;
   $('screenFlash').classList.toggle('on', screenFlashOn);
   $('btnTorch').classList.toggle('on', screenFlashOn);
@@ -1323,33 +1512,57 @@ async function refreshThumbs() {
 const refreshDebounced = debounce(refreshThumbs, 300);
 
 /* =====================================================================
-   الإعدادات
+   ✅ بناء واجهة الفلاتر
 ===================================================================== */
-function buildModeUI() {
-  const w = $('modeChips');
-  w.innerHTML = '';
-  MODES.forEach(m => {
-    const b = document.createElement('button');
-    b.className = 'chip' + (S.set.mode === m.k ? ' on' : '');
-    b.textContent = m.label;
-    b.onclick = () => {
-      S.set.mode = m.k;
-      buildModeUI(); syncSettingsUI();
-      invalidateAllRenderCache();
-      saveDraft(); refreshDebounced();
-    };
-    w.appendChild(b);
+function buildFilterUI() {
+  const wrap = $('filterUI');
+  wrap.innerHTML = '';
+  FILTER_GROUPS.forEach(group => {
+    const gDiv = document.createElement('div');
+    gDiv.className = 'fgroup';
+    const title = document.createElement('b');
+    title.textContent = group.name;
+    gDiv.appendChild(title);
+    const chipsRow = document.createElement('div');
+    chipsRow.className = 'chips-wrap';
+    group.modes.forEach(m => {
+      const b = document.createElement('button');
+      b.className = 'chip' + (S.set.mode === m.k ? ' on' : '');
+      b.textContent = m.label;
+      b.title = m.desc;
+      b.onclick = () => {
+        S.set.mode = m.k;
+        invalidateAllRenderCache();
+        buildFilterUI();
+        syncSettingsUI();
+        saveDraft();
+        refreshDebounced();
+      };
+      chipsRow.appendChild(b);
+    });
+    gDiv.appendChild(chipsRow);
+    wrap.appendChild(gDiv);
   });
+
+  // dropdown in editor
   const sel = $('edMode');
-  sel.innerHTML = '<option value="">حسب الإعداد العام</option>' + MODES.map(m => '<option value="' + m.k + '">' + m.label + '</option>').join('');
+  sel.innerHTML = '<option value="">حسب الإعداد العام</option>' +
+    FILTER_GROUPS.map(g =>
+      '<optgroup label="' + g.name + '">' +
+      g.modes.map(m => '<option value="' + m.k + '">' + m.label + '</option>').join('') +
+      '</optgroup>'
+    ).join('');
 }
+
 function syncSettingsUI() {
   const s = S.set;
   $('rBri').value = s.brightness; $('oBri').textContent = s.brightness;
   $('rCon').value = s.contrast; $('oCon').textContent = s.contrast;
   $('rSharp').value = s.sharp; $('oSharp').textContent = s.sharp;
   $('rThr').value = s.thr; $('oThr').textContent = s.thr;
-  $('thrWrap').classList.toggle('hidden', s.mode !== 'bw' && !S.pages.some(p => p.mode === 'bw'));
+  // إظهار عتبة B&W فقط عند اختيار bw1 أو bw2
+  const needThr = s.mode === 'bw1' || s.mode === 'bw2' || S.pages.some(p => p.mode === 'bw1' || p.mode === 'bw2');
+  $('thrWrap').classList.toggle('hidden', !needThr);
   $('tCrop').checked = s.autoCrop;
   $('tFixed').checked = s.fixedSize;
   $('tMerge').checked = s.mergeId;
@@ -1375,12 +1588,12 @@ function bindSettings() {
   $('bReset').onclick = () => {
     S.set = { ...DEFAULTS, quality: S.set.quality, pdfFit: S.set.pdfFit };
     invalidateAllRenderCache();
-    buildModeUI(); syncSettingsUI(); saveDraft(); refreshThumbs();
+    buildFilterUI(); syncSettingsUI(); saveDraft(); refreshThumbs();
   };
 }
 
 /* =====================================================================
-   ✅ المحرر — مع سحب الأضلاع كاملة
+   المحرر
 ===================================================================== */
 const ED = { p: null, rot: 0, corners: null, src: null, drag: null };
 
@@ -1390,45 +1603,27 @@ async function buildEdSrc() {
   c.width = ED.src.width;
   c.height = ED.src.height;
 }
-
-/**
- * ✅ اكتشاف المنطقة التي تم لمسها:
- *  - ركن (0-3): نقطة على الزاوية
- *  - ضلع (0-3): نقطة في منتصف الضلع
- *  - نقطة داخلية (i): النقطة داخل المضلع
- */
 function hitTest(x, y, corners, w, h) {
   const pts = corners.map(c => [c.x * w, c.y * h]);
   const HIT_RADIUS = 40;
-  // 1. الأركان
   for (let i = 0; i < 4; i++) {
-    if (Math.hypot(pts[i][0] - x, pts[i][1] - y) < HIT_RADIUS) {
-      return { kind: 'corner', i };
-    }
+    if (Math.hypot(pts[i][0] - x, pts[i][1] - y) < HIT_RADIUS) return { kind: 'corner', i };
   }
-  // 2. منتصف الأضلاع
   for (let i = 0; i < 4; i++) {
     const a = pts[i], b = pts[(i + 1) % 4];
     const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-    if (Math.hypot(mx - x, my - y) < HIT_RADIUS) {
-      return { kind: 'edge', i };
-    }
+    if (Math.hypot(mx - x, my - y) < HIT_RADIUS) return { kind: 'edge', i };
   }
   return null;
 }
-
 function drawEd() {
   const c = $('edCanvas'), g = c.getContext('2d');
   const w = c.width, h = c.height;
   g.clearRect(0, 0, w, h);
   g.drawImage(ED.src, 0, 0);
-
   if (!$('edCrop').checked) return;
-
   const P = ED.corners.map(q => [q.x * w, q.y * h]);
   const k = w / (c.getBoundingClientRect().width || w);
-
-  // تعتيم الخارج
   g.save();
   g.fillStyle = 'rgba(0,0,0,.52)';
   g.beginPath();
@@ -1438,8 +1633,6 @@ function drawEd() {
   g.closePath();
   g.fill('evenodd');
   g.restore();
-
-  // إطار المستطيل
   g.strokeStyle = '#14b8a6';
   g.lineWidth = 2.5 * k;
   g.beginPath();
@@ -1447,8 +1640,6 @@ function drawEd() {
   P.slice(1).forEach(q => g.lineTo(q[0], q[1]));
   g.closePath();
   g.stroke();
-
-  // دوائر الأركان (بيضاء)
   P.forEach(q => {
     g.beginPath();
     g.arc(q[0], q[1], 14 * k, 0, 7);
@@ -1458,8 +1649,6 @@ function drawEd() {
     g.strokeStyle = '#0f766e';
     g.stroke();
   });
-
-  // ✅ نقاط منتصف الأضلاع (صفراء مميزة)
   for (let i = 0; i < 4; i++) {
     const a = P[i], b = P[(i + 1) % 4];
     const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
@@ -1470,7 +1659,6 @@ function drawEd() {
     g.lineWidth = 2.5 * k;
     g.strokeStyle = '#b45309';
     g.stroke();
-    // خط صغير يوضح الاتجاه العمودي
     const dx = (b[0] - a[0]), dy = (b[1] - a[1]);
     const len = Math.hypot(dx, dy);
     const px = -dy / len, py = dx / len;
@@ -1482,7 +1670,6 @@ function drawEd() {
     g.stroke();
   }
 }
-
 async function openEditor(id) {
   const p = S.pages.find(x => x.id === id);
   if (!p) return;
@@ -1511,29 +1698,21 @@ async function edRotate(dir) {
   await buildEdSrc();
   drawEd();
 }
-
-/** ✅ سحب ركن: فقط النقطة نفسها تتحرك */
 function moveCorner(cornerIdx, nx, ny) {
   ED.corners[cornerIdx].x = Math.min(1, Math.max(0, nx));
   ED.corners[cornerIdx].y = Math.min(1, Math.max(0, ny));
 }
-
-/** ✅ سحب ضلع: يتحرك الركنان معًا بشكل متعامد على الضلع */
 function moveEdge(edgeIdx, x, y, w, h) {
   const corners = ED.corners;
   const i0 = edgeIdx;
   const i1 = (edgeIdx + 1) % 4;
   const a = { x: corners[i0].x * w, y: corners[i0].y * h };
   const b = { x: corners[i1].x * w, y: corners[i1].y * h };
-  // نقطة المنتصف
   const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-  // اتجاه عمودي على الضلع
   const dx = b.x - a.x, dy = b.y - a.y;
   const len = Math.hypot(dx, dy) || 1;
   const px = -dy / len, py = dx / len;
-  // إسقاط إزاحة الماوس على الاتجاه العمودي
   const delta = (x - mx) * px + (y - my) * py;
-  // تحريك الطرفين بنفس المقدار في اتجاه العمودي
   const na = { x: (a.x + px * delta) / w, y: (a.y + py * delta) / h };
   const nb = { x: (b.x + px * delta) / w, y: (b.y + py * delta) / h };
   corners[i0].x = Math.min(1, Math.max(0, na.x));
@@ -1541,7 +1720,6 @@ function moveEdge(edgeIdx, x, y, w, h) {
   corners[i1].x = Math.min(1, Math.max(0, nb.x));
   corners[i1].y = Math.min(1, Math.max(0, nb.y));
 }
-
 function edSave() {
   const p = ED.p;
   if (!p) return;
@@ -1559,11 +1737,9 @@ function edSave() {
   saveDraft();
   refreshThumbs();
 }
-
 function bindEditor() {
   const ec = $('edCanvas');
   let dragState = null;
-
   ec.addEventListener('pointerdown', e => {
     if (!$('edCrop').checked) return;
     const r = ec.getBoundingClientRect();
@@ -1576,7 +1752,6 @@ function bindEditor() {
       e.preventDefault();
     }
   });
-
   ec.addEventListener('pointermove', e => {
     if (!dragState) return;
     const r = ec.getBoundingClientRect();
@@ -1589,15 +1764,12 @@ function bindEditor() {
     }
     drawEd();
   });
-
   const up = () => { dragState = null; };
   ec.addEventListener('pointerup', up);
   ec.addEventListener('pointercancel', up);
-
   $('edCrop').onchange = drawEd;
   $('edClose').onclick = closeEditor;
   $('edAuto').onclick = () => {
-    // استخدام نسبة الأبعاد للصفحة الحالية
     const szKey = effSize(ED.p);
     const ar = szKey ? SIZES[szKey].w / SIZES[szKey].h : 1.585;
     ED.corners = detectQuad(ED.src, ar) || defaultCorners();
@@ -1655,10 +1827,8 @@ async function setJpegDpi(blob, dpi) {
         buf[2] === 0xFF && buf[3] === 0xE0 &&
         buf[6] === 0x4A && buf[7] === 0x46 && buf[8] === 0x49 && buf[9] === 0x46 && buf[10] === 0x00) {
       buf[13] = 1;
-      buf[14] = (dpi >> 8) & 0xFF;
-      buf[15] = dpi & 0xFF;
-      buf[16] = (dpi >> 8) & 0xFF;
-      buf[17] = dpi & 0xFF;
+      buf[14] = (dpi >> 8) & 0xFF; buf[15] = dpi & 0xFF;
+      buf[16] = (dpi >> 8) & 0xFF; buf[17] = dpi & 0xFF;
       return new Blob([buf], { type: 'image/jpeg' });
     }
   } catch (e) {}
@@ -1700,7 +1870,7 @@ function renderExport() {
     printEl.classList.remove('hidden');
     if (minDpi >= 300) { printEl.className = 'notice ok'; printEl.textContent = '✓ جاهز للطباعة (≥ 300 DPI).'; }
     else if (minDpi >= 200) { printEl.className = 'notice'; printEl.textContent = '⚠️ جودة مقبولة، بعض الصفحات < 300 DPI.'; }
-    else { printEl.className = 'notice'; printEl.textContent = '⚠️ بعض الصفحات < 200 DPI — أعد التصوير بإضاءة أفضل.'; }
+    else { printEl.className = 'notice'; printEl.textContent = '⚠️ بعض الصفحات < 200 DPI.'; }
   }
   $('selQ').value = String(S.set.quality);
   $('selPdf').value = S.set.pdfFit;
@@ -1779,10 +1949,6 @@ async function buildZip() {
     S.nid ? 'الرقم القومي: ' + S.nid : '',
     S.phone ? 'الهاتف: ' + S.phone : '',
     'تاريخ التجهيز: ' + new Date().toLocaleString('ar-EG'),
-    '',
-    'المقاسات:',
-    '  · بطاقة / شهادة ميلاد: 8.56 × 5.4 سم @ ' + SIZES.card.dpi + ' DPI',
-    '  · مستندات A4: 21 × 29.7 سم @ ' + SIZES.a4.dpi + ' DPI',
     '',
     'الصفحات:'
   ].concat(OUT.map((o, i) => (i + 1) + '. ' + o.label + (o.cm ? ' [' + o.cm.w.toFixed(2) + '×' + o.cm.h.toFixed(2) + ' سم · ' + o.dpi + ' DPI]' : '')))
@@ -1884,7 +2050,7 @@ async function go(n) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (n === 2) { updateCam(); setTimeout(() => startCam(), 60); }
   else stopCam();
-  if (n === 3) { buildModeUI(); syncSettingsUI(); renderGrid(); refreshThumbs(); }
+  if (n === 3) { buildFilterUI(); syncSettingsUI(); renderGrid(); refreshThumbs(); }
   if (n === 4) prepareExport();
   saveDraft();
 }
@@ -1969,25 +2135,21 @@ function init() {
   $('errNative').onclick = () => $('fileNative').click();
   $('fileGallery').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
   $('fileNative').onchange = e => { onFiles(e.target.files); e.target.value = ''; };
-
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopCam();
     else if (S.step === 2) startCam();
   });
-
   window.addEventListener('resize', () => setGuide());
   window.addEventListener('orientationchange', () => setTimeout(setGuide, 300));
-
   ['fName', 'fPhone'].forEach(id => $(id).addEventListener('input', () => {
     S.name = $('fName').value;
     S.phone = $('fPhone').value;
     saveDraft();
   }));
-
   bindSettings();
   bindEditor();
   bindExport();
-  buildModeUI();
+  buildFilterUI();
   updateCam();
   checkDraft();
   $('steps').querySelector('[data-s="1"]').classList.add('on');
